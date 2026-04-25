@@ -2,7 +2,7 @@
   "name": "html2show",
   "version": "1.0.0",
   "description": "Apple/Karpathy 风格的教学 HTML 知识图集合",
-  "generated": "2026-04-25T12:38:33.612Z",
+  "generated": "2026-04-25T14:29:04.618Z",
   "tree": {
     "name": "全部",
     "type": "folder",
@@ -33,7 +33,19 @@
             "icon": "git-branch",
             "color": "#16a34a",
             "desc": "Data Structure · 线性表/树/图/排序",
-            "children": []
+            "children": [
+              {
+                "name": "KMP",
+                "type": "page",
+                "path": "pages/408/ds/kmp.html",
+                "icon": "file-text",
+                "desc": "字符串匹配算法 · next 数组 · 一图掌握",
+                "tags": [
+                  "DS"
+                ],
+                "updated": "2026-04-25"
+              }
+            ]
           },
           {
             "name": "计算机网络",

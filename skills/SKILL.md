@@ -304,6 +304,77 @@ PPT 复用同一图表用 `<div class="plantuml-ref" data-ref="diagram-xxx"></di
 ❌ 不要手写 PPT slide (会被自动派生覆盖)
 ❌ 不要用 `--ink` 作为深色卡背景 (夜间模式会翻成白色 → 用 `--inverse-bg`)
 ❌ 改完不同步 `html2show/skills/` (导致版本不一致)
+❌ **不要**完全照搬模板的章节数和组件布局 — 见下方 "🎨 创造性组合" 与 "🐛 已知坑位"
+
+---
+
+## 🎨 创造性组合 (而非照搬模板)
+
+deadlock.html 是一个**示例**, 不是固定章节模板。为不同主题写新页时, **章节数与组件布局必须为内容服务**, 不能机械复制 6 节结构。
+
+| 主题类型 | 章节数 | 组件偏向 |
+|---|---|---|
+| 概念定义型 (死锁/进程) | 5–6 节 | def-stack + cond-grid + 简单 algo-grid |
+| **算法型 (KMP/银行家/Dijkstra)** | **7+ 节** | **多用 step + ds-row + 完整 walkthrough trace** |
+| 对比辨析型 (HTTP vs HTTPS) | 4–5 节 | rag-grid + compare-row + pitfall |
+| 公式推导型 (页表计算) | 5–6 节 | def-stack + algo-grid + 公式 key-quote |
+
+**KMP 案例**: 7 节结构（核心思想 / next 本质 / 手算示例 / 主算法 / nextval / 完整 trace / 考点），其中:
+- "手算示例" 用 `.def-stack` 套两个 card (Target + 9 行 ds-row trace)
+- "完整 trace" 用 7 个连续 step 演示一次匹配过程
+- 这些**结构**在 deadlock 里都没出现, 是为算法主题专门组合的
+
+**判断标准**: 章节切分应符合"一张幻灯片讲一个独立观点", 而不是"凑够 6 节"。算法主题通常需要"完整 walkthrough"作为独立章节。
+
+---
+
+## 🐛 已知坑位 (本节 = 实战教训档案)
+
+### 坑 1 · 章节 div 嵌套错位 → PPT 只生成几张幻灯片
+**症状**: 写完 7 节, PPT 模式只显示 4 张幻灯片; TOC 也对不上
+**根因**: 某个 `.section` 内部漏关 `</div>` (常见: card 套 def-stack 套 key-quote 时少一层关闭), 导致后续 section 被嵌套进前一个 section, `querySelectorAll('#flow-view .section')` 仍能找到, 但 `buildSlidesFromFlow` 处理时出错
+**预防**:
+- 每改完一个 section 立刻数 div 平衡: `awk '/<div /{n++}/<\/div>/{c++}END{print n,c}' file.html` (开闭差应为 0)
+- **每个 section 内只用一个主容器** (.def-stack / .algo-grid / .rag-grid 等), key-quote/pitfall/mnemonic 作为容器的兄弟节点
+- 不要在 .def-stack 内部嵌 .key-quote — 它应是 section 的直接子, 不是 grid 的子
+- 写多个并列 card 时**必须**包在 .def-stack 里, 别游离
+
+### 坑 2 · PlantUML 状态图语法错误
+**症状**: 渲染出来是源码 + "Syntax Error? (Assumed diagram type: state)" 红字
+**踩过的写法**:
+```
+state q0 as "q0"          ❌ 别名顺序反了
+[*] -right-> q0           ❌ 状态图不支持带方向的虚线 .down.>
+q4 .down.> q2 : 失配      ❌ 同上
+skinparam state {         
+  StartColor #0071e3      ❌ state 块里没这个 key, 引发解析失败
+  EndColor #16a34a        ❌ 同上
+}
+```
+**正确写法**:
+```
+state "q0" as q0          ✅ 标签在前, 别名在后
+state "q1 : A" as q1
+[*] --> q0                ✅ 起始用 [*], 实线用 -->
+q4 ..> q2 : 失配 next=2   ✅ 虚线只能用 ..>, 不能加方向
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #0071e3
+  FontColor #0071e3       ✅ 只用通用 key
+}
+```
+**或干脆**: 状态图/有向图用**内联 SVG** 替代 PlantUML, 更可控、无网络依赖、好调样式 (KMP 页就是这么做的)
+
+### 坑 3 · 标准章节是 6 节, 但算法主题需要更多
+**症状**: 强行塞进 6 节, 银行家/KMP 这种重头戏没空间展开 trace
+**预防**: 算法主题至少 7 节, 多出来的一节专门做 step-by-step walkthrough (用连续的 .step 元素列出每一步)
+
+### 坑 4 · 游离 .card 与 grid 混用导致间距不齐
+**症状**: 同一 section 里, 上方是 standalone `<div class="card">`, 下方是 `<div class="rag-grid">`, 视觉上间距不匀
+**根因**: `.card` 自身没 margin, grid 也没 margin, 它们之间靠手动 inline `style="margin-bottom:24px"` 凑, 与其他 section 的 `gap:20px` 节奏不一致
+**预防**:
+- 同一 section 内多个 card 一律用 `.def-stack` 包 (gap:20px, 与所有其他 grid 一致)
+- 不要写 `<div class="card" style="margin-bottom:Xpx">` 手动堆叠
 
 ---
 
@@ -311,12 +382,15 @@ PPT 复用同一图表用 `<div class="plantuml-ref" data-ref="diagram-xxx"></di
 
 - [ ] `<title>` 改成主题名
 - [ ] Hero 三个字段都填了
-- [ ] 6 个 section 都有标题 + 编号
+- [ ] **章节数为内容服务**, 不强行 6 节 (算法主题通常 7+)
 - [ ] 每个 section 至少一个组件 (card / grid / quote / pitfall)
-- [ ] 至少一个 PlantUML 图 (放在最关键章节)
+- [ ] **每个 section 内只有一个主容器** (.def-stack / .algo-grid / .rag-grid 等)
+- [ ] **div 平衡**: `awk '/<div /{n++}/<\/div>/{c++}END{print n,c}' file.html` 开闭相等
+- [ ] **没有游离 .card** 在 section 内部 (要么进 grid, 要么进 .def-stack)
+- [ ] PlantUML 图本地预览过, 无 "Syntax Error" 红字 (复杂状态图直接用内联 SVG)
 - [ ] 至少一个 `.key-quote` 重点引用
 - [ ] 至少一个 `.pitfall` 易错警示
-- [ ] 浏览器打开测试: 流式滚动通畅 / TOC 跳转工作 / PPT 模式翻页正常
+- [ ] 浏览器打开测试: 流式滚动通畅 / TOC 全部章节都列出 / PPT 模式 = (hero + 章节数) 张
 - [ ] 浏览器打开测试: 切日夜模式所有元素可读 / 导出 PNG 有左右留白
 - [ ] 提交 + 推送 + 同步 skills/
 
