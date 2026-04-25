@@ -52,10 +52,22 @@ html2show/
 ├── templates/              # 空骨架模板 (新建主题用)
 │   └── teaching-html-template.html
 │
-├── skills/                 # Claude Code 全局 Skill (与 ~/.claude/commands/teaching-html 同步)
-│   ├── SKILL.md
-│   ├── examples/
-│   └── references/
+├── skills/                 # Claude Code Skill 集合
+│   ├── SKILL.md            # teaching-html 主 skill
+│   ├── examples/           # 模板镜像
+│   ├── references/
+│   └── teaching-video/     # ★ 教学视频生产 skill (HTML → mp4)
+│       └── SKILL.md
+│
+├── video/                  # ★ 教学视频工作区, 与 pages/ 一一镜像
+│   ├── _template/          # 新主题起始模板
+│   ├── tools/              # tts.py / merge.ps1 共享工具
+│   └── <path>/<topic>/     # 与 pages/<path>/<topic>.html 对应
+│       ├── narration.txt   # 文案
+│       ├── narration.mp3   # Edge TTS 配音
+│       ├── narration.srt   # 字幕
+│       ├── record.py       # PPT 模式自动录制
+│       └── out/demo.mp4    # 最终成片 (1920x1080)
 │
 ├── docs/                   # 设计文档 / 开发笔记
 │
@@ -105,13 +117,42 @@ git push
 # 保存后 1-2 分钟即可访问 https://senjay2580.github.io/html2show/
 ```
 
+## 🎬 把主题录成教学视频
+
+每个 `pages/<path>/<topic>.html` 可一键转成带配音的 PPT 演示视频（1920×1080，5–7 分钟）。
+
+```bash
+# 1. 复制模板
+mkdir -p video/<path>/<topic>
+cp video/_template/* video/<path>/<topic>/
+
+# 2. 写文案 (参考 video/408/os/deadlock/narration.txt 风格)
+$EDITOR video/<path>/<topic>/narration.txt
+
+# 3. TTS + 自动测时, 复制打印的 SLIDE_DWELLS 到 record.py
+python video/tools/tts.py video/<path>/<topic>
+
+# 4. 录制 (需先 python -m http.server 8765)
+python video/<path>/<topic>/record.py
+
+# 5. 合并 → 最终 mp4
+pwsh video/tools/merge.ps1 video/<path>/<topic>
+```
+
+完整工作流见 [video/README.md](video/README.md) 与 [skills/teaching-video/SKILL.md](skills/teaching-video/SKILL.md)。
+
+**已发布**：
+- [video/408/os/deadlock/out/demo.mp4](video/408/os/deadlock/out/demo.mp4) · 6:07 · Deadlock 完整讲解
+
+---
+
 ## 📦 Skill 同步
 
-`skills/` 目录是 Claude Code 全局 skill `teaching-html` 的镜像。
-本地修改后:
+`skills/` 是 Claude Code Skill 集合（多 skill 并存）：
+- `SKILL.md` — teaching-html（生成知识图）
+- `teaching-video/SKILL.md` — 教学视频生产
+
+本地修改后同步到 `~/.claude/commands/`：
 ```bash
-# 仓库 → 全局 skill
-cp -r skills/* ~/.claude/commands/teaching-html/
-# 全局 skill → 仓库
-cp -r ~/.claude/commands/teaching-html/* skills/
+cp -r skills/* ~/.claude/commands/
 ```

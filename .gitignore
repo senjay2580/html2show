@@ -6,3 +6,7 @@ node_modules/
 .idea/
 *.bak
 *.tmp
+
+# 教学视频中间产物 (mp4 / 字幕保留, webm 太大不入库)
+video/**/out/*.webm
+video/**/out/trim_offset.txt
