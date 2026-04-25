@@ -1,0 +1,28 @@
+{
+  "name": "html2show",
+  "version": "1.0.0",
+  "description": "Apple/Karpathy 风格的教学 HTML 知识图集合",
+  "generated": "2026-04-25T12:31:51.927Z",
+  "tree": {
+    "name": "全部",
+    "type": "folder",
+    "path": "/",
+    "icon": "library",
+    "children": [
+      {
+        "name": "Deadlock",
+        "type": "page",
+        "path": "pages/deadlock.html",
+        "icon": "lock",
+        "desc": "操作系统死锁知识图 · 一图掌握",
+        "tags": [
+          "408",
+          "操作系统",
+          "死锁",
+          "进程"
+        ],
+        "updated": "2026-04-25"
+      }
+    ]
+  }
+}
