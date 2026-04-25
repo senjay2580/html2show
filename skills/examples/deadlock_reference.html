@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Deadlock · Knowledge Map</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --blue:    #0071e3;
+    --blue-2:  #0066cc;
+    --blue-soft: #e8f1ff;
+    --red:     #ff3b30;
+    --red-soft: #fff1f0;
+    --ink:     #1d1d1f;       /* 主文字色 */
+    --ink-2:   #424245;
+    --ink-3:   #86868b;
+    --line:    #e8e8ed;
+    --bg:      #fbfbfd;       /* 页面背景 */
+    --card:    #ffffff;       /* 普通卡片背景 */
+    --dot:     #d2d2d7;
+    /* 反色卡片(深色高亮卡, 例 key-quote) — 与主题无关, 永远深色 */
+    --inverse-bg:   #1d1d1f;
+    --inverse-text: #ffffff;
+    --inverse-em:   #ff6b6b;
+    --inverse-ok:   #5dd4a1;
+    --inverse-blue: #2997ff;
+    /* 浅蓝/浅红柔和高亮区背景 */
+    --soft-blue-bg: #e8f1ff;
+    --soft-red-bg:  #fff1f0;
+    --mono:    'SF Mono', 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
+  }
+  /* 夜间模式配色 — 重新设计 */
+  body.dark {
+    --blue:    #4ea2ff;        /* 提亮的苹果蓝 */
+    --blue-2:  #7fbdff;
+    --blue-soft: rgba(78, 162, 255, 0.16);
+    --red:     #ff7b6f;        /* 不刺眼的暖红 */
+    --red-soft: rgba(255, 123, 111, 0.14);
+    --ink:     #f5f5f7;        /* 接近白(主文字) */
+    --ink-2:   #d2d2d7;        /* 副文字 */
+    --ink-3:   #8e8e93;        /* 弱文字 */
+    --line:    #38383c;
+    --bg:      #1a1a1c;        /* 接近纯黑 */
+    --card:    #2a2a2d;        /* 卡片背景: 比 bg 亮一档 */
+    --dot:     #2e2e32;        /* 网格点更隐蔽 */
+    /* 反色卡片在夜间反而要"更深更黑", 形成新层次 */
+    --inverse-bg:   #0a0a0c;
+    --inverse-text: #ffffff;
+    --inverse-em:   #ff8a7e;
+    --inverse-ok:   #6fe3b0;
+    --inverse-blue: #5eb3ff;
+    /* 柔和高亮区: 夜间用半透明蓝/红 */
+    --soft-blue-bg: rgba(78, 162, 255, 0.12);
+    --soft-red-bg:  rgba(255, 123, 111, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                 'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    color: var(--ink);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle, var(--dot) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+    line-height: 1.6;
+    padding: 80px 24px 120px;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+    scroll-behavior: smooth;
+    transition: background-color 0.4s, color 0.4s;
+  }
+
+  .page { max-width: 1080px; margin: 0 auto; }
+
+  /* ============== 顶部阅读进度条 ============== */
+  .read-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--blue);
+    width: 0%;
+    z-index: 999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(0,113,227,0.4);
+  }
+
+  /* TOC 样式由 JS 在 buildTOC() 中动态注入 (避免冲突) */
+
+  /* ============== Section 入场动画 ============== */
+  .section {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* 仅当 JS 标记后才启用动画初始态 */
+  .section.anim-init {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .hero {
+    animation: heroIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============== 顶部按钮组 ============== */
+  .top-actions {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    gap: 12px;
+  }
+  .top-btn {
+    /* 用 inverse 变量, 永远黑底白字, 不被夜间模式翻转 */
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+  }
+  .top-btn:hover {
+    transform: translateY(-1px);
+    background: var(--blue);
+    color: #fff;
+  }
+  .top-btn .icon {
+    width: 14px; height: 14px;
+    display: inline-block;
+    background: var(--blue);
+    border-radius: 3px;
+  }
+  .top-btn:hover .icon { background: #fff; }
+  /* 导出按钮: 浅色版(用主题 card 颜色, 夜里也能跟随) */
+  .top-btn.export {
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .top-btn.export .icon { background: var(--ink); }
+  .top-btn.export:hover {
+    background: var(--blue);
+    color: #fff;
+  }
+  .top-btn.export:hover .icon { background: #fff; }
+  .top-btn:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+
+
+  /* ============== Hero ============== */
+  .hero {
+    text-align: center;
+    margin-bottom: 96px;
+    padding: 48px 0;
+  }
+  .hero .eyebrow {
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-family: var(--mono);
+  }
+  .hero h1 {
+    font-size: 88px;
+    font-weight: 700;
+    letter-spacing: -3px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .hero .sub {
+    color: var(--ink-3);
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  /* ============== Section ============== */
+  .section { margin-bottom: 80px; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 1px;
+  }
+  .section-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -1px;
+  }
+  .section-sub {
+    color: var(--ink-3);
+    font-size: 14px;
+    margin-left: auto;
+    font-family: var(--mono);
+  }
+
+  /* ============== Card ============== */
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s, box-shadow 0.3s, background 0.4s;
+  }
+  body.dark .card {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 16px 36px rgba(0, 0, 0, 0.06);
+  }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .card-h {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .card-body {
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .card-meta {
+    color: var(--ink-3);
+    font-size: 14px;
+    margin-top: 12px;
+    font-family: var(--mono);
+  }
+
+  /* ============== Big Highlights (重点) ============== */
+  .key-quote {
+    margin: 32px 0;
+    padding: 56px 56px;
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    border-radius: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  /* 装饰性大引号 */
+  .key-quote::before {
+    content: '"';
+    position: absolute;
+    top: -40px;
+    left: 32px;
+    font-size: 200px;
+    line-height: 1;
+    color: rgba(255,255,255,0.06);
+    font-family: Georgia, serif;
+    pointer-events: none;
+  }
+  .key-quote .lab {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--inverse-blue);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    padding: 6px 16px;
+    background: rgba(78, 162, 255, 0.18);
+    border-radius: 999px;
+  }
+  .key-quote .text .em { color: var(--inverse-em); font-weight: 800; }
+  .key-quote .text .ok { color: var(--inverse-ok); font-weight: 800; }
+  .key-quote .text {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: -0.5px;
+  }
+  .key-quote .text .em {
+    color: #ff6b6b;
+    font-weight: 800;
+  }
+  .key-quote .text .ok {
+    color: #5dd4a1;
+    font-weight: 800;
+  }
+  /* 重点引用的"补充结论"行: 在 key-quote 之后单独成块 */
+  .key-quote + .quote-followup {
+    margin-top: -8px;
+    padding: 24px 40px;
+    text-align: center;
+    background: var(--blue-soft);
+    color: var(--blue-2);
+    border-radius: 0 0 18px 18px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  /* 兼容当前 HTML: 紧跟 key-quote 后裸文字也美化 */
+  .quote-followup .arrow {
+    color: var(--ink-3);
+    margin: 0 12px;
+    font-weight: 400;
+  }
+
+  /* 易错红色框 */
+  .pitfall {
+    background: var(--red-soft);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin: 24px 0;
+  }
+  .pitfall .lab {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .pitfall .head {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: -0.5px;
+    margin-bottom: 14px;
+  }
+  .pitfall ul {
+    list-style: none;
+    padding: 0;
+  }
+  .pitfall li {
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.9;
+    padding: 4px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .pitfall li::before {
+    content: '✗';
+    color: var(--red);
+    font-weight: 700;
+  }
+  .pitfall li .right {
+    color: #5dd4a1;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .pitfall li b {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  /* ============== Section 1: 定义 ============== */
+  .def-stack { display: grid; gap: 20px; }
+
+  /* ============== Section 2: 4 必要条件 ============== */
+  .cond-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .cond {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 32px 24px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    transition: transform 0.3s;
+  }
+  .cond:hover { transform: translateY(-3px); }
+  .cond-num {
+    font-family: var(--mono);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .cond-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .cond-en {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .cond-desc {
+    color: var(--ink-2);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .mnemonic {
+    margin-top: 32px;
+    padding: 28px 36px;
+    background: var(--blue-soft);
+    border-radius: 18px;
+    text-align: center;
+  }
+  .mnemonic .lab {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: var(--blue-2);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .mnemonic .text {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.5px;
+  }
+
+  /* ============== Section 3: 3 策略 ============== */
+  .strat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .strat {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 36px 28px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s;
+  }
+  .strat:hover { transform: translateY(-3px); }
+  .strat-mark {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .strat-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .strat-en {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .strat-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--blue-soft);
+    color: var(--blue-2);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    font-family: var(--mono);
+  }
+  .strat-list { list-style: none; padding: 0; }
+  .strat-list li {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.8;
+    padding: 6px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .strat-list li::before {
+    content: '—';
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .strat-list .star { color: var(--blue); font-weight: 600; }
+
+  /* ============== Section 4: 银行家 ============== */
+  .algo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .ds-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+  }
+  .ds-row + .ds-row { border-top: 1px solid var(--line); }
+  .ds-key {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .ds-val { color: var(--ink-2); font-size: 15px; }
+  .step {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    align-items: baseline;
+  }
+  .step + .step { border-top: 1px solid var(--line); }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .step-t {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .step-t code {
+    font-family: var(--mono);
+    background: var(--blue-soft);
+    color: var(--blue-2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .step-t .ok { color: var(--blue); font-weight: 600; }
+  .step-t .no { color: var(--red); font-weight: 600; }
+
+  /* ============== Section 5: RAG + 辨析 ============== */
+  .rag-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .info-line {
+    padding: 14px 0;
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .info-line + .info-line { border-top: 1px solid var(--line); }
+  .info-line strong { color: var(--ink); font-weight: 600; }
+  .conclusion {
+    margin-top: 16px;
+    padding: 18px 22px;
+    background: var(--blue-soft);
+    border-radius: 12px;
+    color: var(--blue-2);
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+  .compare-row { padding: 18px 0; }
+  .compare-row + .compare-row { border-top: 1px solid var(--line); }
+  .compare-row .label {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .compare-row .label .en {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-left: 8px;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+  .compare-row .desc {
+    color: var(--ink-2);
+    font-size: 14.5px;
+  }
+  .compare-row .eg {
+    color: var(--ink-3);
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* ============== Section 6: 考点 ============== */
+  .exam-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .exam-item {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 24px 16px;
+    text-align: center;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s;
+  }
+  .exam-item:hover { transform: translateY(-2px); }
+  .exam-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .exam-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .exam-text .star { color: var(--blue); margin-left: 4px; }
+
+  .footer {
+    margin-top: 80px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+
+  /* ============== Mermaid 图表容器 ============== */
+  .diagram-card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 40px 32px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+    text-align: center;
+  }
+  .diagram-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+  .diagram-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 24px;
+    letter-spacing: -0.3px;
+  }
+  .plantuml, .mermaid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+  .plantuml img, .mermaid img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  .plantuml.loading::before {
+    content: '加载图表中...';
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  /* ============================================== */
+  /*                PPT 模式                         */
+  /* ============================================== */
+  .ppt-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle, #d2d2d7 1px, transparent 1px);
+    background-size: 32px 32px;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+  }
+  .ppt-overlay.active { display: flex; }
+
+  .ppt-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 60px;
+    overflow: hidden;          /* 严禁滚动 — slide 必须一屏装下 */
+    position: relative;
+  }
+  /* 每张 slide 容器 — 限制最大尺寸 + JS 自动缩放保证一屏装下 */
+  .slide.active {
+    max-width: 1200px;
+    max-height: 100%;
+    width: 100%;
+    transform-origin: center center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* PPT 内的 .section 不要再有底部 margin (已是 slide 全部) */
+  .slide .section { margin-bottom: 0; }
+  .slide .hero { margin-bottom: 0; padding: 0; }
+
+  .slide {
+    width: 100%;
+    max-width: 1100px;
+    display: none;
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .slide.active { display: block; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PPT 内的样式: 字号普遍放大 */
+  .slide .s-eyebrow {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--blue);
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .slide h2 {
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 36px;
+  }
+  .slide .s-sub {
+    font-size: 28px;
+    color: var(--ink-3);
+    font-weight: 400;
+    letter-spacing: -0.5px;
+  }
+  .slide .s-body {
+    font-size: 24px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    margin-top: 36px;
+  }
+  .slide .s-body .em {
+    color: var(--red);
+    font-weight: 700;
+  }
+  .slide .s-body .blue {
+    color: var(--blue);
+    font-weight: 700;
+  }
+
+  /* PPT 4 必要条件网格 */
+  .slide .s-cond {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .slide .s-cond .item {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 36px 24px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  }
+  .slide .s-cond .item .n {
+    font-family: var(--mono);
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .slide .s-cond .item .name {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .slide .s-cond .item .desc {
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* PPT 3 策略 */
+  .slide .s-strat {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 48px;
+  }
+  .slide .s-strat .item {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  }
+  .slide .s-strat .item .mark {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--blue);
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .slide .s-strat .item .nm {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .slide .s-strat .item .tag {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--blue-soft);
+    color: var(--blue-2);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--mono);
+    margin-bottom: 24px;
+  }
+  .slide .s-strat .item ul {
+    list-style: none;
+    padding: 0;
+  }
+  .slide .s-strat .item li {
+    color: var(--ink-2);
+    font-size: 18px;
+    line-height: 2;
+    padding: 4px 0;
+  }
+
+  /* PPT 模式: 图表展示 */
+  .slide .s-diagram-wrap {
+    margin-top: 40px;
+    background: var(--card);
+    border-radius: 24px;
+    padding: 48px 40px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+  .slide .s-diagram-wrap .lab {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--blue);
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .slide .s-diagram-wrap .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 32px;
+    letter-spacing: -0.3px;
+  }
+  .slide .s-diagram-wrap .mermaid {
+    transform: scale(1.4);
+    transform-origin: center;
+    margin: 40px 0;
+  }
+
+  /* PPT 模式: 同步美化 (大字号 + 装饰引号 + 显眼标签) */
+  .slide .s-quote {
+    position: relative;
+    overflow: hidden;
+  }
+  .slide .s-quote::before {
+    content: '"';
+    position: absolute;
+    top: -60px;
+    left: 48px;
+    font-size: 280px;
+    line-height: 1;
+    color: rgba(255,255,255,0.06);
+    font-family: Georgia, serif;
+    pointer-events: none;
+  }
+
+  /* 原始 .s-quote */
+  .slide .s-quote {
+    background: var(--ink);
+    color: white;
+    border-radius: 24px;
+    padding: 64px 80px;
+    text-align: center;
+    margin-top: 48px;
+  }
+  .slide .s-quote .lab {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--blue);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .slide .s-quote .txt {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -1px;
+  }
+  .slide .s-quote .txt .em { color: #ff6b6b; }
+
+  /* PPT 易错 */
+  .slide .s-pitfall {
+    background: var(--red-soft);
+    border-radius: 24px;
+    padding: 48px 56px;
+    margin-top: 48px;
+  }
+  .slide .s-pitfall .lab {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--red);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .slide .s-pitfall h3 {
+    font-size: 36px;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .slide .s-pitfall ul {
+    list-style: none;
+    padding: 0;
+  }
+  .slide .s-pitfall li {
+    color: var(--ink);
+    font-size: 22px;
+    line-height: 1.8;
+    padding: 8px 0;
+  }
+  .slide .s-pitfall li::before {
+    content: '✗ ';
+    color: var(--red);
+    font-weight: 700;
+  }
+  .slide .s-pitfall li b { color: var(--red); }
+  .slide .s-pitfall li .ok { color: #1a8a3a; font-weight: 600; }
+
+  /* PPT 银行家 2 列 */
+  .slide .s-banker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 48px;
+  }
+  .slide .s-banker .col {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  }
+  .slide .s-banker .col h4 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .slide .s-banker .col .row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    align-items: baseline;
+  }
+  .slide .s-banker .col .row + .row { border-top: 1px solid var(--line); }
+  .slide .s-banker .col .k {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .slide .s-banker .col .v {
+    font-size: 18px;
+    color: var(--ink-2);
+  }
+
+  /* ============== PPT 控制条 (跟随主题) ============== */
+  .ppt-bar {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .ppt-bar .progress {
+    flex: 1;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    margin: 0 24px;
+    overflow: hidden;
+  }
+  .ppt-bar .progress .fill {
+    height: 100%;
+    background: var(--blue);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ppt-bar .info {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-3);
+    min-width: 100px;
+  }
+  .ppt-bar .info .cur {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .ppt-bar .btn {
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+  }
+  .ppt-bar .btn:hover { background: var(--blue); color: #fff; }
+  .ppt-bar .nav {
+    display: flex;
+    gap: 8px;
+  }
+  .ppt-bar .nav button {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ppt-bar .nav button:hover {
+    background: var(--blue);
+    color: #fff;
+  }
+  .ppt-bar .nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ppt-tip {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 12px;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .ppt-tip.show { opacity: 1; }
+
+  /* ============== 响应式 ============== */
+  @media (max-width: 900px) {
+    .hero h1 { font-size: 56px; letter-spacing: -2px; }
+    .section-title { font-size: 28px; }
+    .cond-grid, .strat-grid, .algo-grid, .rag-grid {
+      grid-template-columns: 1fr;
+    }
+    .exam-grid { grid-template-columns: repeat(2, 1fr); }
+    body { padding: 40px 16px 80px; }
+    .key-quote .text { font-size: 20px; }
+    .slide h2 { font-size: 40px; }
+    .slide .s-cond, .slide .s-strat { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 阅读进度条 -->
+<div class="read-progress"></div>
+
+<!-- 顶部按钮组 -->
+<div class="top-actions">
+  <button class="top-btn export" id="export-btn" title="导出当前流式视图为高清 PNG">
+    <i data-lucide="image-down" style="width:16px;height:16px;"></i>
+    导出图片
+  </button>
+  <button class="top-btn" id="ppt-btn">
+    <i data-lucide="presentation" style="width:16px;height:16px;"></i>
+    PPT 模式
+  </button>
+</div>
+
+<!-- 导出加载提示 -->
+<div id="export-loading" style="
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 99999; display: none; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+">
+  <div style="
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: #0071e3;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  "></div>
+  <div style="
+    color: white; font-family: 'SF Mono', monospace;
+    font-size: 14px; letter-spacing: 1px;
+  " id="export-status">正在生成高清图片...</div>
+</div>
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<!-- ============================================== -->
+<!--             流式视图 (默认)                     -->
+<!-- ============================================== -->
+<div class="page" id="flow-view">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="eyebrow">OS · 408 · Knowledge Map</div>
+    <h1>Deadlock</h1>
+    <div class="sub">操作系统死锁知识图 · 一图掌握</div>
+  </div>
+
+  <!-- 1. 定义 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2 class="section-title">什么是死锁</h2>
+      <span class="section-sub">Definition</span>
+    </div>
+    <div class="def-stack">
+      <div class="card">
+        <div class="card-label">Definition</div>
+        <div class="card-h">多个进程互相等待对方持有的资源</div>
+        <div class="card-body">导致全部进程都无法继续推进的状态。</div>
+        <div class="card-meta">类比 ▸ 四车路口堵死, 谁都不动</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Example</div>
+        <div class="card-h">P1 持打印机等扫描仪 · P2 持扫描仪等打印机</div>
+        <div class="card-body">两个进程互相持有对方需要的资源, 又互相等待对方释放, 永远等下去。</div>
+      </div>
+      <div class="diagram-card">
+        <div class="diagram-label">Diagram · 死锁环路 (RAG 资源分配图)</div>
+        <div class="diagram-title">P1 / P2 互相持有对方所需资源 → 形成等待环</div>
+        <div class="plantuml" id="diagram-deadlock-cycle" data-uml="
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName 'Microsoft YaHei'
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam padding 6
+skinparam ArrowThickness 1.4
+skinparam ArrowColor #424245
+skinparam ArrowFontColor #1d1d1f
+skinparam ArrowFontSize 13
+
+skinparam circle {
+  BackgroundColor #FFFFFF
+  BorderColor #0071e3
+  BorderThickness 2
+  FontColor #0071e3
+  FontStyle bold
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #1d1d1f
+  BorderThickness 1.5
+  FontColor #1d1d1f
+}
+
+' 进程 = 圆形, 资源 = 方框 (OS 教科书标准)
+circle &quot;P1&quot; as P1
+circle &quot;P2&quot; as P2
+rectangle &quot; 扫描仪 &quot; as R2
+rectangle &quot; 打印机 &quot; as R1
+
+P1 -right-&gt; R2 : 请求
+R2 -down-&gt; P2 : 已分配
+P2 -left-&gt; R1 : 请求
+R1 -up-&gt; P1 : 已分配
+@enduml
+        "></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 4 必要条件 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">4 个必要条件</h2>
+      <span class="section-sub">Necessary Conditions</span>
+    </div>
+    <div class="cond-grid">
+      <div class="cond">
+        <div class="cond-num">01</div>
+        <div class="cond-name">互斥</div>
+        <div class="cond-en">Mutual Exclusion</div>
+        <div class="cond-desc">资源一次只能<br>一个进程使用</div>
+      </div>
+      <div class="cond">
+        <div class="cond-num">02</div>
+        <div class="cond-name">占有并等待</div>
+        <div class="cond-en">Hold and Wait</div>
+        <div class="cond-desc">占着已有资源<br>又等新资源</div>
+      </div>
+      <div class="cond">
+        <div class="cond-num">03</div>
+        <div class="cond-name">不可剥夺</div>
+        <div class="cond-en">No Preemption</div>
+        <div class="cond-desc">资源不能被强抢<br>只能主动释放</div>
+      </div>
+      <div class="cond">
+        <div class="cond-num">04</div>
+        <div class="cond-name">循环等待</div>
+        <div class="cond-en">Circular Wait</div>
+        <div class="cond-desc">P1→P2→...→P1<br>形成等待环</div>
+      </div>
+    </div>
+    <div class="mnemonic">
+      <div class="lab">Mnemonic · 记忆口诀</div>
+      <div class="text">互斥 + 占等 + 不剥夺 + 循环等</div>
+    </div>
+    <div class="key-quote">
+      <div class="lab">重点</div>
+      <div class="text">4 条件 <span class="em">同时成立</span> 才会死锁<br><span class="ok">破坏一个</span> 就能预防</div>
+    </div>
+  </div>
+
+  <!-- 3. 3 大策略 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">3 大处理策略</h2>
+      <span class="section-sub">Handling Strategies</span>
+    </div>
+    <div class="strat-grid">
+      <div class="strat">
+        <div class="strat-mark">A</div>
+        <div class="strat-name">预防</div>
+        <div class="strat-en">Prevention</div>
+        <div class="strat-tag">事前杜绝</div>
+        <ul class="strat-list">
+          <li>资源一次性申请</li>
+          <li>资源编号按序申请 <span class="star">★</span></li>
+          <li>申请失败释放所有</li>
+        </ul>
+      </div>
+      <div class="strat">
+        <div class="strat-mark">B</div>
+        <div class="strat-name">避免</div>
+        <div class="strat-en">Avoidance</div>
+        <div class="strat-tag">动态判断</div>
+        <ul class="strat-list">
+          <li><span class="star">★ 银行家算法</span></li>
+          <li>分配前判断是否安全</li>
+          <li>安全→分配 / 不安全→拒绝</li>
+        </ul>
+      </div>
+      <div class="strat">
+        <div class="strat-mark">C</div>
+        <div class="strat-name">检测+解除</div>
+        <div class="strat-en">Detection</div>
+        <div class="strat-tag">事后处理</div>
+        <ul class="strat-list">
+          <li>资源分配图扫描</li>
+          <li>终止进程</li>
+          <li>资源剥夺</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 银行家算法 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2 class="section-title">银行家算法</h2>
+      <span class="section-sub">Banker's Algorithm · 必考</span>
+    </div>
+    <div class="algo-grid">
+      <div class="card">
+        <div class="card-label">Data Structures</div>
+        <div class="card-h">4 个核心数据结构</div>
+        <div class="ds-row">
+          <div class="ds-key">Available</div>
+          <div class="ds-val">系统当前可用资源向量</div>
+        </div>
+        <div class="ds-row">
+          <div class="ds-key">Max</div>
+          <div class="ds-val">每进程最大需求矩阵</div>
+        </div>
+        <div class="ds-row">
+          <div class="ds-key">Allocation</div>
+          <div class="ds-val">每进程已分配资源矩阵</div>
+        </div>
+        <div class="ds-row">
+          <div class="ds-key">Need</div>
+          <div class="ds-val">还需要资源 = Max − Allocation</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Algorithm</div>
+        <div class="card-h">安全性算法步骤</div>
+        <div class="step">
+          <div class="step-n">01</div>
+          <div class="step-t">找进程 Pi 使 <code>Need[i] ≤ Available</code></div>
+        </div>
+        <div class="step">
+          <div class="step-n">02</div>
+          <div class="step-t">假设 Pi 完成, 回收资源<br><code>Available += Allocation[i]</code></div>
+        </div>
+        <div class="step">
+          <div class="step-n">03</div>
+          <div class="step-t">重复直到全部完成 → <span class="ok">安全</span><br>否则 → <span class="no">不安全</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. RAG + 辨析 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2 class="section-title">资源分配图 + 概念辨析</h2>
+      <span class="section-sub">RAG &amp; Comparison</span>
+    </div>
+    <div class="rag-grid">
+      <div class="card">
+        <div class="card-label">Tool</div>
+        <div class="card-h">资源分配图判断死锁</div>
+        <div class="info-line">
+          <strong>符号</strong><br>
+          进程 = 圆圈 ○ &nbsp;&nbsp; 资源 = 方框 □
+        </div>
+        <div class="info-line">
+          <strong>判断规则</strong><br>
+          单实例资源: 有环 = 死锁<br>
+          多实例资源: 有环 ≠ 一定死锁
+        </div>
+        <div class="conclusion">
+          死锁 → 一定有循环等待<br>
+          循环等待 → 不一定死锁
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Comparison</div>
+        <div class="card-h">死锁 vs 活锁 vs 饥饿</div>
+        <div class="compare-row">
+          <div class="label">死锁<span class="en">Deadlock</span></div>
+          <div class="desc">进程都阻塞, 无法推进</div>
+          <div class="eg">面对面走廊都不让</div>
+        </div>
+        <div class="compare-row">
+          <div class="label">活锁<span class="en">Livelock</span></div>
+          <div class="desc">不阻塞但都做无效操作</div>
+          <div class="eg">同时让又同时让回</div>
+        </div>
+        <div class="compare-row">
+          <div class="label">饥饿<span class="en">Starvation</span></div>
+          <div class="desc">长期得不到资源</div>
+          <div class="eg">低优先级一直被抢</div>
+        </div>
+      </div>
+    </div>
+    <!-- 易错红色框 -->
+    <div class="pitfall">
+      <div class="lab">Pitfall · 高频易错</div>
+      <div class="head">这些说法都是 错的</div>
+      <ul>
+        <li>"<b>死锁 = 循环等待</b>" <span class="right">✓ 正确: 循环等待是必要不充分条件</span></li>
+        <li>"<b>有环就一定死锁</b>" <span class="right">✓ 正确: 多实例资源有环不一定死锁</span></li>
+        <li>"<b>死锁可以彻底消除</b>" <span class="right">✓ 正确: 只能预防/避免/检测, 不能消除</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6. 考点 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">06</span>
+      <h2 class="section-title">408 高频考点</h2>
+      <span class="section-sub">Exam Focus</span>
+    </div>
+    <div class="exam-grid">
+      <div class="exam-item">
+        <div class="exam-num">01</div>
+        <div class="exam-text">4 必要条件</div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">02</div>
+        <div class="exam-text">银行家算法<span class="star">★</span></div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">03</div>
+        <div class="exam-text">安全序列判断</div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">04</div>
+        <div class="exam-text">RAG 判定</div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">05</div>
+        <div class="exam-text">3 策略对比</div>
+      </div>
+    </div>
+    <div class="key-quote">
+      <div class="lab">Essence · 一句话精华</div>
+      <div class="text">
+        4 条件同时成立才死锁<br>
+        破坏一个就预防 <span class="em">→</span> 动态用银行家 <span class="em">→</span> 事后用 RAG
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Robotic / explain · Made with <span style="color:#0071e3;">●</span> for 408
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!--             PPT 模式视图                        -->
+<!-- ============================================== -->
+<div class="ppt-overlay" id="ppt-view">
+  <div class="ppt-stage" id="ppt-stage">
+
+  </div>
+
+  <!-- PPT 控制条 -->
+  <div class="ppt-bar">
+    <div class="info">
+      <span class="cur" id="ppt-cur">1</span> / <span id="ppt-total">12</span>
+    </div>
+    <div class="progress"><div class="fill" id="ppt-progress"></div></div>
+    <div class="nav">
+      <button id="ppt-prev" title="上一页">‹</button>
+      <button id="ppt-next" title="下一页">›</button>
+    </div>
+    <button class="btn" id="ppt-exit" style="margin-left:16px;">ESC 退出</button>
+  </div>
+</div>
+
+<div class="ppt-tip" id="ppt-tip"></div>
+
+<script>
+  const pptBtn = document.getElementById('ppt-btn');
+  const flowView = document.getElementById('flow-view');
+  const pptView = document.getElementById('ppt-view');
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const pptCur = document.getElementById('ppt-cur');
+  const pptTotal = document.getElementById('ppt-total');
+  const pptProgress = document.getElementById('ppt-progress');
+  const pptPrev = document.getElementById('ppt-prev');
+  const pptNext = document.getElementById('ppt-next');
+  const pptExit = document.getElementById('ppt-exit');
+  const pptTip = document.getElementById('ppt-tip');
+  const pptStage = document.getElementById('ppt-stage');
+
+  let currentSlide = 0;
+  let pptMode = false;
+
+  pptTotal.textContent = totalSlides;
+
+  function showTip(msg) {
+    pptTip.textContent = msg;
+    pptTip.classList.add('show');
+    clearTimeout(pptTip._timer);
+    pptTip._timer = setTimeout(() => {
+      pptTip.classList.remove('show');
+    }, 1500);
+  }
+
+  function enterPPT() {
+    pptMode = true;
+    pptView.classList.add('active');
+    flowView.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+    showSlide(0);
+    showTip('SPACE / ← → 翻页  ·  ESC 退出');
+  }
+
+  function exitPPT() {
+    pptMode = false;
+    pptView.classList.remove('active');
+    flowView.style.display = '';
+    document.body.style.overflow = '';
+  }
+
+  // ⭐ 使用 let 让翻页函数可被后续重新赋值
+  let showSlide = (idx) => {
+    if (idx < 0) idx = 0;
+    if (idx >= totalSlides) idx = totalSlides - 1;
+    currentSlide = idx;
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    pptCur.textContent = idx + 1;
+    pptProgress.style.width = ((idx + 1) / totalSlides * 100) + '%';
+    pptPrev.disabled = (idx === 0);
+    pptNext.disabled = (idx === totalSlides - 1);
+  };
+  let nextSlide = () => showSlide(currentSlide + 1);
+  let prevSlide = () => showSlide(currentSlide - 1);
+
+  // 事件绑定: 用箭头函数包装, 后续重新赋值仍能被引用
+  pptBtn.addEventListener('click', enterPPT);
+  pptExit.addEventListener('click', exitPPT);
+  pptPrev.addEventListener('click', () => prevSlide());
+  pptNext.addEventListener('click', () => nextSlide());
+  pptStage.addEventListener('click', (e) => {
+    if (!pptMode) return;
+    if (e.target === pptStage || e.target.classList.contains('slide')) {
+      nextSlide();
+    }
+  });
+
+  // 键盘导航
+  document.addEventListener('keydown', (e) => {
+    if (!pptMode) return;
+    switch (e.key) {
+      case 'Escape':
+        exitPPT();
+        break;
+      case 'ArrowRight':
+      case ' ':
+      case 'PageDown':
+        e.preventDefault();
+        nextSlide();
+        break;
+      case 'ArrowLeft':
+      case 'PageUp':
+        e.preventDefault();
+        prevSlide();
+        break;
+      case 'Home':
+        showSlide(0);
+        break;
+      case 'End':
+        showSlide(totalSlides - 1);
+        break;
+    }
+  });
+
+  // ============================================
+  //          导出高清 PNG (html2canvas)
+  // ============================================
+  const exportBtn = document.getElementById('export-btn');
+  const exportLoading = document.getElementById('export-loading');
+  const exportStatus = document.getElementById('export-status');
+
+  async function exportToPNG() {
+    if (pptMode) {
+      alert('请先退出 PPT 模式再导出');
+      return;
+    }
+
+    exportBtn.disabled = true;
+    exportLoading.style.display = 'flex';
+    exportStatus.textContent = '准备渲染...';
+
+    const topActions = document.querySelector('.top-actions');
+    topActions.style.display = 'none';
+
+    // ★ 创建临时导出容器(加大留白)
+    const flowView = document.getElementById('flow-view');
+    const exportWrapper = document.createElement('div');
+    exportWrapper.id = 'export-wrapper';
+    exportWrapper.style.cssText = `
+      position: absolute;
+      top: -99999px; left: -99999px;
+      background: #fbfbfd;
+      background-image: radial-gradient(circle, #d2d2d7 1px, transparent 1px);
+      background-size: 24px 24px;
+      padding: 80px 64px 100px 64px;
+      width: 1208px;
+      box-sizing: border-box;
+    `;
+    const inner = document.createElement('div');
+    inner.style.cssText = 'max-width: 1080px; margin: 0 auto;';
+    inner.innerHTML = flowView.innerHTML;
+    exportWrapper.appendChild(inner);
+    document.body.appendChild(exportWrapper);
+
+    try {
+      await new Promise(r => setTimeout(r, 200));
+      exportStatus.textContent = '正在生成高清图片 (2x 像素)...';
+
+      const canvas = await html2canvas(exportWrapper, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#fbfbfd',
+        width: exportWrapper.offsetWidth,
+        height: exportWrapper.scrollHeight,
+        windowWidth: exportWrapper.offsetWidth,
+        windowHeight: exportWrapper.scrollHeight,
+        logging: false,
+        imageTimeout: 0
+      });
+
+      exportStatus.textContent = '正在生成下载链接...';
+
+      const title = document.title.split(' · ')[0].trim() || 'knowledge-map';
+      const ts = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+      const filename = `${title}_${ts}.png`;
+
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        exportStatus.textContent = '✓ 导出成功';
+        setTimeout(() => {
+          exportLoading.style.display = 'none';
+        }, 600);
+      }, 'image/png', 1.0);
+
+    } catch (err) {
+      console.error(err);
+      alert('导出失败: ' + err.message);
+      exportLoading.style.display = 'none';
+    } finally {
+      // 清理临时容器
+      if (exportWrapper && exportWrapper.parentNode) {
+        exportWrapper.parentNode.removeChild(exportWrapper);
+      }
+      topActions.style.display = '';
+      exportBtn.disabled = false;
+    }
+  }
+
+  exportBtn.addEventListener('click', exportToPNG);
+
+  // ============================================
+  //          PlantUML 渲染 (走公共服务器)
+  // ============================================
+  const PLANTUML_SERVER = 'https://www.plantuml.com/plantuml/svg/';
+
+  function renderPlantUML(el) {
+    if (el.dataset.rendered === 'true') return;
+    const uml = el.dataset.uml || '';
+    if (!uml.trim() || !window.plantumlEncoder) return;
+    el.classList.add('loading');
+    try {
+      const encoded = plantumlEncoder.encode(uml.trim());
+      const img = document.createElement('img');
+      img.src = PLANTUML_SERVER + encoded;
+      img.alt = 'PlantUML diagram';
+      img.onload = () => {
+        el.classList.remove('loading');
+        el.innerHTML = '';
+        el.appendChild(img);
+        el.dataset.rendered = 'true';
+      };
+      img.onerror = () => {
+        el.classList.remove('loading');
+        el.innerHTML = '<span style="color:#ff3b30;font-family:var(--mono);font-size:12px;">图表加载失败</span>';
+      };
+    } catch (e) {
+      console.warn('PlantUML 编码失败:', e);
+    }
+  }
+
+  function renderAllPlantUML(scope) {
+    const root = scope || document;
+    root.querySelectorAll('.plantuml[data-uml]').forEach(renderPlantUML);
+  }
+
+  // 页面加载完成后渲染所有 PlantUML
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => renderAllPlantUML());
+  } else {
+    renderAllPlantUML();
+  }
+
+  // (旧: MutationObserver 监听 slide 切换 - 已不需要,
+  // _showSlideV2 内部已经处理 PlantUML 渲染)
+
+  // ============================================
+  //   一份源代码两处复用: PPT slide 自动从流式视图复用 PlantUML
+  //   规则: <div class="plantuml-ref" data-ref="diagram-id"></div>
+  //   会查找流式视图中 id="diagram-id" 的 .plantuml 元素并复用
+  // ============================================
+  function syncReusedDiagrams() {
+    document.querySelectorAll('.plantuml-ref[data-ref]').forEach(ref => {
+      const sourceId = ref.dataset.ref;
+      const source = document.querySelector(`#flow-view .plantuml[id="${sourceId}"]`);
+      if (source && !ref.dataset.synced) {
+        const clone = source.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.removeAttribute('data-rendered');
+        ref.replaceWith(clone);
+      }
+    });
+  }
+  syncReusedDiagrams();
+
+  // 启动 Section 入场动画 (IntersectionObserver)
+  const sections = document.querySelectorAll('#flow-view .section');
+  sections.forEach(s => s.classList.add('anim-init'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+  sections.forEach(s => io.observe(s));
+
+  // 阅读进度条
+  const readProgress = document.querySelector('.read-progress');
+  if (readProgress) {
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      readProgress.style.width = scrolled + '%';
+    });
+  }
+
+  // ============================================================
+  //   ⭐ 左侧浮动目录: 自动从 section 提取标题 + 点击跳转 + 滚动高亮
+  // ============================================================
+  function buildTOC() {
+    const sections = document.querySelectorAll('#flow-view .section');
+    if (sections.length === 0) return;
+
+    const toc = document.createElement('nav');
+    toc.className = 'toc';
+    toc.innerHTML = Array.from(sections).map((sec, i) => {
+      const id = sec.id || `sec-${i + 1}`;
+      sec.id = id;
+      const num = sec.querySelector('.section-num')?.textContent || String(i + 1).padStart(2, '0');
+      const title = sec.querySelector('.section-title')?.textContent || `Section ${i+1}`;
+      return `<a href="#${id}" data-target="${id}">
+                <span class="num">${num}</span>
+                <span class="title">${title}</span>
+              </a>`;
+    }).join('');
+    document.body.appendChild(toc);
+
+    // 平滑跳转
+    toc.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(a.dataset.target);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // 滚动高亮当前 section
+    const links = toc.querySelectorAll('a');
+    const tocObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          links.forEach(link => link.classList.toggle('active', link.dataset.target === id));
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+    sections.forEach(s => tocObserver.observe(s));
+
+    // PPT 模式时隐藏 TOC
+    return toc;
+  }
+  const tocEl = buildTOC();
+
+  // 注入 TOC 样式
+  const tocStyle = document.createElement('style');
+  tocStyle.textContent = `
+    .toc {
+      position: fixed;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 800;
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      width: 220px;
+      box-sizing: border-box;
+    }
+    body.dark .toc { box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+    .toc a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--ink-3);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .toc a:last-child { margin-bottom: 0; }
+    .toc a:hover {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    .toc a.active {
+      background: var(--blue);
+      color: #fff;
+    }
+    .toc .num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.6;
+      flex-shrink: 0;
+      white-space: nowrap;
+      writing-mode: horizontal-tb;
+    }
+    .toc a.active .num { opacity: 0.95; }
+    .toc .title {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      writing-mode: horizontal-tb;
+    }
+    @media (max-width: 1380px) { .toc { display: none; } }
+  `;
+  document.head.appendChild(tocStyle);
+
+  // PPT 模式时隐藏 TOC
+  const _origEnterPPT = enterPPT;
+  enterPPT = () => {
+    if (tocEl) tocEl.style.display = 'none';
+    _origEnterPPT();
+  };
+  const _origExitPPT = exitPPT;
+  exitPPT = () => {
+    _origExitPPT();
+    if (tocEl) tocEl.style.display = '';
+  };
+  // 重新绑定按钮
+  pptBtn.removeEventListener('click', _origEnterPPT);
+  pptBtn.addEventListener('click', enterPPT);
+  pptExit.removeEventListener('click', _origExitPPT);
+  pptExit.addEventListener('click', exitPPT);
+
+  // ============================================================
+  //   Lucide 图标渲染 (替换所有 <i data-lucide="..."> 为 SVG)
+  // ============================================================
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons();
+  } else {
+    // CDN 还没加载好就再等一下
+    setTimeout(() => {
+      if (window.lucide && lucide.createIcons) lucide.createIcons();
+    }, 500);
+  }
+
+  // ============================================================
+  //   ⭐ 单一来源派生: PPT slides 从 #flow-view 自动克隆
+  //   改流式视图内容 → PPT 自动同步
+  // ============================================================
+  function buildSlidesFromFlow() {
+    const stage = document.getElementById('ppt-stage');
+    if (!stage) return [];
+    stage.innerHTML = '';
+
+    const sources = [];
+    const hero = document.querySelector('#flow-view .hero');
+    if (hero) sources.push(hero);
+    document.querySelectorAll('#flow-view .section').forEach(s => sources.push(s));
+
+    sources.forEach((src, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide' + (i === 0 ? ' active' : '');
+      const clone = src.cloneNode(true);
+      // 移除可能干扰 PPT 的动画类
+      clone.classList.remove('anim-init', 'visible');
+      slide.appendChild(clone);
+      stage.appendChild(slide);
+    });
+    return stage.querySelectorAll('.slide');
+  }
+
+  // ★ 自动缩放: 让 active slide 一屏装下不滚动
+  function fitActiveSlide() {
+    const stage = document.getElementById('ppt-stage');
+    const active = stage && stage.querySelector('.slide.active');
+    if (!active) return;
+    // 重置已有缩放, 测量原始尺寸
+    const inner = active.firstElementChild;  // .hero 或 .section
+    if (!inner) return;
+    inner.style.transform = '';
+    inner.style.transformOrigin = 'top center';
+    // 强制 reflow
+    void inner.offsetHeight;
+    const sH = stage.clientHeight - 60;     // 留点 padding
+    const sW = stage.clientWidth - 80;
+    const cH = inner.scrollHeight;
+    const cW = inner.scrollWidth;
+    const scale = Math.min(sH / cH, sW / cW, 1);
+    if (scale < 1) {
+      inner.style.transform = `scale(${scale})`;
+      // 用 negative margin 收掉 transform 缩放后留下的空白(让父元素以视觉尺寸计算)
+      inner.style.marginBottom = `${(scale - 1) * cH}px`;
+    } else {
+      inner.style.marginBottom = '';
+    }
+  }
+
+  // 重写 showSlide 用最新的 slides 列表
+  showSlide = (idx) => {
+    const ss = document.querySelectorAll('#ppt-stage .slide');
+    if (ss.length === 0) return;
+    if (idx < 0) idx = 0;
+    if (idx >= ss.length) idx = ss.length - 1;
+    currentSlide = idx;
+    ss.forEach((s, i) => s.classList.toggle('active', i === idx));
+    pptCur.textContent = idx + 1;
+    pptProgress.style.width = ((idx + 1) / ss.length * 100) + '%';
+    pptPrev.disabled = (idx === 0);
+    pptNext.disabled = (idx === ss.length - 1);
+    // 渲染图表 + 自适应缩放
+    setTimeout(() => {
+      const active = document.querySelector('.slide.active');
+      if (active) renderAllPlantUML(active);
+      fitActiveSlide();
+      // 图表加载完后再 fit 一次
+      setTimeout(fitActiveSlide, 400);
+    }, 50);
+  };
+
+  // 窗口大小变化时也重新 fit
+  window.addEventListener('resize', () => {
+    if (pptMode) fitActiveSlide();
+  });
+  // nextSlide/prevSlide 内部已通过箭头函数引用 showSlide, 不需重新赋值
+
+  // 立即派生一次
+  function reinitPPT() {
+    const newSlides = buildSlidesFromFlow();
+    pptTotal.textContent = newSlides.length;
+  }
+  reinitPPT();
+
+  // 进入 PPT 时重新派生(保证 flow 改了能即时同步)
+  pptBtn.addEventListener('click', () => {
+    reinitPPT();
+    showSlide(0);
+  });
+
+  // ============================================================
+  //   FAB 浮动按钮组: 回顶 + 日夜模式
+  // ============================================================
+  const fab = document.createElement('div');
+  fab.id = 'fab-group';
+  fab.innerHTML = `
+    <button class="fab" id="fab-theme" title="切换日夜模式">
+      <i data-lucide="moon" style="width:20px;height:20px;"></i>
+    </button>
+    <button class="fab" id="fab-top" title="回到顶部">
+      <i data-lucide="arrow-up" style="width:20px;height:20px;"></i>
+    </button>
+  `;
+  document.body.appendChild(fab);
+
+  // FAB 样式注入
+  const fabStyle = document.createElement('style');
+  fabStyle.textContent = `
+    #fab-group {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .fab {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .fab:hover {
+      background: var(--blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,113,227,0.3);
+    }
+    #fab-top { opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.2s; }
+    #fab-top.visible { opacity: 1; pointer-events: auto; }
+  `;
+  document.head.appendChild(fabStyle);
+
+  // 回顶逻辑
+  const fabTop = document.getElementById('fab-top');
+  fabTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  window.addEventListener('scroll', () => {
+    fabTop.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // 日夜模式
+  const fabTheme = document.getElementById('fab-theme');
+  const savedTheme = localStorage.getItem('theme');
+  function syncThemeIcon() {
+    const isDark = document.body.classList.contains('dark');
+    fabTheme.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" style="width:20px;height:20px;"></i>`;
+    if (window.lucide) lucide.createIcons();
+  }
+  if (savedTheme === 'dark') document.body.classList.add('dark');
+  fabTheme.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    syncThemeIcon();
+  });
+  // 初始同步一次
+  setTimeout(syncThemeIcon, 100);
+</script>
+</body>
+</html>
