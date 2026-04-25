@@ -5,6 +5,7 @@
 <title>Deadlock · Knowledge Map</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root {
     --blue:    #0071e3;
@@ -89,63 +90,7 @@
     box-shadow: 0 0 8px rgba(0,113,227,0.4);
   }
 
-  /* ============== 侧边目录 (TOC) ============== */
-  .toc {
-    position: fixed;
-    left: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 800;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 16px;
-    padding: 14px 8px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .toc a {
-    display: block;
-    width: 28px; height: 28px;
-    line-height: 28px;
-    text-align: center;
-    border-radius: 8px;
-    color: var(--ink-3);
-    text-decoration: none;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .toc a:hover {
-    background: var(--blue-soft);
-    color: var(--blue);
-  }
-  .toc a.active {
-    background: var(--blue);
-    color: white;
-  }
-  .toc a .tip {
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%) translateX(8px);
-    background: var(--ink);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-family: -apple-system, 'SF Pro Display', 'Microsoft YaHei', sans-serif;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .toc a:hover .tip { opacity: 1; }
+  /* TOC 样式由 JS 在 buildTOC() 中动态注入 (避免冲突) */
 
   /* ============== Section 入场动画 ============== */
   .section {
@@ -180,8 +125,9 @@
     gap: 12px;
   }
   .top-btn {
-    background: var(--ink);
-    color: white;
+    /* 用 inverse 变量, 永远黑底白字, 不被夜间模式翻转 */
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
     padding: 12px 20px;
     border-radius: 999px;
     font-family: var(--mono);
@@ -199,6 +145,7 @@
   .top-btn:hover {
     transform: translateY(-1px);
     background: var(--blue);
+    color: #fff;
   }
   .top-btn .icon {
     width: 14px; height: 14px;
@@ -206,19 +153,19 @@
     background: var(--blue);
     border-radius: 3px;
   }
-  .top-btn:hover .icon { background: white; }
+  .top-btn:hover .icon { background: #fff; }
+  /* 导出按钮: 浅色版(用主题 card 颜色, 夜里也能跟随) */
   .top-btn.export {
     background: var(--card);
     color: var(--ink);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
+  .top-btn.export .icon { background: var(--ink); }
   .top-btn.export:hover {
     background: var(--blue);
-    color: white;
+    color: #fff;
   }
-  .top-btn.export .icon {
-    background: var(--ink);
-  }
-  .top-btn.export:hover .icon { background: white; }
+  .top-btn.export:hover .icon { background: #fff; }
   .top-btn:disabled {
     opacity: 0.5;
     cursor: wait;
@@ -793,17 +740,23 @@
   .ppt-stage {
     flex: 1;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    padding: 60px 80px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    padding: 40px 60px;
+    overflow: hidden;          /* 严禁滚动 — slide 必须一屏装下 */
+    position: relative;
   }
-  .ppt-stage::-webkit-scrollbar { width: 8px; }
-  .ppt-stage::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.15);
-    border-radius: 4px;
+  /* 每张 slide 容器 — 限制最大尺寸 + JS 自动缩放保证一屏装下 */
+  .slide.active {
+    max-width: 1200px;
+    max-height: 100%;
+    width: 100%;
+    transform-origin: center center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  /* PPT 内的 .section 不要再有底部 margin (已是 slide 全部) */
+  .slide .section { margin-bottom: 0; }
+  .slide .hero { margin-bottom: 0; padding: 0; }
 
   .slide {
     width: 100%;
@@ -1093,14 +1046,15 @@
     color: var(--ink-2);
   }
 
-  /* ============== PPT 控制条 ============== */
+  /* ============== PPT 控制条 (跟随主题) ============== */
   .ppt-bar {
     height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--card);
+    border-top: 1px solid var(--line);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
@@ -1128,8 +1082,8 @@
     font-weight: 700;
   }
   .ppt-bar .btn {
-    background: var(--ink);
-    color: white;
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
     padding: 10px 18px;
     border-radius: 999px;
     font-family: var(--mono);
@@ -1139,7 +1093,7 @@
     border: none;
     transition: background 0.2s;
   }
-  .ppt-bar .btn:hover { background: var(--blue); }
+  .ppt-bar .btn:hover { background: var(--blue); color: #fff; }
   .ppt-bar .nav {
     display: flex;
     gap: 8px;
@@ -1156,7 +1110,7 @@
   }
   .ppt-bar .nav button:hover {
     background: var(--blue);
-    color: white;
+    color: #fff;
   }
   .ppt-bar .nav button:disabled {
     opacity: 0.3;
@@ -1168,8 +1122,8 @@
     bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--ink);
-    color: white;
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
     padding: 12px 20px;
     border-radius: 999px;
     font-family: var(--mono);
@@ -1203,15 +1157,28 @@
 
 <!-- 顶部按钮组 -->
 <div class="top-actions">
+  <a class="top-btn home" id="home-link" href="#" title="返回首页">
+    <i data-lucide="home" style="width:16px;height:16px;"></i>
+    首页
+  </a>
   <button class="top-btn export" id="export-btn" title="导出当前流式视图为高清 PNG">
-    <span class="icon"></span>
+    <i data-lucide="image-down" style="width:16px;height:16px;"></i>
     导出图片
   </button>
   <button class="top-btn" id="ppt-btn">
-    <span class="icon"></span>
+    <i data-lucide="presentation" style="width:16px;height:16px;"></i>
     PPT 模式
   </button>
 </div>
+<script>
+  // 自动计算 index.html 相对路径(兼容 pages/ 任意层级)
+  (function() {
+    const link = document.getElementById('home-link');
+    if (!link) return;
+    const m = location.pathname.match(/(.*?\/)pages\//);
+    link.href = m ? m[1] + 'index.html' : '../index.html';
+  })();
+</script>
 
 <!-- 导出加载提示 -->
 <div id="export-loading" style="
@@ -1240,26 +1207,311 @@
 <!--             流式视图 (默认)                     -->
 <!-- ============================================== -->
 <div class="page" id="flow-view">
-  <!-- ⭐⭐⭐ 内容唯一来源: 在此填写 Hero + 多个 Section
-       PPT 视图自动从这里克隆派生, 不要手写 PPT 内容 -->
 
-  <!-- Hero (必有, 标题页) -->
+  <!-- Hero -->
   <div class="hero">
-    <div class="eyebrow">EYEBROW · UPPERCASE</div>
-    <h1>主题英文名</h1>
-    <div class="sub">中文副标题</div>
+    <div class="eyebrow">OS · 408 · Knowledge Map</div>
+    <h1>Deadlock</h1>
+    <div class="sub">操作系统死锁知识图 · 一图掌握</div>
   </div>
 
-  <!-- Section 模板 (复制多份, 每个章节一份) -->
+  <!-- 1. 定义 -->
   <div class="section">
     <div class="section-head">
       <span class="section-num">01</span>
-      <h2 class="section-title">章节中文标题</h2>
-      <span class="section-sub">English Sub</span>
+      <h2 class="section-title">什么是死锁</h2>
+      <span class="section-sub">Definition</span>
     </div>
-    <!-- 在此放卡片/网格/重点引用/易错框/PlantUML 图表 等 -->
+    <div class="def-stack">
+      <div class="card">
+        <div class="card-label">Definition</div>
+        <div class="card-h">多个进程互相等待对方持有的资源</div>
+        <div class="card-body">导致全部进程都无法继续推进的状态。</div>
+        <div class="card-meta">类比 ▸ 四车路口堵死, 谁都不动</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Example</div>
+        <div class="card-h">P1 持打印机等扫描仪 · P2 持扫描仪等打印机</div>
+        <div class="card-body">两个进程互相持有对方需要的资源, 又互相等待对方释放, 永远等下去。</div>
+      </div>
+      <div class="diagram-card">
+        <div class="diagram-label">Diagram · 死锁环路 (RAG 资源分配图)</div>
+        <div class="diagram-title">P1 / P2 互相持有对方所需资源 → 形成等待环</div>
+        <div class="plantuml" id="diagram-deadlock-cycle" data-uml="
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName 'Microsoft YaHei'
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam padding 6
+skinparam ArrowThickness 1.4
+skinparam ArrowColor #424245
+skinparam ArrowFontColor #1d1d1f
+skinparam ArrowFontSize 13
+
+skinparam circle {
+  BackgroundColor #FFFFFF
+  BorderColor #0071e3
+  BorderThickness 2
+  FontColor #0071e3
+  FontStyle bold
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #1d1d1f
+  BorderThickness 1.5
+  FontColor #1d1d1f
+}
+
+' 进程 = 圆形, 资源 = 方框 (OS 教科书标准)
+circle &quot;P1&quot; as P1
+circle &quot;P2&quot; as P2
+rectangle &quot; 扫描仪 &quot; as R2
+rectangle &quot; 打印机 &quot; as R1
+
+P1 -right-&gt; R2 : 请求
+R2 -down-&gt; P2 : 已分配
+P2 -left-&gt; R1 : 请求
+R1 -up-&gt; P1 : 已分配
+@enduml
+        "></div>
+      </div>
+    </div>
   </div>
 
+  <!-- 2. 4 必要条件 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">4 个必要条件</h2>
+      <span class="section-sub">Necessary Conditions</span>
+    </div>
+    <div class="cond-grid">
+      <div class="cond">
+        <div class="cond-num">01</div>
+        <div class="cond-name">互斥</div>
+        <div class="cond-en">Mutual Exclusion</div>
+        <div class="cond-desc">资源一次只能<br>一个进程使用</div>
+      </div>
+      <div class="cond">
+        <div class="cond-num">02</div>
+        <div class="cond-name">占有并等待</div>
+        <div class="cond-en">Hold and Wait</div>
+        <div class="cond-desc">占着已有资源<br>又等新资源</div>
+      </div>
+      <div class="cond">
+        <div class="cond-num">03</div>
+        <div class="cond-name">不可剥夺</div>
+        <div class="cond-en">No Preemption</div>
+        <div class="cond-desc">资源不能被强抢<br>只能主动释放</div>
+      </div>
+      <div class="cond">
+        <div class="cond-num">04</div>
+        <div class="cond-name">循环等待</div>
+        <div class="cond-en">Circular Wait</div>
+        <div class="cond-desc">P1→P2→...→P1<br>形成等待环</div>
+      </div>
+    </div>
+    <div class="mnemonic">
+      <div class="lab">Mnemonic · 记忆口诀</div>
+      <div class="text">互斥 + 占等 + 不剥夺 + 循环等</div>
+    </div>
+    <div class="key-quote">
+      <div class="lab">重点</div>
+      <div class="text">4 条件 <span class="em">同时成立</span> 才会死锁<br><span class="ok">破坏一个</span> 就能预防</div>
+    </div>
+  </div>
+
+  <!-- 3. 3 大策略 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">3 大处理策略</h2>
+      <span class="section-sub">Handling Strategies</span>
+    </div>
+    <div class="strat-grid">
+      <div class="strat">
+        <div class="strat-mark">A</div>
+        <div class="strat-name">预防</div>
+        <div class="strat-en">Prevention</div>
+        <div class="strat-tag">事前杜绝</div>
+        <ul class="strat-list">
+          <li>资源一次性申请</li>
+          <li>资源编号按序申请 <span class="star">★</span></li>
+          <li>申请失败释放所有</li>
+        </ul>
+      </div>
+      <div class="strat">
+        <div class="strat-mark">B</div>
+        <div class="strat-name">避免</div>
+        <div class="strat-en">Avoidance</div>
+        <div class="strat-tag">动态判断</div>
+        <ul class="strat-list">
+          <li><span class="star">★ 银行家算法</span></li>
+          <li>分配前判断是否安全</li>
+          <li>安全→分配 / 不安全→拒绝</li>
+        </ul>
+      </div>
+      <div class="strat">
+        <div class="strat-mark">C</div>
+        <div class="strat-name">检测+解除</div>
+        <div class="strat-en">Detection</div>
+        <div class="strat-tag">事后处理</div>
+        <ul class="strat-list">
+          <li>资源分配图扫描</li>
+          <li>终止进程</li>
+          <li>资源剥夺</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 银行家算法 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2 class="section-title">银行家算法</h2>
+      <span class="section-sub">Banker's Algorithm · 必考</span>
+    </div>
+    <div class="algo-grid">
+      <div class="card">
+        <div class="card-label">Data Structures</div>
+        <div class="card-h">4 个核心数据结构</div>
+        <div class="ds-row">
+          <div class="ds-key">Available</div>
+          <div class="ds-val">系统当前可用资源向量</div>
+        </div>
+        <div class="ds-row">
+          <div class="ds-key">Max</div>
+          <div class="ds-val">每进程最大需求矩阵</div>
+        </div>
+        <div class="ds-row">
+          <div class="ds-key">Allocation</div>
+          <div class="ds-val">每进程已分配资源矩阵</div>
+        </div>
+        <div class="ds-row">
+          <div class="ds-key">Need</div>
+          <div class="ds-val">还需要资源 = Max − Allocation</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Algorithm</div>
+        <div class="card-h">安全性算法步骤</div>
+        <div class="step">
+          <div class="step-n">01</div>
+          <div class="step-t">找进程 Pi 使 <code>Need[i] ≤ Available</code></div>
+        </div>
+        <div class="step">
+          <div class="step-n">02</div>
+          <div class="step-t">假设 Pi 完成, 回收资源<br><code>Available += Allocation[i]</code></div>
+        </div>
+        <div class="step">
+          <div class="step-n">03</div>
+          <div class="step-t">重复直到全部完成 → <span class="ok">安全</span><br>否则 → <span class="no">不安全</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. RAG + 辨析 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2 class="section-title">资源分配图 + 概念辨析</h2>
+      <span class="section-sub">RAG &amp; Comparison</span>
+    </div>
+    <div class="rag-grid">
+      <div class="card">
+        <div class="card-label">Tool</div>
+        <div class="card-h">资源分配图判断死锁</div>
+        <div class="info-line">
+          <strong>符号</strong><br>
+          进程 = 圆圈 ○ &nbsp;&nbsp; 资源 = 方框 □
+        </div>
+        <div class="info-line">
+          <strong>判断规则</strong><br>
+          单实例资源: 有环 = 死锁<br>
+          多实例资源: 有环 ≠ 一定死锁
+        </div>
+        <div class="conclusion">
+          死锁 → 一定有循环等待<br>
+          循环等待 → 不一定死锁
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Comparison</div>
+        <div class="card-h">死锁 vs 活锁 vs 饥饿</div>
+        <div class="compare-row">
+          <div class="label">死锁<span class="en">Deadlock</span></div>
+          <div class="desc">进程都阻塞, 无法推进</div>
+          <div class="eg">面对面走廊都不让</div>
+        </div>
+        <div class="compare-row">
+          <div class="label">活锁<span class="en">Livelock</span></div>
+          <div class="desc">不阻塞但都做无效操作</div>
+          <div class="eg">同时让又同时让回</div>
+        </div>
+        <div class="compare-row">
+          <div class="label">饥饿<span class="en">Starvation</span></div>
+          <div class="desc">长期得不到资源</div>
+          <div class="eg">低优先级一直被抢</div>
+        </div>
+      </div>
+    </div>
+    <!-- 易错红色框 -->
+    <div class="pitfall">
+      <div class="lab">Pitfall · 高频易错</div>
+      <div class="head">这些说法都是 错的</div>
+      <ul>
+        <li>"<b>死锁 = 循环等待</b>" <span class="right">✓ 正确: 循环等待是必要不充分条件</span></li>
+        <li>"<b>有环就一定死锁</b>" <span class="right">✓ 正确: 多实例资源有环不一定死锁</span></li>
+        <li>"<b>死锁可以彻底消除</b>" <span class="right">✓ 正确: 只能预防/避免/检测, 不能消除</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6. 考点 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">06</span>
+      <h2 class="section-title">408 高频考点</h2>
+      <span class="section-sub">Exam Focus</span>
+    </div>
+    <div class="exam-grid">
+      <div class="exam-item">
+        <div class="exam-num">01</div>
+        <div class="exam-text">4 必要条件</div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">02</div>
+        <div class="exam-text">银行家算法<span class="star">★</span></div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">03</div>
+        <div class="exam-text">安全序列判断</div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">04</div>
+        <div class="exam-text">RAG 判定</div>
+      </div>
+      <div class="exam-item">
+        <div class="exam-num">05</div>
+        <div class="exam-text">3 策略对比</div>
+      </div>
+    </div>
+    <div class="key-quote">
+      <div class="lab">Essence · 一句话精华</div>
+      <div class="text">
+        4 条件同时成立才死锁<br>
+        破坏一个就预防 <span class="em">→</span> 动态用银行家 <span class="em">→</span> 事后用 RAG
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Robotic / explain · Made with <span style="color:#0071e3;">●</span> for 408
+  </div>
 </div>
 
 <!-- ============================================== -->
@@ -1566,6 +1818,149 @@
   }
 
   // ============================================================
+  //   ⭐ 左侧浮动目录: 自动从 section 提取标题 + 点击跳转 + 滚动高亮
+  // ============================================================
+  function buildTOC() {
+    const sections = document.querySelectorAll('#flow-view .section');
+    if (sections.length === 0) return;
+
+    const toc = document.createElement('nav');
+    toc.className = 'toc';
+    toc.innerHTML = Array.from(sections).map((sec, i) => {
+      const id = sec.id || `sec-${i + 1}`;
+      sec.id = id;
+      const num = sec.querySelector('.section-num')?.textContent || String(i + 1).padStart(2, '0');
+      const title = sec.querySelector('.section-title')?.textContent || `Section ${i+1}`;
+      return `<a href="#${id}" data-target="${id}">
+                <span class="num">${num}</span>
+                <span class="title">${title}</span>
+              </a>`;
+    }).join('');
+    document.body.appendChild(toc);
+
+    // 平滑跳转
+    toc.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(a.dataset.target);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // 滚动高亮当前 section
+    const links = toc.querySelectorAll('a');
+    const tocObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          links.forEach(link => link.classList.toggle('active', link.dataset.target === id));
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+    sections.forEach(s => tocObserver.observe(s));
+
+    // PPT 模式时隐藏 TOC
+    return toc;
+  }
+  const tocEl = buildTOC();
+
+  // 注入 TOC 样式
+  const tocStyle = document.createElement('style');
+  tocStyle.textContent = `
+    .toc {
+      position: fixed;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 800;
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      width: 220px;
+      box-sizing: border-box;
+    }
+    body.dark .toc { box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+    .toc a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--ink-3);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .toc a:last-child { margin-bottom: 0; }
+    .toc a:hover {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    .toc a.active {
+      background: var(--blue);
+      color: #fff;
+    }
+    .toc .num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.6;
+      flex-shrink: 0;
+      white-space: nowrap;
+      writing-mode: horizontal-tb;
+    }
+    .toc a.active .num { opacity: 0.95; }
+    .toc .title {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      writing-mode: horizontal-tb;
+    }
+    @media (max-width: 1380px) { .toc { display: none; } }
+  `;
+  document.head.appendChild(tocStyle);
+
+  // PPT 模式时隐藏 TOC
+  const _origEnterPPT = enterPPT;
+  enterPPT = () => {
+    if (tocEl) tocEl.style.display = 'none';
+    _origEnterPPT();
+  };
+  const _origExitPPT = exitPPT;
+  exitPPT = () => {
+    _origExitPPT();
+    if (tocEl) tocEl.style.display = '';
+  };
+  // 重新绑定按钮
+  pptBtn.removeEventListener('click', _origEnterPPT);
+  pptBtn.addEventListener('click', enterPPT);
+  pptExit.removeEventListener('click', _origExitPPT);
+  pptExit.addEventListener('click', exitPPT);
+
+  // ============================================================
+  //   Lucide 图标渲染 (替换所有 <i data-lucide="..."> 为 SVG)
+  // ============================================================
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons();
+  } else {
+    // CDN 还没加载好就再等一下
+    setTimeout(() => {
+      if (window.lucide && lucide.createIcons) lucide.createIcons();
+    }, 500);
+  }
+
+  // ============================================================
   //   ⭐ 单一来源派生: PPT slides 从 #flow-view 自动克隆
   //   改流式视图内容 → PPT 自动同步
   // ============================================================
@@ -1591,7 +1986,33 @@
     return stage.querySelectorAll('.slide');
   }
 
-  // 重写 showSlide 用最新的 slides 列表(不依赖外部 slides 变量)
+  // ★ 自动缩放: 让 active slide 一屏装下不滚动
+  function fitActiveSlide() {
+    const stage = document.getElementById('ppt-stage');
+    const active = stage && stage.querySelector('.slide.active');
+    if (!active) return;
+    // 重置已有缩放, 测量原始尺寸
+    const inner = active.firstElementChild;  // .hero 或 .section
+    if (!inner) return;
+    inner.style.transform = '';
+    inner.style.transformOrigin = 'top center';
+    // 强制 reflow
+    void inner.offsetHeight;
+    const sH = stage.clientHeight - 60;     // 留点 padding
+    const sW = stage.clientWidth - 80;
+    const cH = inner.scrollHeight;
+    const cW = inner.scrollWidth;
+    const scale = Math.min(sH / cH, sW / cW, 1);
+    if (scale < 1) {
+      inner.style.transform = `scale(${scale})`;
+      // 用 negative margin 收掉 transform 缩放后留下的空白(让父元素以视觉尺寸计算)
+      inner.style.marginBottom = `${(scale - 1) * cH}px`;
+    } else {
+      inner.style.marginBottom = '';
+    }
+  }
+
+  // 重写 showSlide 用最新的 slides 列表
   showSlide = (idx) => {
     const ss = document.querySelectorAll('#ppt-stage .slide');
     if (ss.length === 0) return;
@@ -1603,11 +2024,20 @@
     pptProgress.style.width = ((idx + 1) / ss.length * 100) + '%';
     pptPrev.disabled = (idx === 0);
     pptNext.disabled = (idx === ss.length - 1);
+    // 渲染图表 + 自适应缩放
     setTimeout(() => {
       const active = document.querySelector('.slide.active');
       if (active) renderAllPlantUML(active);
+      fitActiveSlide();
+      // 图表加载完后再 fit 一次
+      setTimeout(fitActiveSlide, 400);
     }, 50);
   };
+
+  // 窗口大小变化时也重新 fit
+  window.addEventListener('resize', () => {
+    if (pptMode) fitActiveSlide();
+  });
   // nextSlide/prevSlide 内部已通过箭头函数引用 showSlide, 不需重新赋值
 
   // 立即派生一次
@@ -1630,14 +2060,10 @@
   fab.id = 'fab-group';
   fab.innerHTML = `
     <button class="fab" id="fab-theme" title="切换日夜模式">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
+      <i data-lucide="moon" style="width:20px;height:20px;"></i>
     </button>
     <button class="fab" id="fab-top" title="回到顶部">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="18 15 12 9 6 15"/>
-      </svg>
+      <i data-lucide="arrow-up" style="width:20px;height:20px;"></i>
     </button>
   `;
   document.body.appendChild(fab);
@@ -1686,11 +2112,19 @@
   // 日夜模式
   const fabTheme = document.getElementById('fab-theme');
   const savedTheme = localStorage.getItem('theme');
+  function syncThemeIcon() {
+    const isDark = document.body.classList.contains('dark');
+    fabTheme.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" style="width:20px;height:20px;"></i>`;
+    if (window.lucide) lucide.createIcons();
+  }
   if (savedTheme === 'dark') document.body.classList.add('dark');
   fabTheme.addEventListener('click', () => {
     document.body.classList.toggle('dark');
     localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    syncThemeIcon();
   });
+  // 初始同步一次
+  setTimeout(syncThemeIcon, 100);
 </script>
 </body>
 </html>

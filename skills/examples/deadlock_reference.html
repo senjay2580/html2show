@@ -1157,6 +1157,10 @@
 
 <!-- 顶部按钮组 -->
 <div class="top-actions">
+  <a class="top-btn home" id="home-link" href="#" title="返回首页">
+    <i data-lucide="home" style="width:16px;height:16px;"></i>
+    首页
+  </a>
   <button class="top-btn export" id="export-btn" title="导出当前流式视图为高清 PNG">
     <i data-lucide="image-down" style="width:16px;height:16px;"></i>
     导出图片
@@ -1166,6 +1170,15 @@
     PPT 模式
   </button>
 </div>
+<script>
+  // 自动计算 index.html 相对路径(兼容 pages/ 任意层级)
+  (function() {
+    const link = document.getElementById('home-link');
+    if (!link) return;
+    const m = location.pathname.match(/(.*?\/)pages\//);
+    link.href = m ? m[1] + 'index.html' : '../index.html';
+  })();
+</script>
 
 <!-- 导出加载提示 -->
 <div id="export-loading" style="

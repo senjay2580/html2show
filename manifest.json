@@ -2,7 +2,7 @@
   "name": "html2show",
   "version": "1.0.0",
   "description": "Apple/Karpathy 风格的教学 HTML 知识图集合",
-  "generated": "2026-04-25T12:31:51.927Z",
+  "generated": "2026-04-25T12:38:33.612Z",
   "tree": {
     "name": "全部",
     "type": "folder",
@@ -10,18 +10,62 @@
     "icon": "library",
     "children": [
       {
-        "name": "Deadlock",
-        "type": "page",
-        "path": "pages/deadlock.html",
-        "icon": "lock",
-        "desc": "操作系统死锁知识图 · 一图掌握",
-        "tags": [
-          "408",
-          "操作系统",
-          "死锁",
-          "进程"
-        ],
-        "updated": "2026-04-25"
+        "name": "考研 408",
+        "type": "folder",
+        "path": "/408",
+        "icon": "graduation-cap",
+        "color": "#0071e3",
+        "desc": "全国硕士研究生入学统考 408 · 计算机学科专业基础综合",
+        "children": [
+          {
+            "name": "计算机组成",
+            "type": "folder",
+            "path": "/408/co",
+            "icon": "cog",
+            "color": "#9333ea",
+            "desc": "Computer Organization · 总线/存储/CPU/IO",
+            "children": []
+          },
+          {
+            "name": "数据结构",
+            "type": "folder",
+            "path": "/408/ds",
+            "icon": "git-branch",
+            "color": "#16a34a",
+            "desc": "Data Structure · 线性表/树/图/排序",
+            "children": []
+          },
+          {
+            "name": "计算机网络",
+            "type": "folder",
+            "path": "/408/network",
+            "icon": "network",
+            "color": "#ea580c",
+            "desc": "Computer Network · TCP/IP/HTTP/路由",
+            "children": []
+          },
+          {
+            "name": "操作系统",
+            "type": "folder",
+            "path": "/408/os",
+            "icon": "cpu",
+            "color": "#0071e3",
+            "desc": "Operating System · 进程/内存/文件/IO",
+            "children": [
+              {
+                "name": "Deadlock",
+                "type": "page",
+                "path": "pages/408/os/deadlock.html",
+                "icon": "file-text",
+                "desc": "操作系统死锁知识图 · 一图掌握",
+                "tags": [
+                  "OS"
+                ],
+                "updated": "2026-04-25"
+              }
+            ]
+          }
+        ]
       }
     ]
   }
