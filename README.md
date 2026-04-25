@@ -68,13 +68,22 @@ html2show/
 ```bash
 # 1. 复制空骨架
 cp templates/teaching-html-template.html pages/<topic>.html
+
 # 2. 改 <title> + Hero + 各 section
-# 3. 浏览器打开预览
-# 4. 提交并推送, GitHub Pages 自动更新
-git add pages/<topic>.html
+
+# 3. 重新生成首页索引 (扫描 pages/ 自动产出 manifest.json)
+node scripts/build-manifest.js
+
+# 4. 浏览器打开 home.html 预览首页 / pages/<topic>.html 预览主题
+
+# 5. 提交并推送, GitHub Pages 自动更新
+git add pages/<topic>.html manifest.json
 git commit -m "feat: add <topic> knowledge map"
 git push
 ```
+
+> 也可在 pages/ 下创建子目录组织主题, 例如 `pages/os/<topic>.html`,
+> 首页会自动识别为子目录卡片, 点击进入下一级。
 
 ## 🎨 设计规范
 
