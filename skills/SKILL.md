@@ -7,6 +7,321 @@ description: 生成 Apple/Karpathy 极简风格的教学 HTML 知识图。适用
 
 生成**极简、高质感、教学风格**的 HTML 知识图，专为考研知识点 / 课程总结 / 概念讲义设计。
 
+---
+
+## 🌐 远程仓库 (重要)
+
+所有产物纳入 **`html2show`** 仓库版本管理 + GitHub Pages 公网托管:
+- **本地**: `D:\Desktop\html2show\`
+- **GitHub**: https://github.com/senjay2580/html2show
+- **线上**: https://senjay2580.github.io/html2show/
+
+**新建主题时优先在 `html2show/pages/` 下创建**, 而不是项目目录里。本 skill 包内的 `examples/` 和 `references/` 是模板镜像。
+
+---
+
+## 📁 仓库目录使用规范
+
+```
+html2show/
+├── index.html                  入口 (复制最新主题作为首页)
+│
+├── pages/<topic>.html          ★ 新主题放这里, 一文件一主题
+│
+├── templates/                  ★ 复制此处的空骨架开始新主题
+│   └── teaching-html-template.html
+│
+├── components/                 ★ 可复用 HTML 片段 (有现成的就用,别重写)
+│   ├── cards/                  普通卡 / 必要条件卡 / 策略卡 / 考点卡
+│   ├── quotes/                 重点引用 (深色) / 易错警示 (红色) / 记忆口诀 (浅蓝)
+│   ├── grids/                  grid-2/3/4/5 多列布局
+│   ├── toc/                    左侧浮动目录
+│   ├── fab/                    右下角浮动按钮 (回顶 + 日夜)
+│   └── navigation/             顶部按钮 (导出 / PPT) + PPT 控件
+│
+├── styles/                     CSS 拆分 (未来用)
+│   ├── base/{variables,reset,layout,typography}.css
+│   └── themes/{apple-light,apple-dark}.css
+│
+├── scripts/                    JS 拆分 (未来用)
+│   ├── core/{toc,ppt,theme-toggle,scroll-progress}.js
+│   ├── plantuml/plantuml-render.js
+│   └── export/html2canvas-export.js
+│
+├── images/<topic>/             ★ 主题插图按主题分子目录
+│   └── _common/                跨主题共用 (logo / banner)
+│
+├── diagrams/
+│   ├── plantuml/<topic>.puml   PlantUML 源文件 (版本化)
+│   └── exported/               渲染后 PNG/SVG (备份)
+│
+├── assets/{icons,illustrations,fonts,backgrounds}/
+│
+├── skills/                     当前 skill 的镜像 (与 ~/.claude/commands/teaching-html/ 双向同步)
+│
+├── docs/                       设计文档
+│
+└── .github/workflows/pages.yml GitHub Actions 自动部署
+```
+
+**目录使用铁律**:
+1. **页面只放 `pages/`**, 资源按类放对应目录, 不要在 `pages/` 里直接放 png
+2. **图片按主题分子目录** (`images/<topic>/`), 跨主题共用放 `images/_common/`
+3. **PlantUML 源**放 `diagrams/plantuml/<topic>.puml`, 即使运行时走 CDN 也要保留源
+4. **Skill 改动同步**: 改完 `~/.claude/commands/teaching-html/` 后立即 `cp -r` 到 `html2show/skills/` 并 git push
+
+---
+
+## 🛠️ 常见操作流程
+
+### 操作 A: 新建主题知识图 (最常见)
+
+```bash
+cd /d/Desktop/html2show
+
+# 1. 复制空骨架 (skill 包里也有同样模板, 但仓库版本更新)
+cp templates/teaching-html-template.html pages/<topic>.html
+
+# 2. 改 <title> + .hero (h1/sub) + 各 .section 内容
+#    PPT slides 不用改, JS 自动从 flow-view 派生
+
+# 3. 本地预览 (双击或浏览器打开)
+start pages/<topic>.html
+
+# 4. 提交 + 推送 → GitHub Pages 自动部署 (~30s)
+git add pages/<topic>.html images/<topic>/
+git commit -m "feat(<topic>): add knowledge map"
+git push
+```
+
+### 操作 B: 修改现有主题
+
+```bash
+# 改 pages/<topic>.html 即可
+# Hero / Section 改完, PPT 视图刷新就同步 (单一来源派生)
+git add pages/<topic>.html
+git commit -m "docs(<topic>): improve <section>"
+git push
+```
+
+### 操作 C: 插入图片
+
+```bash
+# 1. 放到对应主题目录
+cp ~/Downloads/illustration.png images/<topic>/
+
+# 2. 在 pages/<topic>.html 里引用 (注意路径 .. )
+<img src="../images/<topic>/illustration.png" alt="..." style="max-width:100%;border-radius:12px;">
+```
+
+### 操作 D: 加自定义图表 (PlantUML)
+
+```bash
+# 1. 写源文件, 方便后续修改
+echo '@startuml
+... PlantUML 代码
+@enduml' > diagrams/plantuml/<topic>-<name>.puml
+
+# 2. 在 pages/<topic>.html 里用 .plantuml 容器 (内嵌 data-uml)
+#    JS 会通过 plantuml-encoder 编码 + 公共服务器 SVG 渲染
+```
+
+### 操作 E: 修改全局样式
+
+⚠️ **当前所有 CSS 都内联在 HTML 里**, 修改时:
+- 修改 `templates/teaching-html-template.html` (空骨架)
+- 修改 `skills/examples/deadlock_reference.html` (示范例)
+- 必须**同时改两份**, 后续生成的新主题才会带最新样式
+
+未来 CSS/JS 拆分到 `styles/` `scripts/` 后, 改一处所有页面就生效。
+
+### 操作 F: 同步 skill 到仓库
+
+```bash
+# 修改后从全局 skill 同步到仓库 (用于版本化)
+cp -r ~/.claude/commands/teaching-html/* /d/Desktop/html2show/skills/
+cd /d/Desktop/html2show
+git add skills/
+git commit -m "chore(skills): sync from local"
+git push
+```
+
+---
+
+## 🎨 现有可复用组件 (优先复用, 不要重写)
+
+下面所有组件**已经在模板里写好 CSS**, 直接拷贝 HTML 片段即可。
+
+### 📦 卡片组件 (`.card`)
+```html
+<div class="card">
+  <div class="card-label">EYEBROW · UPPERCASE</div>
+  <div class="card-h">主标题</div>
+  <div class="card-body">正文一句话描述</div>
+  <div class="card-meta">类比 ▸ 补充信息</div>
+</div>
+```
+
+### 📦 必要条件卡 (`.cond`) — 4 列横排, 适合"几个核心要点"
+```html
+<div class="cond-grid">      <!-- 4 列 -->
+  <div class="cond">
+    <div class="cond-num">01</div>
+    <div class="cond-name">名称</div>
+    <div class="cond-en">ENGLISH</div>
+    <div class="cond-desc">两行描述<br>简短直接</div>
+  </div>
+  <!-- 重复 4 次 -->
+</div>
+```
+
+### 📦 策略卡 (`.strat`) — 3 列, 适合"几大方案/分类"
+```html
+<div class="strat-grid">     <!-- 3 列 -->
+  <div class="strat">
+    <div class="strat-mark">A</div>
+    <div class="strat-name">方案名</div>
+    <div class="strat-en">English</div>
+    <div class="strat-tag">标签</div>
+    <ul class="strat-list">
+      <li>要点 1</li>
+      <li>要点 2 <span class="star">★</span></li>
+    </ul>
+  </div>
+</div>
+```
+
+### 📦 重点引用 (`.key-quote`) — 黑底白字 + 装饰大引号
+```html
+<div class="key-quote">
+  <div class="lab">重点</div>
+  <div class="text">
+    主张内容 <span class="em">易错关键(红)</span><br>
+    <span class="ok">正确做法(绿)</span>
+  </div>
+</div>
+```
+
+### 📦 易错警示 (`.pitfall`) — 红底, 列出错误说法 + 正确解释
+```html
+<div class="pitfall">
+  <div class="lab">Pitfall · 高频易错</div>
+  <div class="head">这些说法都是错的</div>
+  <ul>
+    <li>"<b>错误说法</b>" <span class="right">✓ 正确: 解释</span></li>
+  </ul>
+</div>
+```
+
+### 📦 记忆口诀 (`.mnemonic`) — 浅蓝底, 一行精华
+```html
+<div class="mnemonic">
+  <div class="lab">Mnemonic · 记忆口诀</div>
+  <div class="text">A + B + C + D</div>
+</div>
+```
+
+### 📦 考点速记 (`.exam-grid`) — 5 列小卡, 章节末尾用
+```html
+<div class="exam-grid">
+  <div class="exam-item">
+    <div class="exam-num">01</div>
+    <div class="exam-text">必背要点 <span class="star">★</span></div>
+  </div>
+</div>
+```
+
+### 📦 图表卡 (`.diagram-card`) + PlantUML
+```html
+<div class="diagram-card">
+  <div class="diagram-label">Diagram · 类型</div>
+  <div class="diagram-title">图表主标题</div>
+  <div class="plantuml" id="diagram-xxx" data-uml="
+@startuml
+... PlantUML 代码 (引号转义为 &quot;)
+@enduml
+  "></div>
+</div>
+```
+
+PPT 复用同一图表用 `<div class="plantuml-ref" data-ref="diagram-xxx"></div>` (但因当前已是 JS 自动派生, 通常无需手动复用)。
+
+---
+
+## 📐 布局规范
+
+### 标准章节骨架 (一个 .section = 一张 PPT)
+```html
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">01</span>            <!-- 等距字号编号 -->
+    <h2 class="section-title">章节中文标题</h2>
+    <span class="section-sub">English Subtitle</span>
+  </div>
+  <!-- 内容: card / cond-grid / strat-grid / key-quote / pitfall / mnemonic / exam-grid / diagram-card -->
+</div>
+```
+
+### 多列网格快捷类
+- `.grid-2` 1:1 两列
+- `.grid-3` 1:1:1 三列
+- `.grid-4` 四列 (条件类专用)
+- `.grid-5` 五列 (考点类专用)
+
+### Hero (页头)
+```html
+<div class="hero">
+  <div class="eyebrow">EYEBROW · UPPERCASE</div>
+  <h1>主题英文名</h1>
+  <div class="sub">中文副标题</div>
+</div>
+```
+
+### 章节顺序建议 (6 节最稳)
+1. **什么是 X** (定义 + 类比 + 经典示例)
+2. **核心概念/必要条件** (横向 4 卡)
+3. **策略/分类** (3 卡 + 对比)
+4. **核心算法/方法** (左右两栏)
+5. **辨析/对比 + 易错警示**
+6. **高频考点 + 一句话精华**
+
+但**不强制**, 创造性允许:
+- 标题创意自由 (可以写"为什么 X 重要")
+- 章节数 4-8 都行
+- 顺序可调
+- **唯一硬约束**: 用上面定义的 class, 不要新造样式
+
+---
+
+## ⛔ 反例 (禁止做)
+
+❌ 不要给样式起新名字 (eg `.my-card`)
+❌ 不要在 HTML 里写 `style="..."` 内联样式 (除非临时 hack)
+❌ 不要直接把图片放 `pages/` 旁边
+❌ 不要用 emoji 当主装饰
+❌ 不要用 border (用 box-shadow)
+❌ 不要用渐变 (除背景圆点外)
+❌ 不要手写 PPT slide (会被自动派生覆盖)
+❌ 不要用 `--ink` 作为深色卡背景 (夜间模式会翻成白色 → 用 `--inverse-bg`)
+❌ 改完不同步 `html2show/skills/` (导致版本不一致)
+
+---
+
+## ✅ 检查清单 (新主题完成前过一遍)
+
+- [ ] `<title>` 改成主题名
+- [ ] Hero 三个字段都填了
+- [ ] 6 个 section 都有标题 + 编号
+- [ ] 每个 section 至少一个组件 (card / grid / quote / pitfall)
+- [ ] 至少一个 PlantUML 图 (放在最关键章节)
+- [ ] 至少一个 `.key-quote` 重点引用
+- [ ] 至少一个 `.pitfall` 易错警示
+- [ ] 浏览器打开测试: 流式滚动通畅 / TOC 跳转工作 / PPT 模式翻页正常
+- [ ] 浏览器打开测试: 切日夜模式所有元素可读 / 导出 PNG 有左右留白
+- [ ] 提交 + 推送 + 同步 skills/
+
+---
+
 ## 何时使用
 
 - 用户说："给我生成一个 X 的知识图 / 知识点总结 / 教学 HTML"
