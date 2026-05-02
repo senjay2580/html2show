@@ -442,12 +442,17 @@
   #fab-top { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   #fab-top.visible { opacity: 1; pointer-events: auto; }
 
-  /* ============== GitHub 角标 ============== */
-  .gh-corner {
+  /* ============== 顶部角标 ============== */
+  .top-corners {
     position: fixed;
     top: 24px;
     right: 24px;
     z-index: 900;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .gh-corner {
     background: var(--card);
     color: var(--ink);
     padding: 10px 16px;
@@ -456,34 +461,130 @@
     font-family: var(--mono);
     font-size: 13px;
     font-weight: 600;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+    line-height: 1;
   }
   .gh-corner:hover {
     background: var(--ink);
-    color: white;
+    color: var(--card);
     transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+  }
+
+  /* 导航入口：低调文字链 + 下划线动画 */
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 10px 4px;
+    position: relative;
+    transition: color 0.2s ease;
+    line-height: 1;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 6px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.32s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .nav-link:hover {
+    color: var(--blue);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+  .nav-link .arrow {
+    transition: transform 0.25s ease;
+  }
+  .nav-link:hover .arrow {
+    transform: translate(2px, -2px);
+  }
+  .nav-link.soon {
+    position: relative;
+  }
+  .nav-link.soon::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #c8a23a;
+    margin-right: 4px;
+    box-shadow: 0 0 0 0 rgba(200, 162, 58, 0.6);
+    animation: navSoonPulse 2s infinite;
+  }
+  @keyframes navSoonPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200, 162, 58, 0.6); }
+    70%  { box-shadow: 0 0 0 7px rgba(200, 162, 58, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(200, 162, 58, 0); }
+  }
+  .nav-link.soon[title]:hover .tip,
+  .nav-link.soon[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--card);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
   }
 
   @media (max-width: 720px) {
     body { padding: 32px 16px 80px; }
     .hero h1 { font-size: 44px; }
-    .gh-corner { display: none; }
+    .top-corners { top: 16px; right: 16px; gap: 8px; }
+    .gh-corner span { display: none; }
+    .gh-corner { padding: 10px 12px; }
+    .nav-link { font-size: 12px; }
     .grid-view { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<a href="https://github.com/senjay2580/html2show" target="_blank" class="gh-corner">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-  </svg>
-  GitHub
-</a>
+<div class="top-corners">
+  <a href="pages/showcase.html" class="nav-link">
+    <span>WORKS</span>
+    <svg class="arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="7" y1="17" x2="17" y2="7"></line>
+      <polyline points="7 7 17 7 17 17"></polyline>
+    </svg>
+  </a>
+  <a href="pages/resume.html" class="nav-link soon" title="Coming soon">
+    <span>RESUME</span>
+  </a>
+  <a href="pages/blog.html" class="nav-link soon" title="Coming soon">
+    <span>BLOG</span>
+  </a>
+  <a href="https://github.com/senjay2580/html2show" target="_blank" class="gh-corner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+    </svg>
+    <span>GitHub</span>
+  </a>
+</div>
 
 <div class="page">
   <!-- Hero -->

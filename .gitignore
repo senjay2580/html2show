@@ -4,6 +4,7 @@ Thumbs.db
 node_modules/
 .vscode/
 .idea/
+.claude/
 *.bak
 *.tmp
 

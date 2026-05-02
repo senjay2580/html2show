@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "lumina",
+    "url": "https://lumina-three-green.vercel.app/",
+    "title": "Lumina AI - 智能提示词管理与工作流平台",
+    "h1": "Lumina",
+    "desc": "Lumina AI 是一个智能提示词管理平台，支持 AI 工作流编排、提示词采集、多模型集成。帮助你高效管理和使用 AI 提示词。",
+    "body_text": "LUMINA · AI WORKFLOW · ORCHESTRATOR · LUMINA · AI WORKFLOW · ORCHESTRATOR · CREATE · AUTOMATE · INNOVATE · CREATE · AUTOMATE · INNOVATE · WORKFLOW · PROMPTS · AI · WORKFLOW · PROMPTS · AI · Lumina 登录 注册 邮箱或用户名 密码 忘记密码？ 登录 还没有账号？立即注册",
+    "favicon": "https://lumina-three-green.vercel.app/favicon.svg",
+    "screenshot": "assets/screenshots/lumina.jpg"
+  },
+  {
+    "slug": "fluxfilter",
+    "url": "https://flux-filter.vercel.app/",
+    "title": "FluxFilter",
+    "h1": "",
+    "desc": "智能追踪你关注的UP主，永不错过精彩内容",
+    "body_text": "F f 下拉刷新 游客模式 登录后可同步视频数据 登录 U All 时间 日期 关注 AI 快捷访问 收藏 提醒 待办 笔记 转写 回收站 工作流 应用 最新视频 FluxF 首页 待看列表 RSS 订阅 工具 添加 UP主 设置",
+    "favicon": "https://flux-filter.vercel.app/manifest-icon-192.maskable.png",
+    "screenshot": "assets/screenshots/fluxfilter.jpg"
+  },
+  {
+    "slug": "archat",
+    "url": "https://archat-kappa.vercel.app/",
+    "title": "Archat - 新一代智能通讯工具 | 即时笔记 + 高清视频 + AI助手",
+    "h1": "Think Fast.\nConnect Deep.",
+    "desc": "集即时笔记、高清视频通话和智能AI对话于一体的统一工作空间。Archat 提供原生性能的移动应用、强大的桌面客户端和便捷的网页版，让团队协作更高效。",
+    "body_text": "Archat Features Docs Blog Messages Community Wall Submit Message Ecosystem Official Website Documentation GitHub ArcWater EN English 简体中文 Download ARCHAT V1.0 LIVE Think Fast. Connect Deep. The unified workspace for instant notes, crystal-clear video calls, and intelligent AI conversations. Experience Now Start Now Watch Video Built for the future Cutting-edge technology meets intuitive design Instant Messaging Real-time message push based on Netty WebSocket, supporting text, emojis, images, files and more Learn More AI Integration Integrated LangChain4j + Tongyi Qianwen with streaming respons",
+    "favicon": "https://archat-kappa.vercel.app/archat-logo.ico",
+    "screenshot": "assets/screenshots/archat.jpg"
+  },
+  {
+    "slug": "dashboard",
+    "url": "http://120.76.158.129:8080/dashboard",
+    "title": "MutiExpert - 知识管理平台",
+    "h1": "",
+    "desc": "",
+    "body_text": "MutiExpert 知识管理平台 概览 仪表盘 AI 问答 知识库 定时任务 用户脚本 Bot Tools Skills 画板 系统 系统管理 帮助中心 Toggle Sidebar 仪表盘 概览 05/02 周六 00:48 Search... ⌘K ✦ M u t i E x p e r t 你的知识管理平台 知识库总数 1 文档总量 0 AI 对话数 4 跨域洞察 0 使用趋势 本地 AI 与飞书交互次数 本地 AI 4 飞书交互 0 5月 近 6 个月使用总量 最近动态 最新操作记录 https://www.bilibili.com/video/BV168j7zCE6D?vd_sou... 本地对话 1 小时前 给我一个 ros 的 py代码 本地对话 2 小时前 用 web 搜索脚本帮我找 GitHub 上 AI agent 最热的项目，按 star 排序前 2... 本地对话 2 小时前 用 B站视频转录脚本帮我转 https://www.bilibili.com/video/BV1Sk... 本地对话 4 小时前 AI 调用趋势 近 6 个月各模型调用量 DeepSeek 5月 按月统计各模型 AI 调用次数 知识库行业分布 按行业统计知识库数量 1知识库 覆盖 1 个行业分类 知识图谱 可视化展示知识库之间的关联网络 6",
+    "favicon": "http://120.76.158.129:8080/logo.svg",
+    "screenshot": "assets/screenshots/dashboard.jpg"
+  },
+  {
+    "slug": "service",
+    "url": "http://8.159.154.189:3001/",
+    "title": "Chat - Perplexica",
+    "h1": "",
+    "desc": "Chat with the internet, chat with Perplexica.",
+    "body_text": "Home Discover Library Research begins here. 0°C 0 m/s Humidity 0% Now",
+    "favicon": "http://8.159.154.189:3001/favicon.ico?603d046c9a6fdfbb",
+    "screenshot": "assets/screenshots/service.jpg"
+  },
+  {
+    "slug": "chat",
+    "url": "http://120.76.158.129:3782/chat",
+    "title": "DeepTutor",
+    "h1": "What would you like to learn?",
+    "desc": "Agent-native intelligent learning companion",
+    "body_text": "DeepTutor New Chat Chat TODAY test TutorBot Co-Writer Book Knowledge Space Settings v1.3.4 Chat Save to Notebook Download Markdown New chat What would you like to learn? Ask anything — I'm here to help you understand. Chat Tools Attach Space —",
+    "favicon": "http://120.76.158.129:3782/favicon-16x16.png",
+    "screenshot": "assets/screenshots/chat.jpg"
+  }
+]
