@@ -8,70 +8,70 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root {
-    --blue:    #0071e3;
-    --blue-2:  #0066cc;
-    --blue-soft: #e8f1ff;
-    --red:     #ff3b30;
-    --red-soft: #fff1f0;
-    --ink:     #1d1d1f;       /* 主文字色 */
-    --ink-2:   #424245;
-    --ink-3:   #86868b;
-    --line:    #e8e8ed;
-    --bg:      #fbfbfd;       /* 页面背景 */
-    --card:    #ffffff;       /* 普通卡片背景 */
-    --dot:     #d2d2d7;
-    /* 反色卡片(深色高亮卡, 例 key-quote) — 与主题无关, 永远深色 */
-    --inverse-bg:   #1d1d1f;
-    --inverse-text: #ffffff;
-    --inverse-em:   #ff6b6b;
-    --inverse-ok:   #5dd4a1;
-    --inverse-blue: #2997ff;
-    /* 浅蓝/浅红柔和高亮区背景 */
-    --soft-blue-bg: #e8f1ff;
-    --soft-red-bg:  #fff1f0;
-    --mono:    'SF Mono', 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
+    /* === Anthropic Clay (ThariqS/html-effectiveness) === */
+    --blue:        #D97757;        /* clay：主强调色（替代苹果蓝） */
+    --blue-2:      #B85C3E;        /* clay-d */
+    --blue-soft:   #F0EEE6;        /* g100：柔淡底 */
+    --red:         #B85C3E;        /* clay-d 当 emphasis（不再大红） */
+    --red-soft:    rgba(217, 119, 87, 0.10);
+    --ink:         #141413;        /* slate：近黑带绿味 */
+    --ink-2:       #3D3D3A;        /* g700 */
+    --ink-3:       #87867F;        /* g500 */
+    --line:        #D1CFC5;        /* g300：分割线 */
+    --bg:          #FAF9F5;        /* ivory：奶白偏暖 */
+    --card:        #FFFFFF;        /* paper */
+    --dot:         #E3DACC;        /* oat：圆点弱化 */
+    /* 反色深色卡 */
+    --inverse-bg:   #141413;
+    --inverse-text: #FAF9F5;
+    --inverse-em:   #D97757;       /* clay */
+    --inverse-ok:   #788C5D;       /* olive */
+    --inverse-blue: #D97757;
+    --soft-blue-bg: #F0EEE6;
+    --soft-red-bg:  rgba(217, 119, 87, 0.08);
+    /* 三体字体并用（super 风格灵魂） */
+    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", "PingFang SC", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
   }
-  /* 夜间模式配色 — 重新设计 */
+  /* 夜间模式（保留 clay 主色提亮） */
   body.dark {
-    --blue:    #4ea2ff;        /* 提亮的苹果蓝 */
-    --blue-2:  #7fbdff;
-    --blue-soft: rgba(78, 162, 255, 0.16);
-    --red:     #ff7b6f;        /* 不刺眼的暖红 */
-    --red-soft: rgba(255, 123, 111, 0.14);
-    --ink:     #f5f5f7;        /* 接近白(主文字) */
-    --ink-2:   #d2d2d7;        /* 副文字 */
-    --ink-3:   #8e8e93;        /* 弱文字 */
-    --line:    #38383c;
-    --bg:      #1a1a1c;        /* 接近纯黑 */
-    --card:    #2a2a2d;        /* 卡片背景: 比 bg 亮一档 */
-    --dot:     #2e2e32;        /* 网格点更隐蔽 */
-    /* 反色卡片在夜间反而要"更深更黑", 形成新层次 */
-    --inverse-bg:   #0a0a0c;
-    --inverse-text: #ffffff;
-    --inverse-em:   #ff8a7e;
-    --inverse-ok:   #6fe3b0;
-    --inverse-blue: #5eb3ff;
-    /* 柔和高亮区: 夜间用半透明蓝/红 */
-    --soft-blue-bg: rgba(78, 162, 255, 0.12);
-    --soft-red-bg:  rgba(255, 123, 111, 0.10);
+    --blue:        #E89373;
+    --blue-2:      #F0A98C;
+    --blue-soft:   rgba(232, 147, 115, 0.14);
+    --red:         #E89373;
+    --red-soft:    rgba(232, 147, 115, 0.10);
+    --ink:         #FAF9F5;
+    --ink-2:       #D1CFC5;
+    --ink-3:       #87867F;
+    --line:        #3D3D3A;
+    --bg:          #1A1A18;
+    --card:        #25241F;
+    --dot:         #2E2C26;
+    --inverse-bg:   #0A0A08;
+    --inverse-text: #FAF9F5;
+    --inverse-em:   #E89373;
+    --inverse-ok:   #9DAE7E;
+    --inverse-blue: #E89373;
+    --soft-blue-bg: rgba(232, 147, 115, 0.10);
+    --soft-red-bg:  rgba(232, 147, 115, 0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { font-size: 16px; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                 'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    font-family: var(--sans);
     color: var(--ink);
     background-color: var(--bg);
     background-image:
       radial-gradient(circle, var(--dot) 1px, transparent 1px);
-    background-size: 24px 24px;
+    background-size: 32px 32px;     /* 圆点更稀疏（24 → 32） */
     background-position: 0 0;
-    line-height: 1.6;
+    line-height: 1.55;              /* 比原 1.6 紧一档 */
     padding: 80px 24px 120px;
     -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;              /* 不再 -0.01em 收紧 */
     scroll-behavior: smooth;
     transition: background-color 0.4s, color 0.4s;
   }
@@ -172,37 +172,61 @@
   }
 
 
-  /* ============== Hero ============== */
+  /* ============== Hero (Anthropic Clay：左对齐 + serif H1 + hairline) ============== */
   .hero {
-    text-align: center;
-    margin-bottom: 96px;
-    padding: 48px 0;
+    text-align: left;
+    padding: 80px 0 56px;
+    margin-bottom: 40px;
+    border-bottom: 1.5px solid var(--line);
+    position: relative;
   }
   .hero .eyebrow {
-    color: var(--blue);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
     font-family: var(--mono);
+    color: var(--ink-3);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero .eyebrow::before {
+    content: "";
+    width: 24px;
+    height: 1.5px;
+    background: var(--blue);
   }
   .hero h1 {
-    font-size: 88px;
-    font-weight: 700;
-    letter-spacing: -3px;
+    font-family: var(--serif);
+    font-size: clamp(38px, 5.4vw, 62px);
+    font-weight: 500;             /* serif 不用 700，500 中粗就够 */
+    letter-spacing: -0.018em;
     color: var(--ink);
-    line-height: 1;
-    margin-bottom: 20px;
+    line-height: 1.06;
+    margin-bottom: 8px;
+    max-width: 17ch;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--blue);           /* clay 强调 */
   }
   .hero .sub {
-    color: var(--ink-3);
-    font-size: 20px;
+    color: var(--ink-2);
+    font-size: 16.5px;
     font-weight: 400;
+    margin-top: 22px;
+    max-width: 620px;
   }
 
-  /* ============== Section ============== */
-  .section { margin-bottom: 80px; }
+  /* ============== Section (Anthropic Clay：hairline 分割 + serif 标题) ============== */
+  .section {
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section:last-child { border-bottom: none; padding-bottom: 0; }
 
   .section-head {
     display: flex;
@@ -212,16 +236,18 @@
   }
   .section-num {
     font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--blue);
-    letter-spacing: 1px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);          /* 灰色不是 clay */
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
   .section-title {
-    font-size: 36px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 500;             /* serif 中粗 */
     color: var(--ink);
-    letter-spacing: -1px;
+    letter-spacing: -0.01em;
   }
   .section-sub {
     color: var(--ink-3);
@@ -231,65 +257,63 @@
   }
 
   /* ============== Card ============== */
+  /* ============== Card (Anthropic Clay：去阴影 + 细边 + serif 标题) ============== */
   .card {
     background: var(--card);
-    border-radius: 18px;
-    padding: 32px;
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 8px 24px rgba(0, 0, 0, 0.04);
-    transition: transform 0.3s, box-shadow 0.3s, background 0.4s;
+    border: 1px solid var(--line);
+    border-radius: 10px;            /* 18 → 10 更克制 */
+    padding: 28px;
+    box-shadow: none;
+    transition: border-color 0.2s, transform 0.2s;
   }
-  body.dark .card {
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.3);
-  }
+  body.dark .card { box-shadow: none; }
   .card:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 16px 36px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+    border-color: var(--blue);     /* 悬停只改边色 */
+    box-shadow: none;
   }
 
   .card-label {
     font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--ink-3);            /* 灰色（不再 clay） */
     margin-bottom: 12px;
   }
   .card-h {
+    font-family: var(--serif);
     font-size: 22px;
-    font-weight: 700;
+    font-weight: 500;               /* serif 中粗 */
     color: var(--ink);
     margin-bottom: 12px;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.005em;
   }
   .card-body {
     color: var(--ink-2);
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 15px;
+    line-height: 1.65;
   }
   .card-meta {
     color: var(--ink-3);
-    font-size: 14px;
+    font-size: 11px;
     margin-top: 12px;
     font-family: var(--mono);
+    letter-spacing: 0.04em;
   }
 
-  /* ============== Big Highlights (重点) ============== */
+  /* ============== Big Highlights (Anthropic Clay：左对齐 + serif) ============== */
   .key-quote {
     margin: 32px 0;
-    padding: 56px 56px;
+    padding: 44px 48px;
     background: var(--inverse-bg);
     color: var(--inverse-text);
-    border-radius: 24px;
-    text-align: center;
+    border-radius: 14px;            /* 24 → 14 */
+    text-align: left;               /* center → left */
     position: relative;
     overflow: hidden;
   }
-  /* 装饰性大引号 */
   .key-quote::before {
     content: '"';
     position: absolute;
@@ -297,38 +321,39 @@
     left: 32px;
     font-size: 200px;
     line-height: 1;
-    color: rgba(255,255,255,0.06);
-    font-family: Georgia, serif;
+    color: rgba(217, 119, 87, 0.08);  /* clay 半透明大引号 */
+    font-family: var(--serif);
     pointer-events: none;
   }
   .key-quote .lab {
     display: inline-block;
     font-family: var(--mono);
-    font-size: 13px;
-    color: var(--inverse-blue);
-    font-weight: 700;
-    letter-spacing: 3px;
+    font-size: 11px;
+    color: var(--inverse-em);       /* clay */
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 28px;
-    padding: 6px 16px;
-    background: rgba(78, 162, 255, 0.18);
-    border-radius: 999px;
+    margin-bottom: 20px;
+    padding: 0;                     /* 去掉胶囊背景 */
+    background: transparent;
+    border-radius: 0;
   }
-  .key-quote .text .em { color: var(--inverse-em); font-weight: 800; }
-  .key-quote .text .ok { color: var(--inverse-ok); font-weight: 800; }
+  .key-quote .text .em { color: var(--inverse-em); font-weight: 600; }
+  .key-quote .text .ok { color: var(--inverse-ok); font-weight: 600; }
   .key-quote .text {
-    font-size: 36px;
-    font-weight: 700;
-    line-height: 1.45;
-    letter-spacing: -0.5px;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
   }
   .key-quote .text .em {
-    color: #ff6b6b;
-    font-weight: 800;
+    color: var(--inverse-em);
+    font-weight: 600;
   }
   .key-quote .text .ok {
-    color: #5dd4a1;
-    font-weight: 800;
+    color: var(--inverse-ok);
+    font-weight: 600;
   }
   /* 重点引用的"补充结论"行: 在 key-quote 之后单独成块 */
   .key-quote + .quote-followup {
@@ -349,27 +374,29 @@
     font-weight: 400;
   }
 
-  /* 易错红色框 */
+  /* 易错框 (Anthropic Clay：clay 色不再大红 + serif 标题 + 细边) */
   .pitfall {
     background: var(--red-soft);
-    border-radius: 16px;
-    padding: 28px 32px;
+    border: 1px solid rgba(217, 119, 87, 0.25);
+    border-radius: 10px;
+    padding: 24px 28px;
     margin: 24px 0;
   }
   .pitfall .lab {
     font-family: var(--mono);
     font-size: 11px;
-    color: var(--red);
-    font-weight: 700;
-    letter-spacing: 2px;
+    color: var(--blue-2);           /* clay-d */
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 12px;
   }
   .pitfall .head {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--red);
-    letter-spacing: -0.5px;
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--blue-2);           /* clay-d */
+    letter-spacing: -0.005em;
     margin-bottom: 14px;
   }
   .pitfall ul {
@@ -411,64 +438,70 @@
   }
   .cond {
     background: var(--card);
-    border-radius: 18px;
-    padding: 32px 24px;
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 8px 24px rgba(0, 0, 0, 0.04);
-    text-align: center;
-    transition: transform 0.3s;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 22px;
+    box-shadow: none;
+    text-align: left;               /* center → left, 报刊感 */
+    transition: border-color 0.2s, transform 0.2s;
   }
-  .cond:hover { transform: translateY(-3px); }
+  .cond:hover {
+    transform: translateY(-1px);
+    border-color: var(--blue);
+  }
   .cond-num {
     font-family: var(--mono);
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--blue);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--blue);             /* clay */
     line-height: 1;
     margin-bottom: 16px;
   }
   .cond-name {
+    font-family: var(--serif);
     font-size: 22px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--ink);
     margin-bottom: 4px;
+    letter-spacing: -0.005em;
   }
   .cond-en {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10px;
     color: var(--ink-3);
-    letter-spacing: 1px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 20px;
   }
   .cond-desc {
     color: var(--ink-2);
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 1.65;
   }
 
   .mnemonic {
     margin-top: 32px;
-    padding: 28px 36px;
-    background: var(--blue-soft);
-    border-radius: 18px;
-    text-align: center;
+    padding: 24px 32px;
+    background: var(--blue-soft);   /* g100 ivory 浅底 */
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    text-align: left;
   }
   .mnemonic .lab {
     font-family: var(--mono);
     font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    color: var(--blue-2);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);            /* 灰色不再 clay-d */
     text-transform: uppercase;
     margin-bottom: 10px;
   }
   .mnemonic .text {
-    font-size: 24px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
     color: var(--ink);
-    letter-spacing: 0.5px;
+    letter-spacing: -0.005em;
   }
 
   /* ============== Section 3: 3 策略 ============== */
@@ -479,27 +512,32 @@
   }
   .strat {
     background: var(--card);
-    border-radius: 18px;
-    padding: 36px 28px;
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 8px 24px rgba(0, 0, 0, 0.04);
-    transition: transform 0.3s;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 30px 26px;
+    box-shadow: none;
+    transition: border-color 0.2s, transform 0.2s;
   }
-  .strat:hover { transform: translateY(-3px); }
+  .strat:hover {
+    transform: translateY(-1px);
+    border-color: var(--blue);
+  }
   .strat-mark {
     font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 500;
     color: var(--blue);
-    letter-spacing: 2px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     margin-bottom: 12px;
   }
   .strat-name {
-    font-size: 28px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 500;
     color: var(--ink);
     margin-bottom: 6px;
+    letter-spacing: -0.01em;
   }
   .strat-en {
     font-family: var(--mono);
@@ -648,25 +686,26 @@
   }
   .exam-item {
     background: var(--card);
-    border-radius: 14px;
-    padding: 24px 16px;
-    text-align: center;
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: transform 0.3s;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 22px 16px;
+    text-align: left;
+    box-shadow: none;
+    transition: border-color 0.2s, transform 0.2s;
   }
-  .exam-item:hover { transform: translateY(-2px); }
+  .exam-item:hover { transform: translateY(-1px); border-color: var(--blue); }
   .exam-num {
     font-family: var(--mono);
-    font-size: 12px;
-    color: var(--blue);
-    font-weight: 600;
+    font-size: 11px;
+    color: var(--ink-3);            /* 灰色（不再 clay 抢戏） */
+    font-weight: 500;
+    letter-spacing: 0.08em;
     margin-bottom: 8px;
   }
   .exam-text {
+    font-family: var(--serif);
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--ink);
   }
   .exam-text .star { color: var(--blue); margin-left: 4px; }
@@ -679,29 +718,31 @@
     font-family: var(--mono);
   }
 
-  /* ============== Mermaid 图表容器 ============== */
+  /* ============== 图表容器 (Anthropic Clay：扁平 + serif 标题) ============== */
   .diagram-card {
     background: var(--card);
-    border-radius: 18px;
-    padding: 40px 32px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 32px 28px;
+    box-shadow: none;
     text-align: center;
   }
   .diagram-label {
     font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--ink-3);            /* 灰色，不抢戏 */
     margin-bottom: 8px;
   }
   .diagram-title {
+    font-family: var(--serif);
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--ink);
     margin-bottom: 24px;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.005em;
   }
   .plantuml, .mermaid {
     display: flex;
@@ -771,32 +812,35 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* PPT 内的样式: 字号普遍放大 */
+  /* PPT 内的样式 (Anthropic Clay：serif 大标题 + clamp 自适应) */
   .slide .s-eyebrow {
     font-family: var(--mono);
-    font-size: 14px;
-    color: var(--blue);
-    font-weight: 600;
-    letter-spacing: 2px;
+    font-size: 13px;
+    color: var(--ink-3);            /* 灰色，不抢 H2 戏 */
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 24px;
   }
   .slide h2 {
-    font-size: 72px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: clamp(48px, 6vw, 60px);
+    font-weight: 500;
     color: var(--ink);
-    letter-spacing: -2px;
-    line-height: 1.05;
+    letter-spacing: -0.018em;
+    line-height: 1.06;
     margin-bottom: 36px;
   }
   .slide .s-sub {
-    font-size: 28px;
+    font-family: var(--sans);
+    font-size: 24px;
     color: var(--ink-3);
     font-weight: 400;
-    letter-spacing: -0.5px;
+    letter-spacing: 0;
   }
   .slide .s-body {
-    font-size: 24px;
+    font-family: var(--sans);
+    font-size: 22px;
     color: var(--ink-2);
     line-height: 1.6;
     margin-top: 36px;
@@ -941,51 +985,56 @@
     pointer-events: none;
   }
 
-  /* 原始 .s-quote */
+  /* 原始 .s-quote (Anthropic Clay) */
   .slide .s-quote {
-    background: var(--ink);
-    color: white;
-    border-radius: 24px;
-    padding: 64px 80px;
-    text-align: center;
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    border-radius: 16px;            /* 24 → 16 */
+    padding: 56px 64px;
+    text-align: left;               /* center → left */
     margin-top: 48px;
   }
   .slide .s-quote .lab {
     font-family: var(--mono);
-    font-size: 14px;
-    color: var(--blue);
-    letter-spacing: 2px;
+    font-size: 13px;
+    color: var(--inverse-em);       /* clay */
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 24px;
   }
   .slide .s-quote .txt {
-    font-size: 44px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 500;
     line-height: 1.4;
-    letter-spacing: -1px;
+    letter-spacing: -0.01em;
   }
-  .slide .s-quote .txt .em { color: #ff6b6b; }
+  .slide .s-quote .txt .em { color: var(--inverse-em); }
 
-  /* PPT 易错 */
+  /* PPT 易错 (Anthropic Clay) */
   .slide .s-pitfall {
     background: var(--red-soft);
-    border-radius: 24px;
-    padding: 48px 56px;
+    border: 1px solid rgba(217, 119, 87, 0.25);
+    border-radius: 14px;
+    padding: 40px 48px;
     margin-top: 48px;
   }
   .slide .s-pitfall .lab {
     font-family: var(--mono);
-    font-size: 14px;
-    color: var(--red);
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-size: 13px;
+    color: var(--blue-2);           /* clay-d */
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 16px;
   }
   .slide .s-pitfall h3 {
-    font-size: 36px;
-    color: var(--red);
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--blue-2);
+    font-weight: 500;
+    letter-spacing: -0.01em;
     margin-bottom: 24px;
   }
   .slide .s-pitfall ul {

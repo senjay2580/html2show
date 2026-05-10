@@ -8,65 +8,66 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root {
-    --blue:    #0071e3;
-    --blue-2:  #0066cc;
-    --blue-soft: #e8f1ff;
-    --red:     #ff3b30;
-    --red-soft: #fff1f0;
-    --ink:     #1d1d1f;       /* 主文字色 */
-    --ink-2:   #424245;
-    --ink-3:   #86868b;
-    --line:    #e8e8ed;
-    --bg:      #fbfbfd;       /* 页面背景 */
+    --blue:    #D97757;
+    --blue-2:  #B85C3E;
+    --blue-soft: #F0EEE6;
+    --red:     #B85C3E;
+    --red-soft: rgba(217, 119, 87, 0.10);
+    --ink:     #141413;       /* 主文字色 */
+    --ink-2:   #3D3D3A;
+    --ink-3:   #87867F;
+    --line:    #D1CFC5;
+    --bg:      #FAF9F5;       /* 页面背景 */
     --card:    #ffffff;       /* 普通卡片背景 */
-    --dot:     #d2d2d7;
+    --dot:     #E3DACC;
     /* 反色卡片(深色高亮卡, 例 key-quote) — 与主题无关, 永远深色 */
-    --inverse-bg:   #1d1d1f;
+    --inverse-bg:   #141413;
     --inverse-text: #ffffff;
-    --inverse-em:   #ff6b6b;
-    --inverse-ok:   #5dd4a1;
-    --inverse-blue: #2997ff;
+    --inverse-em:   #D97757;
+    --inverse-ok:   #788C5D;
+    --inverse-blue: #D97757;
     /* 浅蓝/浅红柔和高亮区背景 */
-    --soft-blue-bg: #e8f1ff;
-    --soft-red-bg:  #fff1f0;
-    --mono:    'SF Mono', 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
+    --soft-blue-bg: #F0EEE6;
+    --soft-red-bg:  rgba(217, 119, 87, 0.10);
+    --mono:    ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", "PingFang SC", sans-serif;
   }
   /* 夜间模式配色 — 重新设计 */
   body.dark {
-    --blue:    #4ea2ff;        /* 提亮的苹果蓝 */
-    --blue-2:  #7fbdff;
-    --blue-soft: rgba(78, 162, 255, 0.16);
-    --red:     #ff7b6f;        /* 不刺眼的暖红 */
-    --red-soft: rgba(255, 123, 111, 0.14);
-    --ink:     #f5f5f7;        /* 接近白(主文字) */
-    --ink-2:   #d2d2d7;        /* 副文字 */
+    --blue:    #E89373;        /* 提亮的苹果蓝 */
+    --blue-2:  #F0A98C;
+    --blue-soft: rgba(232, 147, 115, 0.16);
+    --red:     #E89373;        /* 不刺眼的暖红 */
+    --red-soft: rgba(232, 147, 115, 0.14);
+    --ink:     #FAF9F5;        /* 接近白(主文字) */
+    --ink-2:   #E3DACC;        /* 副文字 */
     --ink-3:   #8e8e93;        /* 弱文字 */
     --line:    #38383c;
-    --bg:      #1a1a1c;        /* 接近纯黑 */
-    --card:    #2a2a2d;        /* 卡片背景: 比 bg 亮一档 */
-    --dot:     #2e2e32;        /* 网格点更隐蔽 */
+    --bg:      #1A1A18;        /* 接近纯黑 */
+    --card:    #25241F;        /* 卡片背景: 比 bg 亮一档 */
+    --dot:     #2E2C26;        /* 网格点更隐蔽 */
     /* 反色卡片在夜间反而要"更深更黑", 形成新层次 */
-    --inverse-bg:   #0a0a0c;
+    --inverse-bg:   #0A0A08;
     --inverse-text: #ffffff;
-    --inverse-em:   #ff8a7e;
-    --inverse-ok:   #6fe3b0;
-    --inverse-blue: #5eb3ff;
+    --inverse-em:   #E89373;
+    --inverse-ok:   #9DAE7E;
+    --inverse-blue: #E89373;
     /* 柔和高亮区: 夜间用半透明蓝/红 */
-    --soft-blue-bg: rgba(78, 162, 255, 0.12);
-    --soft-red-bg:  rgba(255, 123, 111, 0.10);
+    --soft-blue-bg: rgba(232, 147, 115, 0.12);
+    --soft-red-bg:  rgba(232, 147, 115, 0.10);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { font-size: 16px; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                 'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    font-family: var(--sans);
     color: var(--ink);
     background-color: var(--bg);
     background-image:
       radial-gradient(circle, var(--dot) 1px, transparent 1px);
-    background-size: 24px 24px;
+    background-size: 32px 32px;
     background-position: 0 0;
     line-height: 1.6;
     padding: 80px 24px 120px;
@@ -87,7 +88,7 @@
     width: 0%;
     z-index: 999;
     transition: width 0.1s linear;
-    box-shadow: 0 0 8px rgba(0,113,227,0.4);
+    box-shadow: 0 0 8px rgba(217, 119, 87,0.4);
   }
 
   /* TOC 样式由 JS 在 buildTOC() 中动态注入 (避免冲突) */
@@ -311,7 +312,7 @@
     text-transform: uppercase;
     margin-bottom: 28px;
     padding: 6px 16px;
-    background: rgba(78, 162, 255, 0.18);
+    background: rgba(232, 147, 115, 0.18);
     border-radius: 999px;
   }
   .key-quote .text .em { color: var(--inverse-em); font-weight: 800; }
@@ -323,11 +324,11 @@
     letter-spacing: -0.5px;
   }
   .key-quote .text .em {
-    color: #ff6b6b;
+    color: #D97757;
     font-weight: 800;
   }
   .key-quote .text .ok {
-    color: #5dd4a1;
+    color: #788C5D;
     font-weight: 800;
   }
   /* 重点引用的"补充结论"行: 在 key-quote 之后单独成块 */
@@ -391,7 +392,7 @@
     font-weight: 700;
   }
   .pitfall li .right {
-    color: #5dd4a1;
+    color: #788C5D;
     font-weight: 600;
     margin-left: 8px;
   }
@@ -729,7 +730,7 @@
     inset: 0;
     background: var(--bg);
     background-image:
-      radial-gradient(circle, #d2d2d7 1px, transparent 1px);
+      radial-gradient(circle, #E3DACC 1px, transparent 1px);
     background-size: 32px 32px;
     z-index: 9999;
     display: none;
@@ -964,7 +965,7 @@
     line-height: 1.4;
     letter-spacing: -1px;
   }
-  .slide .s-quote .txt .em { color: #ff6b6b; }
+  .slide .s-quote .txt .em { color: #D97757; }
 
   /* PPT 易错 */
   .slide .s-pitfall {
@@ -1190,7 +1191,7 @@
   <div style="
     width: 48px; height: 48px;
     border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: #0071e3;
+    border-top-color: #D97757;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   "></div>
@@ -1241,43 +1242,43 @@
           <svg viewBox="0 0 1000 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'SF Mono','JetBrains Mono','Microsoft YaHei',monospace;">
             <defs>
               <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="#424245"/>
+                <path d="M0,0 L10,5 L0,10 z" fill="#3D3D3A"/>
               </marker>
               <marker id="arr-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="#ff3b30"/>
+                <path d="M0,0 L10,5 L0,10 z" fill="#B85C3E"/>
               </marker>
             </defs>
             <!-- 6 状态节点 (q0 起始, q5 接受) -->
-            <g font-size="14" fill="#0071e3" text-anchor="middle">
-              <circle cx="80"  cy="100" r="32" fill="#fff" stroke="#0071e3" stroke-width="2"/>
+            <g font-size="14" fill="#D97757" text-anchor="middle">
+              <circle cx="80"  cy="100" r="32" fill="#fff" stroke="#D97757" stroke-width="2"/>
               <text x="80" y="95" font-weight="700">q0</text>
-              <text x="80" y="113" font-size="11" fill="#86868b">空</text>
-              <circle cx="240" cy="100" r="32" fill="#fff" stroke="#0071e3" stroke-width="2"/>
+              <text x="80" y="113" font-size="11" fill="#87867F">空</text>
+              <circle cx="240" cy="100" r="32" fill="#fff" stroke="#D97757" stroke-width="2"/>
               <text x="240" y="95" font-weight="700">q1</text>
-              <text x="240" y="113" font-size="11" fill="#86868b">A</text>
-              <circle cx="400" cy="100" r="32" fill="#fff" stroke="#0071e3" stroke-width="2"/>
+              <text x="240" y="113" font-size="11" fill="#87867F">A</text>
+              <circle cx="400" cy="100" r="32" fill="#fff" stroke="#D97757" stroke-width="2"/>
               <text x="400" y="95" font-weight="700">q2</text>
-              <text x="400" y="113" font-size="11" fill="#86868b">AB</text>
-              <circle cx="560" cy="100" r="32" fill="#fff" stroke="#0071e3" stroke-width="2"/>
+              <text x="400" y="113" font-size="11" fill="#87867F">AB</text>
+              <circle cx="560" cy="100" r="32" fill="#fff" stroke="#D97757" stroke-width="2"/>
               <text x="560" y="95" font-weight="700">q3</text>
-              <text x="560" y="113" font-size="11" fill="#86868b">ABA</text>
-              <circle cx="720" cy="100" r="32" fill="#fff" stroke="#0071e3" stroke-width="2"/>
+              <text x="560" y="113" font-size="11" fill="#87867F">ABA</text>
+              <circle cx="720" cy="100" r="32" fill="#fff" stroke="#D97757" stroke-width="2"/>
               <text x="720" y="95" font-weight="700">q4</text>
-              <text x="720" y="113" font-size="11" fill="#86868b">ABAB</text>
+              <text x="720" y="113" font-size="11" fill="#87867F">ABAB</text>
               <circle cx="900" cy="100" r="36" fill="#fff" stroke="#16a34a" stroke-width="3"/>
               <circle cx="900" cy="100" r="28" fill="none" stroke="#16a34a" stroke-width="2"/>
               <text x="900" y="95"  font-weight="700" fill="#16a34a">q5</text>
-              <text x="900" y="113" font-size="11" fill="#86868b">accept</text>
+              <text x="900" y="113" font-size="11" fill="#87867F">accept</text>
             </g>
             <!-- 实线主转移 (匹配前进) -->
-            <g stroke="#424245" stroke-width="1.6" fill="none" marker-end="url(#arr)">
+            <g stroke="#3D3D3A" stroke-width="1.6" fill="none" marker-end="url(#arr)">
               <line x1="112" y1="100" x2="208" y2="100"/>
               <line x1="272" y1="100" x2="368" y2="100"/>
               <line x1="432" y1="100" x2="528" y2="100"/>
               <line x1="592" y1="100" x2="688" y2="100"/>
               <line x1="752" y1="100" x2="864" y2="100"/>
             </g>
-            <g font-size="14" font-weight="700" fill="#1d1d1f" text-anchor="middle">
+            <g font-size="14" font-weight="700" fill="#141413" text-anchor="middle">
               <text x="160" y="92">A</text>
               <text x="320" y="92">B</text>
               <text x="480" y="92">A</text>
@@ -1285,12 +1286,12 @@
               <text x="808" y="92">C</text>
             </g>
             <!-- 虚线失配回退 -->
-            <g stroke="#ff3b30" stroke-width="1.4" stroke-dasharray="6 4" fill="none" marker-end="url(#arr-d)">
+            <g stroke="#B85C3E" stroke-width="1.4" stroke-dasharray="6 4" fill="none" marker-end="url(#arr-d)">
               <path d="M 720,132 C 720,210 400,210 400,132"/>
               <path d="M 560,132 C 560,190 240,190 240,132"/>
               <path d="M 400,132 C 400,170  80,170  80,132"/>
             </g>
-            <g font-size="12" fill="#ff3b30" text-anchor="middle" font-weight="600">
+            <g font-size="12" fill="#B85C3E" text-anchor="middle" font-weight="600">
               <text x="560" y="218">q4 失配 → next=2</text>
               <text x="400" y="200">q3 失配 → next=1</text>
               <text x="240" y="180">q2 失配 → next=0</text>
@@ -1636,7 +1637,7 @@
   </div>
 
   <div class="footer">
-    Robotic / explain · Made with <span style="color:#0071e3;">●</span> for 408
+    Robotic / explain · Made with <span style="color:#D97757;">●</span> for 408
   </div>
 </div>
 
@@ -1789,9 +1790,9 @@
     exportWrapper.style.cssText = `
       position: absolute;
       top: -99999px; left: -99999px;
-      background: #fbfbfd;
-      background-image: radial-gradient(circle, #d2d2d7 1px, transparent 1px);
-      background-size: 24px 24px;
+      background: #FAF9F5;
+      background-image: radial-gradient(circle, #E3DACC 1px, transparent 1px);
+      background-size: 32px 32px;
       padding: 80px 64px 100px 64px;
       width: 1208px;
       box-sizing: border-box;
@@ -1809,7 +1810,7 @@
       const canvas = await html2canvas(exportWrapper, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#fbfbfd',
+        backgroundColor: '#FAF9F5',
         width: exportWrapper.offsetWidth,
         height: exportWrapper.scrollHeight,
         windowWidth: exportWrapper.offsetWidth,
@@ -1879,7 +1880,7 @@
       };
       img.onerror = () => {
         el.classList.remove('loading');
-        el.innerHTML = '<span style="color:#ff3b30;font-family:var(--mono);font-size:12px;">图表加载失败</span>';
+        el.innerHTML = '<span style="color:#B85C3E;font-family:var(--mono);font-size:12px;">图表加载失败</span>';
       };
     } catch (e) {
       console.warn('PlantUML 编码失败:', e);
@@ -2221,7 +2222,7 @@
       background: var(--blue);
       color: white;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,113,227,0.3);
+      box-shadow: 0 6px 20px rgba(217, 119, 87,0.3);
     }
     #fab-top { opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.2s; }
     #fab-top.visible { opacity: 1; pointer-events: auto; }

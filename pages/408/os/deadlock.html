@@ -8,65 +8,66 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root {
-    --blue:    #0071e3;
-    --blue-2:  #0066cc;
-    --blue-soft: #e8f1ff;
-    --red:     #ff3b30;
-    --red-soft: #fff1f0;
-    --ink:     #1d1d1f;       /* 主文字色 */
-    --ink-2:   #424245;
-    --ink-3:   #86868b;
-    --line:    #e8e8ed;
-    --bg:      #fbfbfd;       /* 页面背景 */
+    --blue:    #D97757;
+    --blue-2:  #B85C3E;
+    --blue-soft: #F0EEE6;
+    --red:     #B85C3E;
+    --red-soft: rgba(217, 119, 87, 0.10);
+    --ink:     #141413;       /* 主文字色 */
+    --ink-2:   #3D3D3A;
+    --ink-3:   #87867F;
+    --line:    #D1CFC5;
+    --bg:      #FAF9F5;       /* 页面背景 */
     --card:    #ffffff;       /* 普通卡片背景 */
-    --dot:     #d2d2d7;
+    --dot:     #E3DACC;
     /* 反色卡片(深色高亮卡, 例 key-quote) — 与主题无关, 永远深色 */
-    --inverse-bg:   #1d1d1f;
+    --inverse-bg:   #141413;
     --inverse-text: #ffffff;
-    --inverse-em:   #ff6b6b;
-    --inverse-ok:   #5dd4a1;
-    --inverse-blue: #2997ff;
+    --inverse-em:   #D97757;
+    --inverse-ok:   #788C5D;
+    --inverse-blue: #D97757;
     /* 浅蓝/浅红柔和高亮区背景 */
-    --soft-blue-bg: #e8f1ff;
-    --soft-red-bg:  #fff1f0;
-    --mono:    'SF Mono', 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
+    --soft-blue-bg: #F0EEE6;
+    --soft-red-bg:  rgba(217, 119, 87, 0.10);
+    --mono:    ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", "PingFang SC", sans-serif;
   }
   /* 夜间模式配色 — 重新设计 */
   body.dark {
-    --blue:    #4ea2ff;        /* 提亮的苹果蓝 */
-    --blue-2:  #7fbdff;
-    --blue-soft: rgba(78, 162, 255, 0.16);
-    --red:     #ff7b6f;        /* 不刺眼的暖红 */
-    --red-soft: rgba(255, 123, 111, 0.14);
-    --ink:     #f5f5f7;        /* 接近白(主文字) */
-    --ink-2:   #d2d2d7;        /* 副文字 */
+    --blue:    #E89373;        /* 提亮的苹果蓝 */
+    --blue-2:  #F0A98C;
+    --blue-soft: rgba(232, 147, 115, 0.16);
+    --red:     #E89373;        /* 不刺眼的暖红 */
+    --red-soft: rgba(232, 147, 115, 0.14);
+    --ink:     #FAF9F5;        /* 接近白(主文字) */
+    --ink-2:   #E3DACC;        /* 副文字 */
     --ink-3:   #8e8e93;        /* 弱文字 */
     --line:    #38383c;
-    --bg:      #1a1a1c;        /* 接近纯黑 */
-    --card:    #2a2a2d;        /* 卡片背景: 比 bg 亮一档 */
-    --dot:     #2e2e32;        /* 网格点更隐蔽 */
+    --bg:      #1A1A18;        /* 接近纯黑 */
+    --card:    #25241F;        /* 卡片背景: 比 bg 亮一档 */
+    --dot:     #2E2C26;        /* 网格点更隐蔽 */
     /* 反色卡片在夜间反而要"更深更黑", 形成新层次 */
-    --inverse-bg:   #0a0a0c;
+    --inverse-bg:   #0A0A08;
     --inverse-text: #ffffff;
-    --inverse-em:   #ff8a7e;
-    --inverse-ok:   #6fe3b0;
-    --inverse-blue: #5eb3ff;
+    --inverse-em:   #E89373;
+    --inverse-ok:   #9DAE7E;
+    --inverse-blue: #E89373;
     /* 柔和高亮区: 夜间用半透明蓝/红 */
-    --soft-blue-bg: rgba(78, 162, 255, 0.12);
-    --soft-red-bg:  rgba(255, 123, 111, 0.10);
+    --soft-blue-bg: rgba(232, 147, 115, 0.12);
+    --soft-red-bg:  rgba(232, 147, 115, 0.10);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { font-size: 16px; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                 'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    font-family: var(--sans);
     color: var(--ink);
     background-color: var(--bg);
     background-image:
       radial-gradient(circle, var(--dot) 1px, transparent 1px);
-    background-size: 24px 24px;
+    background-size: 32px 32px;
     background-position: 0 0;
     line-height: 1.6;
     padding: 80px 24px 120px;
@@ -87,7 +88,7 @@
     width: 0%;
     z-index: 999;
     transition: width 0.1s linear;
-    box-shadow: 0 0 8px rgba(0,113,227,0.4);
+    box-shadow: 0 0 8px rgba(217, 119, 87,0.4);
   }
 
   /* TOC 样式由 JS 在 buildTOC() 中动态注入 (避免冲突) */
@@ -311,7 +312,7 @@
     text-transform: uppercase;
     margin-bottom: 28px;
     padding: 6px 16px;
-    background: rgba(78, 162, 255, 0.18);
+    background: rgba(232, 147, 115, 0.18);
     border-radius: 999px;
   }
   .key-quote .text .em { color: var(--inverse-em); font-weight: 800; }
@@ -323,11 +324,11 @@
     letter-spacing: -0.5px;
   }
   .key-quote .text .em {
-    color: #ff6b6b;
+    color: #D97757;
     font-weight: 800;
   }
   .key-quote .text .ok {
-    color: #5dd4a1;
+    color: #788C5D;
     font-weight: 800;
   }
   /* 重点引用的"补充结论"行: 在 key-quote 之后单独成块 */
@@ -391,7 +392,7 @@
     font-weight: 700;
   }
   .pitfall li .right {
-    color: #5dd4a1;
+    color: #788C5D;
     font-weight: 600;
     margin-left: 8px;
   }
@@ -729,7 +730,7 @@
     inset: 0;
     background: var(--bg);
     background-image:
-      radial-gradient(circle, #d2d2d7 1px, transparent 1px);
+      radial-gradient(circle, #E3DACC 1px, transparent 1px);
     background-size: 32px 32px;
     z-index: 9999;
     display: none;
@@ -964,7 +965,7 @@
     line-height: 1.4;
     letter-spacing: -1px;
   }
-  .slide .s-quote .txt .em { color: #ff6b6b; }
+  .slide .s-quote .txt .em { color: #D97757; }
 
   /* PPT 易错 */
   .slide .s-pitfall {
@@ -1190,7 +1191,7 @@
   <div style="
     width: 48px; height: 48px;
     border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: #0071e3;
+    border-top-color: #D97757;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   "></div>
@@ -1246,22 +1247,22 @@ skinparam shadowing false
 skinparam roundCorner 8
 skinparam padding 6
 skinparam ArrowThickness 1.4
-skinparam ArrowColor #424245
-skinparam ArrowFontColor #1d1d1f
+skinparam ArrowColor #3D3D3A
+skinparam ArrowFontColor #141413
 skinparam ArrowFontSize 13
 
 skinparam circle {
   BackgroundColor #FFFFFF
-  BorderColor #0071e3
+  BorderColor #D97757
   BorderThickness 2
-  FontColor #0071e3
+  FontColor #D97757
   FontStyle bold
 }
 skinparam rectangle {
   BackgroundColor #FFFFFF
-  BorderColor #1d1d1f
+  BorderColor #141413
   BorderThickness 1.5
-  FontColor #1d1d1f
+  FontColor #141413
 }
 
 ' 进程 = 圆形, 资源 = 方框 (OS 教科书标准)
@@ -1510,7 +1511,7 @@ R1 -up-&gt; P1 : 已分配
   </div>
 
   <div class="footer">
-    Robotic / explain · Made with <span style="color:#0071e3;">●</span> for 408
+    Robotic / explain · Made with <span style="color:#D97757;">●</span> for 408
   </div>
 </div>
 
@@ -1663,9 +1664,9 @@ R1 -up-&gt; P1 : 已分配
     exportWrapper.style.cssText = `
       position: absolute;
       top: -99999px; left: -99999px;
-      background: #fbfbfd;
-      background-image: radial-gradient(circle, #d2d2d7 1px, transparent 1px);
-      background-size: 24px 24px;
+      background: #FAF9F5;
+      background-image: radial-gradient(circle, #E3DACC 1px, transparent 1px);
+      background-size: 32px 32px;
       padding: 80px 64px 100px 64px;
       width: 1208px;
       box-sizing: border-box;
@@ -1683,7 +1684,7 @@ R1 -up-&gt; P1 : 已分配
       const canvas = await html2canvas(exportWrapper, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#fbfbfd',
+        backgroundColor: '#FAF9F5',
         width: exportWrapper.offsetWidth,
         height: exportWrapper.scrollHeight,
         windowWidth: exportWrapper.offsetWidth,
@@ -1753,7 +1754,7 @@ R1 -up-&gt; P1 : 已分配
       };
       img.onerror = () => {
         el.classList.remove('loading');
-        el.innerHTML = '<span style="color:#ff3b30;font-family:var(--mono);font-size:12px;">图表加载失败</span>';
+        el.innerHTML = '<span style="color:#B85C3E;font-family:var(--mono);font-size:12px;">图表加载失败</span>';
       };
     } catch (e) {
       console.warn('PlantUML 编码失败:', e);
@@ -2095,7 +2096,7 @@ R1 -up-&gt; P1 : 已分配
       background: var(--blue);
       color: white;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,113,227,0.3);
+      box-shadow: 0 6px 20px rgba(217, 119, 87,0.3);
     }
     #fab-top { opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.2s; }
     #fab-top.visible { opacity: 1; pointer-events: auto; }
