@@ -1210,19 +1210,20 @@
 <div class="page" id="flow-view">
 
   <!-- Hero -->
-  <div class="hero">
+  <header class="hero">
     <div class="eyebrow">OS · 408 · Knowledge Map</div>
-    <h1>Deadlock</h1>
-    <div class="sub">操作系统死锁知识图 · 一图掌握</div>
-  </div>
+    <h1>死锁 <em>Deadlock</em></h1>
+    <p class="sub">操作系统资源竞争的核心问题——四个必要条件、三大处理策略、银行家算法。一张图掌握 408 OS 高频考点。</p>
+  </header>
 
   <!-- 1. 定义 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">01</span>
-      <h2 class="section-title">什么是死锁</h2>
-      <span class="section-sub">Definition</span>
+      <span class="idx">01</span>
+      <h2>什么是死锁</h2>
+      <span class="count">Definition</span>
     </div>
+    <p class="sec-intro">最简单的场景：两个进程争两个资源。一旦相互持有对方需要的资源、又都不肯让步，整个系统就停转——这就是死锁。先用具体例子建立直觉，再看抽象的资源分配图。</p>
     <div class="def-stack">
       <div class="card">
         <div class="card-label">Definition</div>
@@ -1284,10 +1285,11 @@ R1 -up-&gt; P1 : 已分配
   <!-- 2. 4 必要条件 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">02</span>
-      <h2 class="section-title">4 个必要条件</h2>
-      <span class="section-sub">Necessary Conditions</span>
+      <span class="idx">02</span>
+      <h2>4 个必要条件</h2>
+      <span class="count">Necessary Conditions</span>
     </div>
+    <p class="sec-intro">死锁不是任意场景都会发生——必须 <em>同时</em> 满足四个条件才会构成。打破任何一条都能消除死锁，这是后面预防/避免/解除策略的逻辑基础。</p>
     <div class="cond-grid">
       <div class="cond">
         <div class="cond-num">01</div>
@@ -1327,10 +1329,11 @@ R1 -up-&gt; P1 : 已分配
   <!-- 3. 3 大策略 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">03</span>
-      <h2 class="section-title">3 大处理策略</h2>
-      <span class="section-sub">Handling Strategies</span>
+      <span class="idx">03</span>
+      <h2>3 大处理策略</h2>
+      <span class="count">Handling Strategies</span>
     </div>
+    <p class="sec-intro">既然死锁靠四个条件构成，处理思路自然分三档：<em>预防</em>（事前破坏条件）、<em>避免</em>（事中安全分配）、<em>检测+解除</em>（事后发现回滚）。代价递增，灵活度也递增。</p>
     <div class="strat-grid">
       <div class="strat">
         <div class="strat-mark">A</div>
@@ -1371,10 +1374,11 @@ R1 -up-&gt; P1 : 已分配
   <!-- 4. 银行家算法 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">04</span>
-      <h2 class="section-title">银行家算法</h2>
-      <span class="section-sub">Banker's Algorithm · 必考</span>
+      <span class="idx">04</span>
+      <h2>银行家算法</h2>
+      <span class="count">Banker's Algorithm · 必考</span>
     </div>
+    <p class="sec-intro">"避免"策略的代表实现：每次分配前先模拟一遍——如果分完之后系统仍能找到一个安全序列让所有进程都拿到资源，那就放行；否则让请求方等。Dijkstra 1965 提出，408 必考。</p>
     <div class="algo-grid">
       <div class="card">
         <div class="card-label">Data Structures</div>
@@ -1418,10 +1422,11 @@ R1 -up-&gt; P1 : 已分配
   <!-- 5. RAG + 辨析 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">05</span>
-      <h2 class="section-title">资源分配图 + 概念辨析</h2>
-      <span class="section-sub">RAG &amp; Comparison</span>
+      <span class="idx">05</span>
+      <h2>资源分配图 + 概念辨析</h2>
+      <span class="count">RAG &amp; Comparison</span>
     </div>
+    <p class="sec-intro">资源分配图（RAG）是判定死锁的可视化工具——<em>有环</em> 不一定死锁，但 <em>无环</em> 一定无死锁。本节同时辨析死锁、饥饿、活锁三个相近概念，避免混淆。</p>
     <div class="rag-grid">
       <div class="card">
         <div class="card-label">Tool</div>
@@ -1475,10 +1480,11 @@ R1 -up-&gt; P1 : 已分配
   <!-- 6. 考点 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">06</span>
-      <h2 class="section-title">408 高频考点</h2>
-      <span class="section-sub">Exam Focus</span>
+      <span class="idx">06</span>
+      <h2>408 高频考点</h2>
+      <span class="count">Exam Focus</span>
     </div>
+    <p class="sec-intro">把上面所有内容压缩成 5 张速记卡——每条都是真题里反复出过的"陷阱句"，最后一段记忆口诀帮考前 3 天再过一遍。</p>
     <div class="exam-grid">
       <div class="exam-item">
         <div class="exam-num">01</div>

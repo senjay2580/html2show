@@ -1210,19 +1210,20 @@
 <div class="page" id="flow-view">
 
   <!-- Hero -->
-  <div class="hero">
+  <header class="hero">
     <div class="eyebrow">DS · 408 · Knowledge Map</div>
-    <h1>KMP</h1>
-    <div class="sub">字符串匹配算法 · next 数组 · 一图掌握</div>
-  </div>
+    <h1>KMP <em>String Matching</em></h1>
+    <p class="sub">字符串匹配算法核心：用 next 数组让模式串失配时不回溯。从暴力 O(nm) 到 KMP O(n+m)，一张图掌握 408 高频考点。</p>
+  </header>
 
   <!-- 1. 定义 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">01</span>
-      <h2 class="section-title">什么是 KMP</h2>
-      <span class="section-sub">Definition</span>
+      <span class="idx">01</span>
+      <h2>什么是 KMP</h2>
+      <span class="count">Definition</span>
     </div>
+    <p class="sec-intro">字符串匹配是 OS / 编译器 / 数据库的底层公共操作。暴力法每次失配回到模式串起点，最坏 O(nm)；KMP 利用模式串自身重复结构，让失配时<em>跳得最远</em>，把复杂度降到 O(n+m)。</p>
     <div class="def-stack">
       <div class="card">
         <div class="card-label">Problem</div>
@@ -1305,10 +1306,11 @@
   <!-- 2. next 数组本质 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">02</span>
-      <h2 class="section-title">next 数组的本质</h2>
-      <span class="section-sub">Prefix Function · 前缀函数</span>
+      <span class="idx">02</span>
+      <h2>next 数组的本质</h2>
+      <span class="count">Prefix Function · 前缀函数</span>
     </div>
+    <p class="sec-intro">next 数组是 KMP 的灵魂。它告诉你<em>每个位置失配时，模式串往后跳到哪里继续比</em>——本质是模式串<em>每个前缀的最长真前后缀长度</em>。</p>
     <div class="cond-grid">
       <div class="cond">
         <div class="cond-num">01</div>
@@ -1368,10 +1370,11 @@
   <!-- 3. 手算 next 表 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">03</span>
-      <h2 class="section-title">手算 next 表 · 完整示例</h2>
-      <span class="section-sub">Worked Example · 408 必考</span>
+      <span class="idx">03</span>
+      <h2>手算 next 表 · 完整示例</h2>
+      <span class="count">Worked Example · 408 必考</span>
     </div>
+    <p class="sec-intro">考试最爱考的环节：给一个模式串，手工算 next 表。掌握「前后缀比对」的递推法，3 分钟稳定算出。</p>
     <div class="def-stack">
       <div class="card">
         <div class="card-label">Target</div>
@@ -1432,10 +1435,11 @@
   <!-- 4. KMP 主算法 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">04</span>
-      <h2 class="section-title">KMP 匹配算法</h2>
-      <span class="section-sub">Main Algorithm · 必考</span>
+      <span class="idx">04</span>
+      <h2>KMP 匹配算法</h2>
+      <span class="count">Main Algorithm · 必考</span>
     </div>
+    <p class="sec-intro">正式 KMP 主算法：双指针 i / j 在主串和模式串上推进，遇失配查 next 表跳 j。代码不到 15 行，但每一步语义都要看明白才能写对。</p>
     <div class="algo-grid">
       <div class="card">
         <div class="card-label">Variables</div>
@@ -1483,10 +1487,11 @@
   <!-- 5. nextval 改进数组 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">05</span>
-      <h2 class="section-title">nextval 改进数组</h2>
-      <span class="section-sub">Optimized · 王道必考</span>
+      <span class="idx">05</span>
+      <h2>nextval 改进数组</h2>
+      <span class="count">Optimized · 王道必考</span>
     </div>
+    <p class="sec-intro">nextval 是对 next 的优化——避免某些显然失败的重比。王道教材独家考点，国内 408 真题反复出。</p>
     <div class="def-stack" style="margin-bottom:20px;">
       <div class="card">
         <div class="card-label">Why nextval ?</div>
@@ -1546,10 +1551,11 @@
   <!-- 6. 完整匹配 trace -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">06</span>
-      <h2 class="section-title">完整匹配过程 · 一步一步看</h2>
-      <span class="section-sub">Walkthrough · T="ABABABCABAB" P="ABABC"</span>
+      <span class="idx">06</span>
+      <h2>完整匹配过程 · 一步一步看</h2>
+      <span class="count">Walkthrough · T="ABABABCABAB" P="ABABC"</span>
     </div>
+    <p class="sec-intro">把 next 表 + 主算法两件事拼起来跑一遍，看每一步 i / j / 比较结果。亲手画过一次匹配过程，整个 KMP 就装到肌肉里了。</p>
     <div class="def-stack">
       <div class="card">
         <div class="card-label">Setup</div>
@@ -1597,10 +1603,11 @@
   <!-- 7. 408 高频考点 -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">07</span>
-      <h2 class="section-title">408 高频考点 + 精华</h2>
-      <span class="section-sub">Exam Focus &amp; Essence</span>
+      <span class="idx">07</span>
+      <h2>408 高频考点 + 精华</h2>
+      <span class="count">Exam Focus &amp; Essence</span>
     </div>
+    <p class="sec-intro">把上面所有内容压缩成 5 张速记卡——每条都是真题里反复出过的「陷阱句」或时间复杂度对比。</p>
     <div class="exam-grid">
       <div class="exam-item">
         <div class="exam-num">01</div>

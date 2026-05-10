@@ -255,6 +255,218 @@
     margin-left: auto;
     font-family: var(--mono);
   }
+  /* ThariqS 风 sec-head 别名（idx / count 与 section-num / section-sub 等价） */
+  .section-head .idx {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-head h2 {        /* 直接 h2 不带 class，等同 .section-title */
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .section-head .count {
+    color: var(--ink-3);
+    font-size: 11px;
+    font-family: var(--mono);
+    margin-left: auto;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+  }
+
+  /* ============== ThariqS 报刊风组件（新增） ============== */
+  /* sec-intro: 每节首段散文式描述, 替代直接堆卡片 */
+  .sec-intro {
+    font-family: var(--sans);
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--ink-2);
+    margin: 0 0 28px 0;
+    max-width: 720px;
+  }
+  .sec-intro em { font-style: italic; color: var(--blue); }
+  .sec-intro code {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--blue-soft);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  /* tldr: 章节首段强调摘要 (基于 14-research-feature-explainer 的 .tldr) */
+  .tldr {
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    background: var(--card);
+    border-left: 3px solid var(--blue);
+    padding: 18px 22px;
+    margin: 24px 0 32px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .tldr b {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .tldr code {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--blue-soft);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .tldr em { font-style: italic; color: var(--ink); font-weight: 500; }
+
+  /* details: 折叠展开 (基于 14-research-feature-explainer 的 details) */
+  .section details {
+    border-top: 1px solid var(--line);
+    padding: 14px 0;
+  }
+  .section details:last-of-type { border-bottom: 1px solid var(--line); }
+  .section details summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 4px 0;
+    transition: color 120ms;
+  }
+  .section details summary::-webkit-details-marker { display: none; }
+  .section details summary::before {
+    content: "▸";
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    transition: transform 120ms;
+    display: inline-block;
+  }
+  .section details[open] summary::before { transform: rotate(90deg); }
+  .section details summary:hover { color: var(--blue); }
+  .section details summary .where {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .section details .body {
+    padding: 8px 0 8px 22px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .section details .body p { margin-bottom: 8px; }
+
+  /* callout: 轻量标注（与 .pitfall 区别：.callout 是"提示/注意"，.pitfall 是"易错警示"） */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 18px 22px;
+    background: var(--blue-soft);
+    border-radius: 8px;
+    margin: 24px 0;
+  }
+  .callout .ico {
+    flex: 0 0 auto;
+    font-size: 16px;
+    color: var(--blue);
+    line-height: 1.6;
+  }
+  .callout > div:not(.ico) {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .callout code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--card);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* dl.faq: 定义列表，问答对 */
+  dl.faq {
+    margin: 16px 0;
+    max-width: 720px;
+  }
+  dl.faq dt {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-top: 18px;
+    margin-bottom: 6px;
+  }
+  dl.faq dt:first-child { margin-top: 0; }
+  dl.faq dd {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-2);
+    margin-left: 0;
+  }
+  dl.faq dd code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--blue-soft);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  dl.faq dd em { font-style: italic; color: var(--ink); }
+
+  /* masthead-fig: hero 右侧可选对照插图区（参考 ThariqS index hero-fig） */
+  .hero-fig {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-items: end;
+    max-width: 340px;
+    margin-top: 24px;
+  }
+  .hero-fig .pane {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 12px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hero-fig .pane.md { border-style: dashed; }
+  .hero-fig .pane .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .hero-fig .pane .l {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+  }
+  .hero-fig .pane.html .l { background: var(--blue-soft); }
 
   /* ============== Card ============== */
   /* ============== Card (Anthropic Clay：去阴影 + 细边 + serif 标题) ============== */
@@ -1239,7 +1451,7 @@
   <div style="
     width: 48px; height: 48px;
     border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: #0071e3;
+    border-top-color: #D97757;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   "></div>
@@ -1257,20 +1469,24 @@
 <!-- ============================================== -->
 <div class="page" id="flow-view">
 
-  <!-- Hero -->
-  <div class="hero">
+  <!-- Hero (ThariqS 报刊风：左对齐 + serif H1 with em 强调 + intro 段) -->
+  <header class="hero">
     <div class="eyebrow">OS · 408 · Knowledge Map</div>
-    <h1>Deadlock</h1>
-    <div class="sub">操作系统死锁知识图 · 一图掌握</div>
-  </div>
+    <h1>死锁 <em>Deadlock</em></h1>
+    <p class="sub">操作系统资源竞争的核心问题——四个必要条件、三大处理策略、银行家算法。一张图掌握 408 OS 高频考点。</p>
+  </header>
 
-  <!-- 1. 定义 -->
+  <!-- 1. 定义 (ThariqS 风：sec-head idx + count + sec-intro 散文段开场) -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num">01</span>
-      <h2 class="section-title">什么是死锁</h2>
-      <span class="section-sub">Definition</span>
+      <span class="idx">01</span>
+      <h2>什么是死锁</h2>
+      <span class="count">Definition</span>
     </div>
+    <p class="sec-intro">
+      最简单的场景：两个进程争两个资源。一旦相互持有对方需要的资源、又都不肯让步，整个系统就停转——
+      这就是死锁。先用一个具体例子建立直觉，再看抽象的资源分配图。
+    </p>
     <div class="def-stack">
       <div class="card">
         <div class="card-label">Definition</div>
