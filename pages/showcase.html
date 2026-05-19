@@ -738,6 +738,7 @@
   .span-wide    { grid-column: span 7; grid-row: span 2; }
   .span-square  { grid-column: span 5; grid-row: span 2; }
   .span-half    { grid-column: span 6; grid-row: span 2; }
+  .span-full    { grid-column: span 12; grid-row: span 2; }
 
   /* hero 卡片: 更大字 */
   .work-card.is-hero h3 { font-size: 34px; line-height: 1.0; letter-spacing: -1.2px; margin-bottom: 10px; }
@@ -1841,7 +1842,7 @@
       margin-bottom: 100px;
     }
     .bento { grid-auto-rows: auto; }
-    .span-hero, .span-tall, .span-wide, .span-square, .span-half {
+    .span-hero, .span-tall, .span-wide, .span-square, .span-half, .span-full {
       grid-column: span 12;
       grid-row: auto;
     }
@@ -1893,7 +1894,7 @@
         <span class="pulse"></span>
         <span>WORKS · 2026 SELECTED</span>
         <span style="color: var(--ink-4);">/</span>
-        <span>06 PROJECTS</span>
+        <span>07 PROJECTS</span>
       </div>
       <h1 class="reveal">
         Things I've<br>
@@ -1903,10 +1904,10 @@
     </div>
     <div>
       <p class="lead reveal">
-        一颗好的<em>想法</em>, 似一粒种子 — 须得一片沃土以扎其根, 一缕清露以润其芽; 若无, 纵有锋芒, 亦不过是落于石上的偶然。下面这六亩薄田, 是我亲手翻过的<em>土</em>。
+        一颗好的<em>想法</em>, 似一粒种子 — 须得一片沃土以扎其根, 一缕清露以润其芽; 若无, 纵有锋芒, 亦不过是落于石上的偶然。下面这七亩薄田, 是我亲手翻过的<em>土</em>。
       </p>
       <div class="quick-stats reveal">
-        <div class="stat"><div class="num">06</div><div class="label">Live Apps</div></div>
+        <div class="stat"><div class="num">07</div><div class="label">Live Apps</div></div>
         <div class="stat"><div class="num">∞</div><div class="label">Iterating</div></div>
         <div class="stat"><div class="num">24/7</div><div class="label">Online</div></div>
       </div>
@@ -2309,6 +2310,18 @@
       favicon: '../assets/favicons/chat.png',
       span: 'span-half',
       accent: '#6c5ab8'
+    },
+    {
+      name: 'Hermes',
+      brand: 'AI AGENT · 对话工作台',
+      tag: 'LOCAL DEV',
+      url: 'http://localhost:8648/',
+      desc: '多模型 AI Agent 工作台 — 对话 / 历史 / 群聊 / 任务 / 看板 / 频道 / 技能 / 插件 / 记忆一体, 内建中转站与日志、用量、技能用量三档监控, Web UI 直接编排 Agent 干活。',
+      tags: ['AI Agent', '多模型', '任务编排', '技能/插件', '记忆'],
+      shot: '../assets/screenshots/hermes.png',
+      favicon: null,
+      span: 'span-full',
+      accent: '#0d8b7a'
     }
   ];
 
