@@ -1,0 +1,32 @@
+<!--
+COMPONENT: code-block · 单语言代码块 + 可选 filename header
+WHEN: 展示一段代码 (任何 PR / code-review / research 都用)
+SLOT: section 内
+INNER MARKUP:
+  - .file       (可选 header, 显示文件路径)
+  - <code>      正文
+  - .hl         clay 高亮
+  - .cm         gray 注释
+  - .add / .del olive/rust 增删
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ middleware/ratelimit.ts ──────────┐
+  │ function rateLimit(name) {         │
+  │   const key = resolveBucket(req);  │
+  │   ...                              │
+  │ }                                  │
+  └────────────────────────────────────┘
+-->
+<pre class="code">
+<span class="file">middleware/ratelimit.ts</span>
+<code><span class="cm">// 每个请求过中间件先解析 bucket key, 再问 Redis token-bucket</span>
+function <span class="hl">rateLimit</span>(name?: string) {
+  return async (req, res, next) => {
+    const key = resolveBucket(req);
+    const ok  = await tokenBucket.<span class="hl">consume</span>(name, key);
+    if (!ok) return res.status(429).end();
+    next();
+  };
+}</code>
+</pre>

@@ -1,0 +1,41 @@
+<!--
+COMPONENT: variant-grid · 同概念多变体并列
+WHEN: 4 必要条件 / 设计变体 A/B/C/D / 多个并列要点
+SLOT: section 内
+LAYOUT: auto-fit grid 至少 220px, 自适应 1-4 列
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+  │ 01      │ │ 02      │ │ 03      │ │ 04      │
+  │ 互斥    │ │ 占有等待 │ │ 不可剥夺│ │ 循环等待│
+  │ Mutex   │ │ Hold&Wait│ │ No Pmpt│ │ Circular│
+  │ 资源一次│ │ 占着已有│ │ 资源不能│ │ P1→...→P1│
+  └─────────┘ └─────────┘ └─────────┘ └─────────┘
+-->
+<div class="variants">
+  <div class="variant">
+    <span class="variant-label">01</span>
+    <div class="variant-name">互斥</div>
+    <div class="variant-en">Mutual Exclusion</div>
+    <div class="variant-body">资源一次只能一个进程使用</div>
+  </div>
+  <div class="variant">
+    <span class="variant-label">02</span>
+    <div class="variant-name">占有并等待</div>
+    <div class="variant-en">Hold and Wait</div>
+    <div class="variant-body">占着已有资源又等新资源</div>
+  </div>
+  <div class="variant">
+    <span class="variant-label">03</span>
+    <div class="variant-name">不可剥夺</div>
+    <div class="variant-en">No Preemption</div>
+    <div class="variant-body">资源不能被强抢, 只能主动释放</div>
+  </div>
+  <div class="variant">
+    <span class="variant-label">04</span>
+    <div class="variant-name">循环等待</div>
+    <div class="variant-en">Circular Wait</div>
+    <div class="variant-body">P1 → P2 → ... → P1 形成等待环</div>
+  </div>
+</div>

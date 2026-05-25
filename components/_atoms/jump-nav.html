@@ -1,0 +1,49 @@
+<!--
+COMPONENT: jump-nav
+WHEN: 长文档需要快速跳转目录 (incident-report / research-explainer / pr-writeup)
+SLOT:
+  - 用法 A · 侧栏 sticky:  <nav class="side"> 放在 .page.two-col 的第一列
+  - 用法 B · 横向胶囊条:  <nav class="jump">  放在 hero 下、第一个 section 上
+REQUIRES: styles/atoms.css
+
+PREVIEW (用法 A 侧栏):
+  ON THIS PAGE
+  ├ TL;DR
+  ├ Request path
+  │   1. Identify
+  │   2. Bucket lookup
+  ├ Gotchas
+  └ FAQ
+  ─────────
+  FILES READ
+  middleware/ratelimit.ts
+  lib/tokenBucket.ts
+
+PREVIEW (用法 B 横向):
+  [TL;DR] [Path] [Config] [Gotchas] [FAQ]
+-->
+
+<!-- 用法 A: 侧栏锚点 (放在 .page.two-col 左列) -->
+<nav class="side">
+  <div class="label">On this page</div>
+  <a href="#tldr">TL;DR</a>
+  <a href="#path">Request path</a>
+  <a href="#path" class="l2">1. Identify</a>
+  <a href="#path" class="l2">2. Bucket lookup</a>
+  <a href="#gotchas">Gotchas</a>
+  <a href="#faq">FAQ</a>
+  <div class="files">
+    <div class="label">Files read</div>
+    <code>middleware/ratelimit.ts</code>
+    <code>lib/tokenBucket.ts</code>
+  </div>
+</nav>
+
+<!-- 用法 B: 横向胶囊条 (放在 hero 下, 适合单栏布局) -->
+<nav class="jump">
+  <a href="#tldr">TL;DR</a>
+  <a href="#path">Path</a>
+  <a href="#config">Config</a>
+  <a href="#gotchas">Gotchas</a>
+  <a href="#faq">FAQ</a>
+</nav>

@@ -1,0 +1,19 @@
+<!--
+COMPONENT: hero
+WHEN: 每个 archetype 页面顶部, 一次性介绍 "这是什么 / 给谁看"
+SLOT: <body> 直接子, 在 .page 内首位
+SIZE: 32-36px serif h1, mono eyebrow, 16px sub
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─────────────────────────────────┐
+  │ EYEBROW · CATEGORY              │
+  │ The Big Serif Title             │
+  │ One line of supporting copy     │
+  └─────────────────────────────────┘
+-->
+<header class="hero">
+  <div class="eyebrow">CATEGORY · SUBCATEGORY</div>
+  <h1>页面主标题</h1>
+  <div class="sub">一行副标说明：给谁看 / 解决什么问题</div>
+</header>

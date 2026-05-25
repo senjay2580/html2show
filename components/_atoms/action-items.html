@@ -1,0 +1,41 @@
+<!--
+COMPONENT: action-items · 待办列表
+WHEN: 故障复盘结尾的 followups / 实施计划的 next steps
+SLOT: section 内, 通常在末尾
+STRUCTURE: 3 列表 - owner / task / due-date
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌────────┬──────────────────────────┬────────┐
+  │ OWNER  │ TASK                     │ DUE    │
+  ├────────┼──────────────────────────┼────────┤
+  │ Devon  │ 加 jitter 到 retry       │ 05-20  │
+  │ Priya  │ Redis cluster 切换       │ 05-25  │
+  └────────┴──────────────────────────┴────────┘
+-->
+<table class="actions">
+  <thead>
+    <tr>
+      <th>Owner</th>
+      <th>Action</th>
+      <th>Due</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="owner">@devon</td>
+      <td>加 jitter + 指数 backoff 到 retry 逻辑, 写单元测试覆盖雷暴场景</td>
+      <td class="due">2026-05-20</td>
+    </tr>
+    <tr>
+      <td class="owner">@priya</td>
+      <td>Redis 切 cluster 模式, 配置 sentinel, 验证 failover</td>
+      <td class="due">2026-05-25</td>
+    </tr>
+    <tr>
+      <td class="owner">@kai</td>
+      <td>SLO 改写: 把 retry storm 加入 alert 触发条件</td>
+      <td class="due">2026-05-18</td>
+    </tr>
+  </tbody>
+</table>

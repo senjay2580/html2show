@@ -1,0 +1,13 @@
+<!--
+COMPONENT: file-ref · 行内文件路径徽章
+WHEN: 在正文中提到 path/to/file.ts:42, 让它看起来"可点击"
+SLOT: 行内 inline-block
+STYLE: mono 12px, gray-100 底, 圆角 4px
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ...路径见 [middleware/ratelimit.ts:21], 那里是入口。
+-->
+<p>
+  入口在 <a class="file-ref" href="#">middleware/ratelimit.ts:21</a> 这里 — 把请求归到 bucketKey, 再交给 <a class="file-ref" href="#">lib/tokenBucket.ts:9</a> 取桶。
+</p>

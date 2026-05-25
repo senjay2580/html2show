@@ -1,0 +1,20 @@
+<!--
+COMPONENT: badge / pill · 状态标签
+WHEN: 表示状态 / 严重度 / 分类 (SEV-2 / Resolved / Blocking / safe)
+SLOT: 行内 inline-flex, 嵌在 page-meta / 表格行 / 标题旁
+VARIANTS:
+  - .sev      clay 底白字  (SEV-2 / Blocking / High)
+  - .resolved olive 底白字 (Resolved / Done / Merged)
+  - .warn     rust 底白字  (Open / Failing / Outage)
+  - .neutral  gray-100 底  (默认中性)
+  - .tag      oat 底       (分类标签 Research, Planning, ...)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  [SEV-2]  [Resolved]  [47 min]  [Apr 12]  [Research]
+-->
+<span class="pill sev">SEV-2</span>
+<span class="pill resolved">Resolved</span>
+<span class="pill warn">Outage</span>
+<span class="pill neutral"><span class="k">Duration:</span> <span class="v">47 min</span></span>
+<span class="pill tag">Research</span>

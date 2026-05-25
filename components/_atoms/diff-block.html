@@ -1,0 +1,29 @@
+<!--
+COMPONENT: diff-block · +/- 变化代码
+WHEN: PR writeup / code-review, 展示某个文件的具体修改
+SLOT: section 内, 通常配 file-ref 标注路径
+MARKUP:
+  - .add     olive 底, +
+  - .del     rust 底, -
+  - .ctx     上下文行 (无前缀)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ comments.ts ────────────────────────┐
+  │ - const result = inline(comment);    │  (rust)
+  │ + const result = await queue(...);   │  (olive)
+  │   return result;                     │  (gray)
+  └──────────────────────────────────────┘
+-->
+<a class="file-ref" href="#">comments.ts:42-58</a>
+<pre class="diff">
+<span class="ctx">  function postComment(text, taskId) {</span>
+<span class="del">-   const result = inlineDispatch(text, taskId);</span>
+<span class="del">-   sendEmail(result);</span>
+<span class="add">+   const job = await queue.publish({</span>
+<span class="add">+     type: 'comment.created',</span>
+<span class="add">+     payload: { text, taskId },</span>
+<span class="add">+   });</span>
+<span class="ctx">    return job;</span>
+<span class="ctx">  }</span>
+</pre>

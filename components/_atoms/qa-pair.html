@@ -1,0 +1,25 @@
+<!--
+COMPONENT: qa-pair · FAQ / Q&A 区
+WHEN: 章节末尾收集"读者可能还会问"的问题
+SLOT: section 内, 通常作为收尾
+STYLE: dl/dt/dd 语义化标记 (dt serif 17px, dd sans 14.5px)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ──────────────────────────────────────
+  Q: 为什么用 token bucket 而不是 fixed window?
+       两者都能限流, 但 token bucket 允许突发流量, 用户体验更顺...
+
+  Q: limit 改了什么时候生效?
+       配置文件热重载, 大约 30 秒内全集群同步。
+-->
+<dl class="faq">
+  <dt>Q: 为什么用 token bucket 而不是 fixed window?</dt>
+  <dd>两者都能限流, 但 token bucket 允许短时突发流量, 用户体验更顺。fixed window 会出现"窗口切换瞬间双倍流量"的伪饱和问题。</dd>
+
+  <dt>Q: 限制改了什么时候生效?</dt>
+  <dd>配置文件热重载 — 改 <code>config/limits.yaml</code> 后大约 30 秒内全集群同步, 无需重启。</dd>
+
+  <dt>Q: 怎么排查 429 误伤?</dt>
+  <dd>查看响应 header 中的 <code>X-RateLimit-Remaining</code> 和 <code>Retry-After</code>; 必要时在 Redis 里 <code>DEL rl:{route}:{key}</code> 临时重置。</dd>
+</dl>

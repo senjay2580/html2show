@@ -1,0 +1,15 @@
+<!--
+COMPONENT: metric-delta · 数字 + 上下箭头
+WHEN: 配合 metric-card 显示同比变化 (▲ +2 / ▼ -1 / — flat)
+SLOT: metric-card 内, num + label 下面
+COLORS:
+  .up    olive (好趋势)
+  .down  rust  (坏趋势)
+  .flat  gray-500
+REQUIRES: styles/atoms.css
+
+NOTE: 这只是单独示意, 实际使用直接放在 metric-card.html 里. 该文件主要演示三种状态.
+-->
+<div class="metric-delta up">+2 vs last week</div>
+<div class="metric-delta down">-1 vs baseline</div>
+<div class="metric-delta flat">flat</div>

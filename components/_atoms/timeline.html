@@ -1,0 +1,40 @@
+<!--
+COMPONENT: timeline · 时间戳 + 事件
+WHEN: 故障复盘 / PR rollout 计划 / 项目里程碑
+SLOT: section 内
+STYLE: 左侧 2px 竖线 + 圆点节点 (clay 默认 / olive done / rust alert)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  │
+  ◯ 14:07 UTC · DETECTED
+  │  alert fired on 502 error rate
+  │
+  ◉ 14:09 UTC · ACKED         (olive = done)
+  │  on-call Devon paged
+  │
+  ◍ 14:12 UTC · IMPACT        (rust = alert)
+  │  worker pool saturated
+-->
+<div class="timeline">
+  <div class="tl-entry">
+    <span class="tl-time">14:07 UTC</span>
+    <div class="tl-title">Detected</div>
+    <div class="tl-body">Datadog alert: 502 error rate &gt; 2% sustained 60s.</div>
+  </div>
+  <div class="tl-entry done">
+    <span class="tl-time">14:09 UTC</span>
+    <div class="tl-title">Acknowledged</div>
+    <div class="tl-body">On-call (Devon) paged via PagerDuty.</div>
+  </div>
+  <div class="tl-entry alert">
+    <span class="tl-time">14:12 UTC</span>
+    <div class="tl-title">Impact confirmed</div>
+    <div class="tl-body">Worker pool saturated; user requests stalling at p95.</div>
+  </div>
+  <div class="tl-entry done">
+    <span class="tl-time">14:54 UTC</span>
+    <div class="tl-title">Resolved</div>
+    <div class="tl-body">Rollback of <code>workers.yaml</code> deployed.</div>
+  </div>
+</div>

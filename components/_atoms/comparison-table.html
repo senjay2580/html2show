@@ -1,0 +1,46 @@
+<!--
+COMPONENT: comparison-table · 特性矩阵
+WHEN: 对比 2-4 个方案/概念 (Mod N vs Consistent Hash / Approach A B C)
+SLOT: section 内
+TONE: 中性面向对比, 用 .good / .bad 着色单元格
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌────────┬─────────┬─────────────┐
+  │ Aspect │ Mod N   │ Consistent  │
+  ├────────┼─────────┼─────────────┤
+  │ Move   │ ~100%   │ ~1/N        │
+  │ Cost   │ O(1)    │ O(log N)    │
+  └────────┴─────────┴─────────────┘
+-->
+<table class="compare">
+  <thead>
+    <tr>
+      <th>Aspect</th>
+      <th>Mod N</th>
+      <th>Consistent Hash</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Keys moved when N changes</td>
+      <td class="bad">~100%</td>
+      <td class="good">~1/N</td>
+    </tr>
+    <tr>
+      <td>Hot-spot risk</td>
+      <td class="bad">High (uneven mod)</td>
+      <td class="good">Low (virtual nodes)</td>
+    </tr>
+    <tr>
+      <td>Lookup cost</td>
+      <td>O(1)</td>
+      <td>O(log N)</td>
+    </tr>
+    <tr>
+      <td>Used by</td>
+      <td>simple in-mem caches</td>
+      <td>Cassandra, DynamoDB, CDN</td>
+    </tr>
+  </tbody>
+</table>

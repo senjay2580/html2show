@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implementation Plan · [REPLACE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Plan · 4-week effort</div>
+    <h1>实现 [feature/系统名]</h1>
+    <div class="sub">从 0 到上线的工作分解、数据流、风险、待办。</div>
+  </header>
+
+  <div class="page-meta">
+    <span class="author">@kai</span>
+    <span class="date">2026-05-13</span>
+    <span class="pill tag">Planning</span>
+    <span class="pill neutral"><span class="k">Effort:</span> <span class="v">4 weeks</span></span>
+    <span class="pill neutral"><span class="k">Team:</span> <span class="v">3 eng</span></span>
+  </div>
+
+  <div class="tldr" id="tldr">
+    <span class="tldr-label">TL;DR</span>
+    <p><b>4 周, 3 个工程师, 7 个 PR</b>。先打地基 (Week 1-2: schema + worker), 再做体验 (Week 3: UI), 最后做扩展 (Week 4: notifications + analytics)。</p>
+  </div>
+
+  <section id="milestones">
+    <h2>Milestones</h2>
+    <hr class="rule">
+    <p class="sec-intro">用 variant-grid 把 4 周拆成 4 张卡, 每张卡含: 时间窗口 + 主任务 + PR 编号占位。</p>
+
+    <div class="variants">
+      <div class="variant">
+        <span class="variant-label">Week 1 · May 13-19</span>
+        <div class="variant-name">Schema + Migrations</div>
+        <div class="variant-body">
+          DB 表设计、迁移脚本、回滚预案。<br>
+          <code>PR #401</code> · <code>PR #402</code>
+        </div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">Week 2 · May 20-26</span>
+        <div class="variant-name">Worker + Queue</div>
+        <div class="variant-body">
+          后台处理 + 重试逻辑 + 死信队列。<br>
+          <code>PR #403</code> · <code>PR #404</code>
+        </div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">Week 3 · May 27 — Jun 2</span>
+        <div class="variant-name">UI + UX</div>
+        <div class="variant-body">
+          列表 / 详情 / 编辑 三个核心页面。<br>
+          <code>PR #405</code>
+        </div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">Week 4 · Jun 3-9</span>
+        <div class="variant-name">Notifications + Analytics</div>
+        <div class="variant-body">
+          扩展功能 + 上线 + 数据看板。<br>
+          <code>PR #406</code> · <code>PR #407</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="data-flow">
+    <h2>Data flow</h2>
+    <hr class="rule">
+
+    <div class="flowchart">
+      <span class="fc-label">Diagram · End-to-end</span>
+      <div class="fc-title">从用户提交到 worker 处理完成</div>
+
+      <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg">
+        <rect class="node-box" x="20"  y="80" width="100" height="40"/>
+        <text class="label" x="70"  y="105" text-anchor="middle">User Form</text>
+
+        <rect class="node-box" x="160" y="80" width="100" height="40"/>
+        <text class="label" x="210" y="105" text-anchor="middle">API</text>
+
+        <rect class="node-emph" x="300" y="80" width="100" height="40"/>
+        <text class="label" x="350" y="105" text-anchor="middle">Queue</text>
+
+        <rect class="node-box" x="440" y="80" width="100" height="40"/>
+        <text class="label" x="490" y="105" text-anchor="middle">Worker</text>
+
+        <rect class="node-done" x="580" y="80" width="120" height="40"/>
+        <text class="label" x="640" y="105" text-anchor="middle">DB + Index</text>
+
+        <path class="arrow" d="M 120 100 L 160 100" marker-end="url(#a)"/>
+        <path class="arrow" d="M 260 100 L 300 100" marker-end="url(#a)"/>
+        <path class="arrow" d="M 400 100 L 440 100" marker-end="url(#a)"/>
+        <path class="arrow" d="M 540 100 L 580 100" marker-end="url(#a)"/>
+
+        <defs>
+          <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--gray-700)"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </section>
+
+  <section id="risks">
+    <h2>Risks &amp; mitigations</h2>
+    <hr class="rule">
+
+    <div class="risks">
+      <div class="risk-row">
+        <div class="risk">迁移大表锁库 — 索引重建可能锁 30 分钟</div>
+        <div class="sev high">High</div>
+        <div class="mit">分批迁移 + 在线 DDL 工具 (pt-online-schema-change)</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk">worker 队列积压 — 上线后突发流量</div>
+        <div class="sev med">Medium</div>
+        <div class="mit">先压测 5x peak, 配置自动扩容</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk">前端 UI 来不及 — 后端早上线没界面</div>
+        <div class="sev low">Low</div>
+        <div class="mit">Week 1 同步出 wireframe, Week 2 起步并行</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="decision">
+    <h2>Open questions</h2>
+    <hr class="rule">
+
+    <div class="decision">
+      <div class="q">是否引入新依赖 [Library X] 还是自己写?</div>
+      <div class="options">
+        <div class="opt">
+          <div class="opt-label">Option A</div>
+          <div class="opt-title">引入 Library X</div>
+          <div class="opt-body">省 2 周, 但增加维护面 + 包大小 +200KB。</div>
+        </div>
+        <div class="opt recommended">
+          <div class="opt-label">Option B · Recommended</div>
+          <div class="opt-title">自己写薄层</div>
+          <div class="opt-body">~3 天, 完全可控, 无依赖。功能足够覆盖本期需求。</div>
+        </div>
+      </div>
+      <div class="why">
+        <b>Why B:</b> 本期只用 Library X 30% 的功能, 自己写 200 行更划算。如果未来要用全套能力, 再迁移。
+      </div>
+    </div>
+  </section>
+
+  <section id="actions">
+    <h2>Next steps</h2>
+    <hr class="rule">
+
+    <table class="actions">
+      <thead><tr><th>Owner</th><th>Action</th><th>Due</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="owner">@kai</td>
+          <td>出 schema 设计稿, 拉评审</td>
+          <td class="due">2026-05-15</td>
+        </tr>
+        <tr>
+          <td class="owner">@priya</td>
+          <td>压测脚本 + baseline 数据</td>
+          <td class="due">2026-05-18</td>
+        </tr>
+        <tr>
+          <td class="owner">@devon</td>
+          <td>开 feature flag, 准备 staged rollout</td>
+          <td class="due">2026-05-20</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

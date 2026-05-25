@@ -1,0 +1,37 @@
+<!--
+COMPONENT: metric-card · KPI 大数字
+WHEN: 状态报告 / 仪表盘顶部 - 一眼看核心指标
+SLOT: 放在 .summary-band 容器里 (4 列, 自适应到 2 列)
+SIZE: 40px serif 大数字 + 12px mono uppercase label
+VARIANT: .warn = clay 左 stripe (标识异常项)
+COMPANION: .metric-delta (up/down/flat 配套显示变化)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+  │  14     │ │   6     │ │  47m    │ │   3     │
+  │  PRs    │ │ DEPLOYS │ │ INC-2 ⚠ │ │ FLAKY   │
+  │  ▲ +2   │ │  — flat │ │         │ │  ▼ -1   │
+  └─────────┘ └─────────┘ └─────────┘ └─────────┘
+-->
+<div class="summary-band">
+  <div class="metric-card">
+    <div class="metric-num">14</div>
+    <div class="metric-label">PRs merged</div>
+    <div class="metric-delta up">+2 vs last week</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-num">6</div>
+    <div class="metric-label">Deploys</div>
+    <div class="metric-delta flat">flat</div>
+  </div>
+  <div class="metric-card warn">
+    <div class="metric-num">47<small style="font-size:0.5em;color:var(--gray-500);">min</small></div>
+    <div class="metric-label">1 SEV-2 Incident</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-num">3</div>
+    <div class="metric-label">Flaky tests fixed</div>
+    <div class="metric-delta down">-1 backlog</div>
+  </div>
+</div>

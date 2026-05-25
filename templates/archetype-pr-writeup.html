@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR #[NUM] · [TITLE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">PR #312 · platform / notify-queue</div>
+    <h1>把通知发送从 inline 改成 queue-based</h1>
+    <div class="sub">让 comment 写入路径在 180ms 内返回, retry 不再阻塞主线程。</div>
+  </header>
+
+  <div class="page-meta">
+    <span class="author">@priya</span>
+    <span class="date">2026-05-13</span>
+    <span class="repo">birchline/api @ feature/notify-queue</span>
+    <span class="pill neutral"><span class="k">+</span><span class="v">418</span></span>
+    <span class="pill neutral"><span class="k">−</span><span class="v">190</span></span>
+    <span class="pill tag">refactor</span>
+  </div>
+
+  <div class="tldr" id="tldr">
+    <span class="tldr-label">TL;DR</span>
+    <p><b>1.4s → 180ms</b> 的 p95 提升。原来 inline 处理通知/邮件/索引三件套, 现在 publish 到 queue 由 worker 串行处理。主线程只做"入队", 失败不影响用户写入。</p>
+  </div>
+
+  <section id="why">
+    <h2>Why</h2>
+    <hr class="rule">
+
+    <p class="sec-intro">三个原因合在一起决定改: 用户感知慢、retry 互相阻塞、扩展不动。</p>
+    <ul style="padding-left:20px; max-width:680px;">
+      <li><b>慢:</b> p95 1.4s, 用户能感觉到"卡一下"。</li>
+      <li><b>互锁:</b> 邮件服务慢导致 comment 写入回滚。</li>
+      <li><b>扩展:</b> 新增"通知到飞书"等渠道, inline 链路越来越长。</li>
+    </ul>
+  </section>
+
+  <section id="files">
+    <h2>File by file</h2>
+    <hr class="rule">
+
+    <h3>新增: <a class="file-ref" href="#">workers/notify.ts</a></h3>
+    <p>独立的 worker 进程, 从 queue 拉任务、按类型分发到子处理器。</p>
+
+    <pre class="code">
+<span class="file">workers/notify.ts (new)</span>
+<code>queue.consume('notify', async (job) => {
+  switch (job.type) {
+    case 'email':   return sendEmail(job.payload);
+    case 'webhook': return postWebhook(job.payload);
+    case 'index':   return reindex(job.payload);
+  }
+});</code></pre>
+
+    <h3>修改: <a class="file-ref" href="#">routes/comments.ts</a></h3>
+    <pre class="diff">
+<span class="ctx">  function postComment(text, taskId) {</span>
+<span class="del">-   await sendEmail(...);</span>
+<span class="del">-   await reindex(...);</span>
+<span class="add">+   await queue.publish({ type: 'notify', payload: {...} });</span>
+<span class="ctx">    return { ok: true };</span>
+<span class="ctx">  }</span>
+</pre>
+  </section>
+
+  <section id="focus">
+    <h2>Where to focus your review</h2>
+    <hr class="rule">
+
+    <ol style="padding-left:20px; max-width:680px;">
+      <li><b>错误处理</b>: publish 失败时是否应当回退到 inline?</li>
+      <li><b>顺序保证</b>: 同一 task 的多条通知是否需要串行?</li>
+      <li><b>幂等</b>: worker 重试时如何避免重复发送?</li>
+    </ol>
+  </section>
+
+  <section id="rollout">
+    <h2>Rollout</h2>
+    <hr class="rule">
+
+    <div class="timeline">
+      <div class="tl-entry">
+        <span class="tl-time">Day 0</span>
+        <div class="tl-title">合并 + feature flag 关</div>
+        <div class="tl-body">代码上线但 inline 路径仍然在用。</div>
+      </div>
+      <div class="tl-entry done">
+        <span class="tl-time">Day 2</span>
+        <div class="tl-title">5% 流量 → queue</div>
+        <div class="tl-body">观察 worker lag、queue depth、错误率。</div>
+      </div>
+      <div class="tl-entry done">
+        <span class="tl-time">Day 4</span>
+        <div class="tl-title">100% 切换 + 删 inline 代码</div>
+        <div class="tl-body">flag 全开 + 清理 dead code。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="test-plan">
+    <h2>Test plan</h2>
+    <hr class="rule">
+
+    <dl class="faq">
+      <dt>Q: 怎么验证 worker 重启不丢消息?</dt>
+      <dd>queue 用 at-least-once delivery, worker 处理后 ack。重启时未 ack 的消息会重投。</dd>
+      <dt>Q: 如何监控 queue depth?</dt>
+      <dd>Datadog dashboard <a class="file-ref" href="#">dash/queue-notify</a> 已配置, depth &gt; 1000 触发告警。</dd>
+    </dl>
+  </section>
+
+  <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

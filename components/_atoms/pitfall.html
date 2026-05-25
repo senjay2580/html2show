@@ -1,0 +1,22 @@
+<!--
+COMPONENT: pitfall · 易错警示
+WHEN: 列出读者容易理解错的说法, 配「正确解释」对照
+SLOT: section 内, 通常在概念辨析章节的尾部
+COLOR: rust (深红警示色)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ PITFALL · 高频易错 ─────────┐
+  │ 这些说法都是错的             │
+  │ ✗ 死锁 = 循环等待            │
+  │    ✓ 正确: 必要不充分条件     │
+-->
+<div class="pitfall">
+  <span class="label">Pitfall · 高频易错</span>
+  <div class="head">这些说法都是错的</div>
+  <ul>
+    <li><b>"错误说法 A"</b> <span class="right">✓ 正确解释 A</span></li>
+    <li><b>"错误说法 B"</b> <span class="right">✓ 正确解释 B</span></li>
+    <li><b>"错误说法 C"</b> <span class="right">✓ 正确解释 C</span></li>
+  </ul>
+</div>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Review · PR #[NUM]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Code Review · PR #312</div>
+    <h1>[PR 标题]</h1>
+    <div class="sub">基于这个 diff 给作者的可执行反馈, 用 pill 标注每条意见的优先级。</div>
+  </header>
+
+  <div class="page-meta">
+    <span class="author">@author-name</span>
+    <span class="date">2026-05-13</span>
+    <span class="repo">birchline/web @ main</span>
+    <span class="pill neutral"><span class="k">+</span><span class="v">418</span></span>
+    <span class="pill neutral"><span class="k">−</span><span class="v">190</span></span>
+    <span class="pill resolved">5 files</span>
+  </div>
+
+  <section id="overview">
+    <h2>这个 PR 做了什么</h2>
+    <hr class="rule">
+    <p>用一段散文讲清楚改动的意图、动机, 不复述 commit message。</p>
+    <ul style="padding-left:20px; max-width:680px;">
+      <li>动机 1</li>
+      <li>动机 2</li>
+    </ul>
+  </section>
+
+  <section id="risk-map">
+    <h2>风险地图 — 每个文件分级</h2>
+    <hr class="rule">
+    <p class="sec-intro">用 variant-grid 把改动的文件按"需要多关注"的程度分桶, 让作者一眼看出我接下来要讲哪几个文件。</p>
+
+    <div class="variants">
+      <div class="variant">
+        <span class="variant-label" style="color:var(--olive);">SAFE</span>
+        <div class="variant-name">tests/notification.spec.ts</div>
+        <div class="variant-body">新增测试覆盖。审查只看断言是否合理即可。</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">WORTH A LOOK</span>
+        <div class="variant-name">routes/comments.ts</div>
+        <div class="variant-body">改了 retry 逻辑, 注意 backoff 配置是否对齐其他路由。</div>
+      </div>
+      <div class="variant" style="border-color: var(--rust);">
+        <span class="variant-label" style="color:var(--rust);">NEEDS ATTENTION</span>
+        <div class="variant-name">lib/queue.ts</div>
+        <div class="variant-body">核心改动. 队列分片策略变化, 影响所有 worker — 仔细看下。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="file-1">
+    <h2><a class="file-ref" href="#">lib/queue.ts:42-78</a></h2>
+    <hr class="rule">
+    <p>这里的改动把同步 inline 调用替换成 queue.publish。问题是: <b>错误处理路径丢了</b>。</p>
+
+    <pre class="diff">
+<span class="ctx">  function postComment(text, taskId) {</span>
+<span class="del">-   const result = inlineDispatch(text, taskId);</span>
+<span class="del">-   sendEmail(result);</span>
+<span class="add">+   const job = await queue.publish({</span>
+<span class="add">+     type: 'comment.created',</span>
+<span class="add">+     payload: { text, taskId },</span>
+<span class="add">+   });</span>
+<span class="ctx">    return job;</span>
+<span class="ctx">  }</span>
+</pre>
+
+    <div class="callout warn">
+      <span class="ico">⚠</span>
+      <div><b>Blocking</b> — <code>queue.publish</code> 抛错时没有 fallback。建议加 try/catch, 失败时回退到 inline 写入或写一条 dead-letter。</div>
+    </div>
+  </section>
+
+  <section id="next-steps">
+    <h2>建议的下一步</h2>
+    <hr class="rule">
+
+    <table class="actions">
+      <thead>
+        <tr><th>优先级</th><th>动作</th><th>位置</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pill warn">Blocking</span></td>
+          <td>加错误处理 + dead-letter 写入</td>
+          <td class="due">lib/queue.ts:48</td>
+        </tr>
+        <tr>
+          <td><span class="pill sev">Worth a look</span></td>
+          <td>对齐 retry backoff 配置到其他路由</td>
+          <td class="due">routes/comments.ts:23</td>
+        </tr>
+        <tr>
+          <td><span class="pill resolved">Nit</span></td>
+          <td>函数命名 dispatchToQueue 比 publish 更清晰</td>
+          <td class="due">lib/queue.ts:42</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!--
+COMPONENT: kv-row · key-value 横排单行
+WHEN: 元数据列表 / 数据结构定义 / 配置项概览
+SLOT: 任意, 多个 .kv-row 自然堆叠 (互相之间 hairline 分割)
+SIZE: 12px mono key (uppercase) + 14.5px sans value
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  AVAILABLE       系统当前可用资源向量
+  ─────────────────────────────────────
+  MAX             每进程最大需求矩阵
+  ─────────────────────────────────────
+  ALLOCATION      每进程已分配资源矩阵
+-->
+<div class="kv-row">
+  <div class="k">Available</div>
+  <div class="v">系统当前可用资源向量</div>
+</div>
+<div class="kv-row">
+  <div class="k">Max</div>
+  <div class="v">每进程最大需求矩阵</div>
+</div>
+<div class="kv-row">
+  <div class="k">Allocation</div>
+  <div class="v">每进程已分配资源矩阵</div>
+</div>
+<div class="kv-row">
+  <div class="k">Need</div>
+  <div class="v">还需要资源 = Max − Allocation</div>
+</div>

@@ -1,0 +1,31 @@
+<!--
+COMPONENT: step-list · 编号步骤列表
+WHEN: 算法步骤 / 流程指引 / 操作 walkthrough
+SLOT: section 内, 包在 .steps 容器中
+SIZE: 13px mono 编号 (clay) + 14.5px sans 文本
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ 01 ─────────────────────────────┐
+  │ 找进程 Pi 使 Need[i] ≤ Available │
+  ├─ 02 ─────────────────────────────┤
+  │ 假设 Pi 完成, 回收资源           │
+  │ Available += Allocation[i]       │
+  ├─ 03 ─────────────────────────────┤
+  │ 重复直到全部完成 → 安全          │
+  └──────────────────────────────────┘
+-->
+<div class="steps">
+  <div class="step">
+    <div class="step-n">01</div>
+    <div class="step-t">找进程 Pi 使 <code>Need[i] ≤ Available</code></div>
+  </div>
+  <div class="step">
+    <div class="step-n">02</div>
+    <div class="step-t">假设 Pi 完成, 回收资源<br><code>Available += Allocation[i]</code></div>
+  </div>
+  <div class="step">
+    <div class="step-n">03</div>
+    <div class="step-t">重复直到全部完成 → <span style="color:var(--olive);">安全</span><br>否则 → <span style="color:var(--rust);">不安全</span></div>
+  </div>
+</div>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineering Status · Week [N]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Engineering Status · Week 19</div>
+    <h1>Birchline · 周报</h1>
+    <div class="sub">2026-05-06 — 2026-05-12 · birchline/web @ main</div>
+  </header>
+
+  <div class="page-meta">
+    <span class="author">@kai</span>
+    <span class="date">2026-05-13</span>
+    <span class="auto-pill">Auto-generated</span>
+  </div>
+
+  <!-- ===== KPI 顶栏 ===== -->
+  <div class="summary-band">
+    <div class="metric-card">
+      <div class="metric-num">14</div>
+      <div class="metric-label">PRs merged</div>
+      <div class="metric-delta up">+2 vs last week</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num">6</div>
+      <div class="metric-label">Deploys</div>
+      <div class="metric-delta flat">flat</div>
+    </div>
+    <div class="metric-card warn">
+      <div class="metric-num">1</div>
+      <div class="metric-label">SEV-2 Incident (47 min)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num">3</div>
+      <div class="metric-label">Flaky tests fixed</div>
+      <div class="metric-delta down">-1 backlog</div>
+    </div>
+  </div>
+
+  <section id="shipped">
+    <h2>Shipped</h2>
+    <hr class="rule">
+
+    <div class="variants">
+      <div class="variant">
+        <span class="variant-label">PR #401 · merged</span>
+        <div class="variant-name">Bulk task import</div>
+        <div class="variant-body">CSV / Excel 批量导入, 上限 10000 行。<br><code>@priya</code> · Low risk</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">PR #404 · merged</span>
+        <div class="variant-name">Webhook retries v2</div>
+        <div class="variant-body">指数 backoff + dead-letter, 替换 v1 的固定间隔。<br><code>@devon</code> · Medium risk</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">PR #405 · merged</span>
+        <div class="variant-name">Postgres 16 migration</div>
+        <div class="variant-body">无停机迁移, ~2 小时观察 zero issue。<br><code>@kai</code> · High risk → safe</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="in-progress">
+    <h2>In progress</h2>
+    <hr class="rule">
+
+    <ul style="padding-left:20px;">
+      <li><b>Recurring tasks engine</b> — <code>PR #406</code> 80% 完成, 等 QA 反馈。预计 Wed 合并。</li>
+      <li><b>Audit log export</b> — 设计阶段, 下周开工。</li>
+    </ul>
+  </section>
+
+  <section id="metrics">
+    <h2>Metrics</h2>
+    <hr class="rule">
+
+    <div class="kv-row">
+      <div class="k">API p95 latency</div>
+      <div class="v">180ms <span style="color:var(--olive);">▼ -120ms vs last week</span></div>
+    </div>
+    <div class="kv-row">
+      <div class="k">Background job error rate</div>
+      <div class="v">0.3% <span style="color:var(--olive);">▼ -0.1%</span></div>
+    </div>
+    <div class="kv-row">
+      <div class="k">Build time (CI)</div>
+      <div class="v">4m 22s <span style="color:var(--rust);">▲ +30s vs last week</span></div>
+    </div>
+  </section>
+
+  <section id="decision">
+    <h2>Decision needed</h2>
+    <hr class="rule">
+
+    <div class="decision">
+      <div class="q">这周末发不发 v2.4 ?</div>
+      <div class="options">
+        <div class="opt">
+          <div class="opt-label">Option A</div>
+          <div class="opt-title">周五发</div>
+          <div class="opt-body">早 3 天进入用户, 但 QA 只扫了主路径。</div>
+        </div>
+        <div class="opt recommended">
+          <div class="opt-label">Option B · Recommended</div>
+          <div class="opt-title">推迟到下周一</div>
+          <div class="opt-body">让 QA 多扫两天边界 case, 避开周末值班。</div>
+        </div>
+      </div>
+      <div class="why"><b>Why B:</b> A 早进的 PR 主要是文案, 推迟 3 天用户感知不到差异; 周五发周末值班痛。</div>
+    </div>
+  </section>
+
+  <section id="next">
+    <h2>Next week</h2>
+    <hr class="rule">
+
+    <ul style="padding-left:20px;">
+      <li>合并 <code>PR #406</code> (recurring tasks)</li>
+      <li>启动 audit log export 设计</li>
+      <li>把 build time 拉回到 4 分钟内</li>
+    </ul>
+  </section>
+
+  <footer class="atom">Auto-generated · 2026-05-13 09:00 UTC · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

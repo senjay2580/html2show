@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept Comparison · [REPLACE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">Exploration · approach comparison</div>
+    <h1>三种方式实现 [概念名]</h1>
+    <div class="sub">在 [项目/上下文] 里到底选哪个 — pros / cons / 推荐结合现状的决策。</div>
+  </header>
+
+  <section>
+    <h2>三个方案</h2>
+    <hr class="rule">
+    <p class="sec-intro">先用 variant-grid 横向并列 3 个候选, 让读者扫一眼有"地图感"; 再用 comparison-table 比硬指标。</p>
+
+    <div class="variants">
+      <div class="variant">
+        <span class="variant-label">Approach 01</span>
+        <div class="variant-name">方案 A · Inline</div>
+        <div class="variant-en">React useEffect + setTimeout</div>
+        <div class="variant-body">最简实现, 一个组件内自洽。bundle 0 KB, 但无法跨组件复用。</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">Approach 02</span>
+        <div class="variant-name">方案 B · Custom Hook</div>
+        <div class="variant-en">useDebounce(value, ms)</div>
+        <div class="variant-body">抽到 hook 里, 任意组件复用。bundle ~0.4 KB, 测试友好。</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">Approach 03</span>
+        <div class="variant-name">方案 C · 三方库</div>
+        <div class="variant-en">use-debounce npm package</div>
+        <div class="variant-body">10w+ DL/周, 接口稳定。bundle +6 KB, 增加依赖面。</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>指标对比</h2>
+    <hr class="rule">
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>A · Inline</th>
+          <th>B · Custom Hook</th>
+          <th>C · 三方库</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>bundle 增量</td>
+          <td class="good">0 KB</td>
+          <td class="good">~0.4 KB</td>
+          <td class="bad">+6 KB</td>
+        </tr>
+        <tr>
+          <td>可测试性</td>
+          <td class="bad">差 (混在组件)</td>
+          <td class="good">好</td>
+          <td class="good">好 (库自带)</td>
+        </tr>
+        <tr>
+          <td>复用性</td>
+          <td class="bad">无</td>
+          <td class="good">本仓库内</td>
+          <td class="good">跨项目</td>
+        </tr>
+        <tr>
+          <td>SSR 兼容</td>
+          <td>需手判</td>
+          <td>需手判</td>
+          <td class="good">库已处理</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>推荐</h2>
+    <hr class="rule">
+
+    <div class="decision">
+      <div class="q">这个项目当前用什么?</div>
+      <div class="options">
+        <div class="opt">
+          <div class="opt-label">Option A</div>
+          <div class="opt-title">方案 A · 最简</div>
+          <div class="opt-body">如果只在一个搜索框用 — 选 A 最快。</div>
+        </div>
+        <div class="opt recommended">
+          <div class="opt-label">Option B · Recommended</div>
+          <div class="opt-title">方案 B · Custom Hook</div>
+          <div class="opt-body">仓库里已有 3 处 debounce 需求, 抽 hook 立即复用。无新依赖。</div>
+        </div>
+        <div class="opt">
+          <div class="opt-label">Option C</div>
+          <div class="opt-title">方案 C · 三方库</div>
+          <div class="opt-body">规模再大、调度复杂时考虑。当前不必。</div>
+        </div>
+      </div>
+      <div class="why">
+        <b>Why B:</b> 复用 3+ 次抵消抽象成本; 不引依赖减少升级负担; 测试可以 mock setTimeout 独立验证。
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <span class="label">Bottom line</span>
+      <div class="text">遇到第 <em>3</em> 个相同模式就该抽 hook — 这是 React 仓库里被验证过的临界点。</div>
+    </div>
+  </section>
+
+  <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

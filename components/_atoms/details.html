@@ -1,0 +1,50 @@
+<!--
+COMPONENT: details · 可折叠章节 (原生 <details>/<summary>)
+WHEN: 长文档要做"step-by-step 但默认折叠" / 进阶细节展开
+SLOT: section 内
+INTERACTIVE: 原生 HTML, 无 JS
+DECOR: 自定义 ▸ 三角 (clay), 展开时旋转 90deg
+REQUIRES: styles/atoms.css (默认已含)
+
+PREVIEW:
+  ▸ 1 · Identify the caller        middleware/ratelimit.ts:21
+     [折叠时只显示标题]
+  ▾ 2 · Look up the bucket          lib/tokenBucket.ts:9
+     [展开时显示这段说明]
+     一段解释 ...
+-->
+<details open>
+  <summary>1 · Identify the caller <span class="where">middleware/ratelimit.ts:21</span></summary>
+  <div class="body">
+    <p>中间件先把请求归到 bucketKey: 如果有 Authorization header 用 API key, 否则用客户端 IP (从 x-forwarded-for 取, 只信任自家 LB)。匿名 IP 走更低的默认 tier。</p>
+  </div>
+</details>
+
+<details>
+  <summary>2 · Look up the bucket <span class="where">lib/tokenBucket.ts:9</span></summary>
+  <div class="body">
+    <p>路由名 + bucketKey 映射到 Redis hash (<code>rl:{route}:{key}</code>), 存 <code>tokens</code> 和 <code>updatedAt</code>。缺失时 lazy 创建为满容量, 没有 warm-up。</p>
+  </div>
+</details>
+
+<style>
+/* details 配套样式 (atoms.css 没默认带, 在此补全; 也可整体抽走) */
+details { border: var(--border); border-radius: var(--r-row); background: var(--white); margin: 14px 0; overflow: hidden; }
+details summary {
+  list-style: none; cursor: pointer; padding: 14px 16px;
+  font-family: var(--serif); font-size: 16px; color: var(--slate);
+  display: flex; align-items: baseline; gap: 10px;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸"; color: var(--clay); font-family: var(--sans);
+  font-size: 12px; transition: transform 120ms;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary .where {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--gray-500); margin-left: auto;
+}
+details .body { padding: 0 16px 16px; }
+details .body p { font-size: 14px; margin: 0 0 10px; }
+</style>

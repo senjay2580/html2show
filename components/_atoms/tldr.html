@@ -1,0 +1,24 @@
+<!--
+COMPONENT: tldr · 全文一句话总结
+WHEN: 紧贴 hero 下方, 让读者 5 秒抓住主旨
+SLOT: hero / page-meta 之后, 第一个 section 之前
+VARIANT:
+  - 默认: clay 左 stripe + 白底 (研究/概念解释用)
+  - .inverse: slate 底 + ivory 文字 (incident/PR-writeup 用, 更视觉冲击)
+REQUIRES: styles/atoms.css
+
+PREVIEW (默认):
+  ┃ TL;DR
+  ┃ 每个请求过 rateLimit() 中间件, 解析为 bucketKey, 从 Redis 取 token-bucket,
+  ┃ 消费一个 token 或返回 429。
+-->
+<div class="tldr" id="tldr">
+  <span class="tldr-label">TL;DR</span>
+  <p><b>关键结论一句话</b> — 把全文最核心的信号压缩到这里。读者 5 秒看完决定要不要继续读。</p>
+</div>
+
+<!-- VARIANT: 深色变体 (incident / postmortem 风) -->
+<div class="tldr inverse" id="tldr">
+  <span class="tldr-label">TL;DR · INCIDENT</span>
+  <p>SEV-2 故障 14:07 触发, 47 分钟恢复。根因: <code>workers.yaml</code> 中 retry-backoff 配置缺失, 导致雷暴式重试压垮上游。</p>
+</div>

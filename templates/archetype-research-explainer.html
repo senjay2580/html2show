@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Explainer · [REPLACE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+<style>
+  /* Archetype 微调: 用 two-col 布局 + sticky 侧栏目录 */
+  body { padding: 56px 24px 120px; }
+</style>
+</head>
+<body>
+
+<div class="page two-col">
+
+  <!-- ===== 侧栏锚点目录 ===== -->
+  <nav class="side">
+    <div class="label">On this page</div>
+    <a href="#tldr">TL;DR</a>
+    <a href="#section-1">核心机制</a>
+    <a href="#section-1" class="l2">1. 识别</a>
+    <a href="#section-1" class="l2">2. 查询</a>
+    <a href="#section-1" class="l2">3. 消费</a>
+    <a href="#section-2">配置方式</a>
+    <a href="#gotchas">Gotchas</a>
+    <a href="#faq">FAQ</a>
+    <div class="files">
+      <div class="label">Files read</div>
+      <code>path/to/file-a.ts</code>
+      <code>path/to/file-b.ts</code>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容 ===== -->
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Research &amp; Learning · feature summary</div>
+      <h1>[主题英文/中文标题]</h1>
+      <div class="sub">一行副标说明：这是给谁看的、解决什么问题。</div>
+    </header>
+
+    <div class="tldr" id="tldr">
+      <span class="tldr-label">TL;DR</span>
+      <p><b>关键结论一句话</b> — 把全文最核心的信号压缩到这里。读者 5 秒看完决定要不要继续读。</p>
+    </div>
+
+    <section id="section-1">
+      <h2>核心机制 step by step</h2>
+      <hr class="rule">
+      <p class="sec-intro">先用一个具体例子建立直觉, 再展开抽象逻辑。点击下面每一步可以展开看实现位置。</p>
+
+      <details open>
+        <summary>1 · 识别 <span class="where">path/to/file-a.ts:21</span></summary>
+        <div class="body"><p>这一步做什么 — 一两句话讲清楚。</p></div>
+      </details>
+      <details>
+        <summary>2 · 查询 <span class="where">path/to/file-b.ts:9</span></summary>
+        <div class="body"><p>下一步发生什么 — 配合代码段说明。</p></div>
+      </details>
+      <details>
+        <summary>3 · 消费 <span class="where">path/to/file-b.ts:31</span></summary>
+        <div class="body"><p>核心动作。注意 Lua 脚本保证原子性等关键点。</p></div>
+      </details>
+    </section>
+
+    <section id="section-2">
+      <h2>配置方式</h2>
+      <hr class="rule">
+      <p>多种语言/格式并列时, 用 code-triple tab 切换。</p>
+
+      <div class="tabs" data-tabs>
+        <div class="tabbar">
+          <button class="on" data-t="0">config.yaml</button>
+          <button data-t="1">route.ts</button>
+          <button data-t="2">response</button>
+        </div>
+        <pre class="on"><span class="cm"># config.yaml</span>
+key: value</pre>
+        <pre><span class="cm">// route.ts</span>
+const x = 1;</pre>
+        <pre>HTTP/1.1 200 OK</pre>
+      </div>
+
+      <div class="callout">
+        <span class="ico">★</span>
+        <div>顺手提一句 — 默认值/缺省行为说明放在 callout 里, 不打断主线阅读。</div>
+      </div>
+    </section>
+
+    <section id="gotchas">
+      <h2>Gotchas worth knowing</h2>
+      <hr class="rule">
+      <ul style="padding-left:20px; max-width:680px;">
+        <li style="margin-bottom:8px;"><b>易错点 1</b> — 简短解释为什么。</li>
+        <li style="margin-bottom:8px;"><b>易错点 2</b> — 简短解释。</li>
+        <li><b>易错点 3</b> — 简短解释。</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+      <hr class="rule">
+      <dl class="faq">
+        <dt>Q: 常见问题 1?</dt>
+        <dd>简短直接的答案, 一两句话。</dd>
+        <dt>Q: 常见问题 2?</dt>
+        <dd>简短直接的答案。</dd>
+      </dl>
+    </section>
+
+    <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+  </main>
+</div>
+
+<script>
+// Tab 切换 (code-triple)
+document.querySelectorAll('.tabs[data-tabs]').forEach(box => {
+  const btns = box.querySelectorAll('.tabbar button');
+  const pres = box.querySelectorAll('pre');
+  btns.forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.t;
+    btns.forEach((x, k) => x.classList.toggle('on', k === i));
+    pres.forEach((p, k) => p.classList.toggle('on', k === i));
+  }));
+});
+</script>
+</body>
+</html>

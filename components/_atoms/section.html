@@ -1,0 +1,19 @@
+<!--
+COMPONENT: section
+WHEN: 任意章节容器 - h2 标题 + hairline 分割 + 内容
+SLOT: <body> / .page 内, 多个并列
+SIZE: h2 serif 24px / 500 weight, 章节间 52px 留白
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ## 章节标题                       (serif h2)
+  ───────────────────────────────  (1px hairline)
+  这里放章节内容 (可嵌任意 atom)
+
+NOTE: 用 <section id="..."> 让 jump-nav 能锚定
+-->
+<section id="my-section">
+  <h2>章节标题</h2>
+  <hr class="rule">
+  <p>章节正文段落。可以在此放任何 atom — callout / tldr / step-list / table / 等等。</p>
+</section>

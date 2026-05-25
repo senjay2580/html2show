@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INC-[YYYY-NNNN] · [SHORT TITLE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">INC-2026-0513 · postmortem</div>
+    <h1>Elevated 502s on task sync</h1>
+    <div class="sub">SEV-2, 47 分钟影响窗口, 已恢复并定根因。</div>
+  </header>
+
+  <div class="page-meta">
+    <span class="pill sev">SEV-2</span>
+    <span class="pill resolved">Resolved</span>
+    <span class="pill neutral"><span class="k">Duration:</span> <span class="v">47 min</span></span>
+    <span class="pill neutral"><span class="k">Detected:</span> <span class="v">2026-05-13 14:07 UTC</span></span>
+    <span class="author">Owner: @devon</span>
+  </div>
+
+  <nav class="jump">
+    <a href="#tldr">TL;DR</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#root-cause">Root cause</a>
+    <a href="#impact">Impact</a>
+    <a href="#actions">Action items</a>
+  </nav>
+
+  <div class="tldr inverse" id="tldr">
+    <span class="tldr-label">TL;DR · Incident</span>
+    <p>14:07 UTC 触发, 47 分钟恢复。根因: <code>workers.yaml</code> 中 <code>retry-backoff</code> 配置在上次合并时被误删, 导致雷暴式重试压垮上游 Redis, p95 飙到 12s, 502 比例上升至 8%。回滚 <code>workers.yaml</code> 后 90 秒内指标全部恢复。</p>
+  </div>
+
+  <section id="timeline">
+    <h2>Timeline</h2>
+    <hr class="rule">
+
+    <div class="timeline">
+      <div class="tl-entry">
+        <span class="tl-time">14:07 UTC</span>
+        <div class="tl-title">Detected</div>
+        <div class="tl-body">Datadog alert: 502 error rate &gt; 2% sustained 60s on /api/tasks/sync.</div>
+      </div>
+      <div class="tl-entry done">
+        <span class="tl-time">14:09 UTC</span>
+        <div class="tl-title">Acknowledged</div>
+        <div class="tl-body">On-call (@devon) paged via PagerDuty, joined #incidents.</div>
+      </div>
+      <div class="tl-entry alert">
+        <span class="tl-time">14:12 UTC</span>
+        <div class="tl-title">Impact confirmed</div>
+        <div class="tl-body">Worker pool saturated; Redis CPU 95%; p95 latency 12s.</div>
+      </div>
+      <div class="tl-entry">
+        <span class="tl-time">14:31 UTC</span>
+        <div class="tl-title">Hypothesis</div>
+        <div class="tl-body">Reviewed recent merges → <code>workers.yaml</code> changed 2h ago, retry-backoff section missing.</div>
+      </div>
+      <div class="tl-entry done">
+        <span class="tl-time">14:52 UTC</span>
+        <div class="tl-title">Rollback initiated</div>
+        <div class="tl-body">Reverted to <code>workers.yaml@a3c7e1f</code>, deployed via emergency channel.</div>
+      </div>
+      <div class="tl-entry done">
+        <span class="tl-time">14:54 UTC</span>
+        <div class="tl-title">Resolved</div>
+        <div class="tl-body">All indicators back to baseline within 90s of rollback.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="root-cause">
+    <h2>Root cause</h2>
+    <hr class="rule">
+
+    <p>
+      在 <a class="file-ref" href="#">workers.yaml:42</a> 的合并冲突解决过程中, retry-backoff 配置块被意外丢弃。
+      新版本默认变为"立刻重试", 导致瞬时压力堆积:
+    </p>
+
+    <pre class="code">
+<span class="file">infra/config/workers.yaml</span>
+<code><span class="cm"># ❌ 被丢失的配置:</span>
+retry:
+  <span class="hl">backoff</span>: exponential
+  <span class="hl">initial</span>: 100ms
+  <span class="hl">max</span>: 30s
+  <span class="hl">jitter</span>: true</code></pre>
+
+    <div class="pull-quote">
+      <span class="label">Insight</span>
+      <div class="text">"立刻重试" 在低峰期看不出问题, 但<em>任何瞬时抖动</em>都会把 worker 队列变成 thundering herd, 压垮上游。</div>
+    </div>
+  </section>
+
+  <section id="impact">
+    <h2>Impact</h2>
+    <hr class="rule">
+
+    <div class="kv-row">
+      <div class="k">Peak error rate</div>
+      <div class="v">8.2% (502)</div>
+    </div>
+    <div class="kv-row">
+      <div class="k">Users affected</div>
+      <div class="v">~1,800 (sync 失败需手动重试)</div>
+    </div>
+    <div class="kv-row">
+      <div class="k">Data loss</div>
+      <div class="v" style="color:var(--olive);">None — 队列原子写入未丢消息</div>
+    </div>
+    <div class="kv-row">
+      <div class="k">SLA breach</div>
+      <div class="v" style="color:var(--rust);">Yes — p95 12s 超过 1s 阈值</div>
+    </div>
+  </section>
+
+  <section id="actions">
+    <h2>Action items</h2>
+    <hr class="rule">
+
+    <table class="actions">
+      <thead><tr><th>Owner</th><th>Action</th><th>Due</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="owner">@devon</td>
+          <td>给 retry-backoff 配置加 schema validation, 缺失即编译失败</td>
+          <td class="due">2026-05-20</td>
+        </tr>
+        <tr>
+          <td class="owner">@priya</td>
+          <td>SLO 改写: thundering herd / queue depth 告警加入</td>
+          <td class="due">2026-05-22</td>
+        </tr>
+        <tr>
+          <td class="owner">@kai</td>
+          <td>Postmortem 周会分享 + workers.yaml change review 流程对齐</td>
+          <td class="due">2026-05-18</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="atom">Auto-generated · 2026-05-13 16:30 UTC · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

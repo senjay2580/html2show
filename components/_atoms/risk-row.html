@@ -1,0 +1,32 @@
+<!--
+COMPONENT: risk-row · 风险 + 严重度 + 缓解
+WHEN: implementation-plan / code-review 中列出潜在问题
+SLOT: 包在 .risks 容器里, 多行堆叠
+LAYOUT: 三列 grid (描述 / 严重度 pill / 缓解)
+SEV: .high (rust) / .med (clay) / .low (oat)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ Risks ──────────────────────────────────────────────┐
+  │ 雷暴重试压垮上游  [HIGH]  加 jitter + cap            │
+  │ Redis 单点故障    [MED]   切 cluster 模式            │
+  │ 用户投诉          [LOW]   预先邮件 changelog         │
+  └──────────────────────────────────────────────────────┘
+-->
+<div class="risks">
+  <div class="risk-row">
+    <div class="risk">雷暴式重试压垮上游 — backoff 缺失会让 worker 同时打回 ratelimit。</div>
+    <div class="sev high">High</div>
+    <div class="mit">加 jitter + 指数 backoff + 全局 cap。</div>
+  </div>
+  <div class="risk-row">
+    <div class="risk">Redis 单点故障 → bucket 全部丢失。</div>
+    <div class="sev med">Medium</div>
+    <div class="mit">切 cluster 模式 + sentinel; fallback 内存计数器仅本进程。</div>
+  </div>
+  <div class="risk-row">
+    <div class="risk">收紧 limit 后用户投诉。</div>
+    <div class="sev low">Low</div>
+    <div class="mit">预先邮件 changelog + 提供 grace period 翻倍配额。</div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<!--
+COMPONENT: code-triple · 三栏并列代码 tab
+WHEN: 同一概念多种表示 (yaml 配置 / TS 代码 / HTTP 响应)
+SLOT: section 内
+REQUIRES: styles/atoms.css + 末尾的 tab-switch JS
+
+PREVIEW:
+  ┌─[limits.yaml]─[route.ts]─[response]─┐
+  │ default:                            │
+  │   rate: 100/min                     │
+  │   burst: 120                        │
+  └─────────────────────────────────────┘
+-->
+<div class="tabs" data-tabs>
+  <div class="tabbar">
+    <button class="on" data-t="0">limits.yaml</button>
+    <button data-t="1">route.ts</button>
+    <button data-t="2">client response</button>
+  </div>
+  <pre class="on"><span class="cm"># config/limits.yaml</span>
+default:
+  rate: 100/min
+  burst: 120
+
+<span class="hl">search.query</span>:
+  rate: 20/min
+  burst: 40</pre>
+  <pre><span class="cm">// routes/search.ts</span>
+router.post(
+  "/search",
+  <span class="hl">rateLimit("search.query")</span>,
+  handler,
+);</pre>
+  <pre>HTTP/1.1 429 Too Many Requests
+Retry-After: 17
+X-RateLimit-Limit: 20
+
+{ "error": "rate_limited", "retry_after": 17 }</pre>
+</div>
+
+<!-- 配套 JS (放在 <body> 末尾或 archetype 模板里) -->
+<script>
+(function tabs() {
+  document.querySelectorAll('.tabs[data-tabs]').forEach(box => {
+    const btns = box.querySelectorAll('.tabbar button');
+    const pres = box.querySelectorAll('pre');
+    btns.forEach(b => b.addEventListener('click', () => {
+      const i = +b.dataset.t;
+      btns.forEach((x, k) => x.classList.toggle('on', k === i));
+      pres.forEach((p, k) => p.classList.toggle('on', k === i));
+    }));
+  });
+})();
+</script>

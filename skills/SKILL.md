@@ -1,22 +1,23 @@
 ---
 name: teaching-html
-description: 生成 Apple/Karpathy 极简风格的教学 HTML 知识图。适用于考研/课程知识点总结、概念图、教学讲义。具备双视图模式：默认流式滚动 + PPT 演示模式（按钮触发，键盘导航，ESC 退出）。当用户说"生成知识图""做教学 HTML""做知识点总结图""做 PPT 风讲义"等触发。
+description: 把 AI 回答输出成 ThariqS / Anthropic Clay 风的「高效 HTML」(而不是 Markdown 长文)。基于 9 个页面 archetype + 30 个原子组件搭积木：研究讲解 / 方案对比 / 代码评审 / PR 说明 / 实施计划 / 周报 / 故障复盘 / 流程图 / 设计参考 / 教学知识图。当用户说「生成 HTML / 做一份讲义 / 帮我写 PR description / 周报 / 复盘 / 实施计划 / 概念对比 / 知识图」等触发。
 ---
 
-# Teaching HTML 生成 Skill
+# Teaching HTML Skill
 
-生成**极简、高质感、教学风格**的 HTML 知识图，专为考研知识点 / 课程总结 / 概念讲义设计。
+> **核心思想**: AI 接到任务 → 判定属于哪类工作输出 (archetype) → 复用对应骨架 + 从原子库挑组件填充 → 输出单文件 HTML, 比 Markdown 长文更高效。
+>
+> **风格基线**: Anthropic Clay 配色 ([ThariqS/html-effectiveness](https://thariqs.github.io/html-effectiveness/) 风) — 6 个语义色 + 字体三体 + hairline 分割 + 无重边框无渐变。
 
 ---
 
-## 🌐 远程仓库 (重要)
+## 🌐 远程仓库
 
-所有产物纳入 **`html2show`** 仓库版本管理 + GitHub Pages 公网托管:
 - **本地**: `D:\Desktop\html2show\`
 - **GitHub**: https://github.com/senjay2580/html2show
-- **线上**: https://senjay2580.github.io/html2show/
+- **线上**: https://senjay2580.github.io/html2show/ (push 即自动部署, ~30s)
 
-**新建主题时优先在 `html2show/pages/` 下创建**, 而不是项目目录里。本 skill 包内的 `examples/` 和 `references/` 是模板镜像。
+**生成的新页面放 [`pages/`](../pages/) 下** (skills 自身只是元数据/参考镜像)。
 
 ---
 
@@ -24,385 +25,173 @@ description: 生成 Apple/Karpathy 极简风格的教学 HTML 知识图。适用
 
 ```
 html2show/
-├── index.html                  入口 (复制最新主题作为首页)
+├── pages/                     ★ 新主题放这里, 一文件一主题
 │
-├── pages/<topic>.html          ★ 新主题放这里, 一文件一主题
+├── templates/                 ★ 10 个 archetype 骨架, 复制这里开始
+│   ├── archetype-research-explainer.html
+│   ├── archetype-concept-comparison.html
+│   ├── archetype-code-review.html
+│   ├── archetype-pr-writeup.html
+│   ├── archetype-implementation-plan.html
+│   ├── archetype-status-report.html
+│   ├── archetype-incident-report.html
+│   ├── archetype-flowchart-doc.html
+│   ├── archetype-design-reference.html
+│   ├── archetype-knowledge-map.html   ★ 教学/考研专用 (含 PPT 模式)
+│   └── ARCHETYPES.md          ★ archetype 选择手册
 │
-├── templates/                  ★ 复制此处的空骨架开始新主题
-│   └── teaching-html-template.html
+├── components/
+│   ├── _atoms/                ★ 30 个原子 HTML 片段
+│   └── INDEX.md               ★ 原子目录 (按类别索引)
 │
-├── components/                 ★ 可复用 HTML 片段 (有现成的就用,别重写)
-│   ├── cards/                  普通卡 / 必要条件卡 / 策略卡 / 考点卡
-│   ├── quotes/                 重点引用 (深色) / 易错警示 (红色) / 记忆口诀 (浅蓝)
-│   ├── grids/                  grid-2/3/4/5 多列布局
-│   ├── toc/                    左侧浮动目录
-│   ├── fab/                    右下角浮动按钮 (回顶 + 日夜)
-│   └── navigation/             顶部按钮 (导出 / PPT) + PPT 控件
+├── styles/
+│   └── atoms.css              ★ 全局 token + 30 个原子的样式 (唯一样式来源)
 │
-├── styles/                     CSS 拆分 (未来用)
-│   ├── base/{variables,reset,layout,typography}.css
-│   └── themes/{apple-light,apple-dark}.css
+├── skills/
+│   ├── SKILL.md               ★ 本文件
+│   └── references/thariqs/    ★ 21 个 ThariqS 原始 HTML (灵感来源)
 │
-├── scripts/                    JS 拆分 (未来用)
-│   ├── core/{toc,ppt,theme-toggle,scroll-progress}.js
-│   ├── plantuml/plantuml-render.js
-│   └── export/html2canvas-export.js
+├── docs/
+│   ├── archetype-atom-mapping.md   ★ ThariqS → 本项目映射表
+│   └── lessons.md             ★ 历史踩坑档案
 │
-├── images/<topic>/             ★ 主题插图按主题分子目录
-│   └── _common/                跨主题共用 (logo / banner)
-│
-├── diagrams/
-│   ├── plantuml/<topic>.puml   PlantUML 源文件 (版本化)
-│   └── exported/               渲染后 PNG/SVG (备份)
-│
-├── assets/{icons,illustrations,fonts,backgrounds}/
-│
-├── skills/                     当前 skill 的镜像 (与 ~/.claude/commands/teaching-html/ 双向同步)
-│
-├── docs/                       设计文档
-│
-└── .github/workflows/pages.yml GitHub Actions 自动部署
+├── images/<topic>/            ★ 主题插图按主题分子目录
+└── .github/workflows/pages.yml
 ```
 
-**目录使用铁律**:
-1. **页面只放 `pages/`**, 资源按类放对应目录, 不要在 `pages/` 里直接放 png
-2. **图片按主题分子目录** (`images/<topic>/`), 跨主题共用放 `images/_common/`
-3. **PlantUML 源**放 `diagrams/plantuml/<topic>.puml`, 即使运行时走 CDN 也要保留源
-4. **Skill 改动同步**: 改完 `~/.claude/commands/teaching-html/` 后立即 `cp -r` 到 `html2show/skills/` 并 git push
+**铁律**:
+1. 页面只放 `pages/`, 资源按类放对应目录
+2. 图片按主题分子目录 (`images/<topic>/`)
+3. **所有新生成的 HTML 都 `<link rel="stylesheet" href="../styles/atoms.css">`**, 不再内联完整 token 块
+4. 改全局色 / 字号 / 间距 → 改 [`styles/atoms.css`](../styles/atoms.css) 一处
 
 ---
 
-## 🛠️ 常见操作流程
+## ⚡ 标准生成流程 (5 步)
 
-### 操作 A: 新建主题知识图 (最常见)
+### Step 1 — 判定 archetype (用户输入 → 模板)
 
-```bash
-cd /d/Desktop/html2show
-
-# 1. 复制空骨架 (skill 包里也有同样模板, 但仓库版本更新)
-cp templates/teaching-html-template.html pages/<topic>.html
-
-# 2. 改 <title> + .hero (h1/sub) + 各 .section 内容
-#    PPT slides 不用改, JS 自动从 flow-view 派生
-
-# 3. 本地预览 (双击或浏览器打开)
-start pages/<topic>.html
-
-# 4. 提交 + 推送 → GitHub Pages 自动部署 (~30s)
-git add pages/<topic>.html images/<topic>/
-git commit -m "feat(<topic>): add knowledge map"
-git push
-```
-
-### 操作 B: 修改现有主题
-
-```bash
-# 改 pages/<topic>.html 即可
-# Hero / Section 改完, PPT 视图刷新就同步 (单一来源派生)
-git add pages/<topic>.html
-git commit -m "docs(<topic>): improve <section>"
-git push
-```
-
-### 操作 C: 插入图片
-
-```bash
-# 1. 放到对应主题目录
-cp ~/Downloads/illustration.png images/<topic>/
-
-# 2. 在 pages/<topic>.html 里引用 (注意路径 .. )
-<img src="../images/<topic>/illustration.png" alt="..." style="max-width:100%;border-radius:12px;">
-```
-
-### 操作 D: 加自定义图表 (PlantUML)
-
-```bash
-# 1. 写源文件, 方便后续修改
-echo '@startuml
-... PlantUML 代码
-@enduml' > diagrams/plantuml/<topic>-<name>.puml
-
-# 2. 在 pages/<topic>.html 里用 .plantuml 容器 (内嵌 data-uml)
-#    JS 会通过 plantuml-encoder 编码 + 公共服务器 SVG 渲染
-```
-
-### 操作 E: 修改全局样式
-
-⚠️ **当前所有 CSS 都内联在 HTML 里**, 修改时:
-- 修改 `templates/teaching-html-template.html` (空骨架)
-- 修改 `skills/examples/deadlock_reference.html` (示范例)
-- 必须**同时改两份**, 后续生成的新主题才会带最新样式
-
-未来 CSS/JS 拆分到 `styles/` `scripts/` 后, 改一处所有页面就生效。
-
-### 操作 F: 同步 skill 到仓库
-
-```bash
-# 修改后从全局 skill 同步到仓库 (用于版本化)
-cp -r ~/.claude/commands/teaching-html/* /d/Desktop/html2show/skills/
-cd /d/Desktop/html2show
-git add skills/
-git commit -m "chore(skills): sync from local"
-git push
-```
-
----
-
-## 🎨 现有可复用组件 (优先复用, 不要重写)
-
-下面所有组件**已经在模板里写好 CSS**, 直接拷贝 HTML 片段即可。
-
-### 📦 卡片组件 (`.card`)
-```html
-<div class="card">
-  <div class="card-label">EYEBROW · UPPERCASE</div>
-  <div class="card-h">主标题</div>
-  <div class="card-body">正文一句话描述</div>
-  <div class="card-meta">类比 ▸ 补充信息</div>
-</div>
-```
-
-### 📦 必要条件卡 (`.cond`) — 4 列横排, 适合"几个核心要点"
-```html
-<div class="cond-grid">      <!-- 4 列 -->
-  <div class="cond">
-    <div class="cond-num">01</div>
-    <div class="cond-name">名称</div>
-    <div class="cond-en">ENGLISH</div>
-    <div class="cond-desc">两行描述<br>简短直接</div>
-  </div>
-  <!-- 重复 4 次 -->
-</div>
-```
-
-### 📦 策略卡 (`.strat`) — 3 列, 适合"几大方案/分类"
-```html
-<div class="strat-grid">     <!-- 3 列 -->
-  <div class="strat">
-    <div class="strat-mark">A</div>
-    <div class="strat-name">方案名</div>
-    <div class="strat-en">English</div>
-    <div class="strat-tag">标签</div>
-    <ul class="strat-list">
-      <li>要点 1</li>
-      <li>要点 2 <span class="star">★</span></li>
-    </ul>
-  </div>
-</div>
-```
-
-### 📦 重点引用 (`.key-quote`) — 黑底白字 + 装饰大引号
-```html
-<div class="key-quote">
-  <div class="lab">重点</div>
-  <div class="text">
-    主张内容 <span class="em">易错关键(红)</span><br>
-    <span class="ok">正确做法(绿)</span>
-  </div>
-</div>
-```
-
-### 📦 易错警示 (`.pitfall`) — 红底, 列出错误说法 + 正确解释
-```html
-<div class="pitfall">
-  <div class="lab">Pitfall · 高频易错</div>
-  <div class="head">这些说法都是错的</div>
-  <ul>
-    <li>"<b>错误说法</b>" <span class="right">✓ 正确: 解释</span></li>
-  </ul>
-</div>
-```
-
-### 📦 记忆口诀 (`.mnemonic`) — 浅蓝底, 一行精华
-```html
-<div class="mnemonic">
-  <div class="lab">Mnemonic · 记忆口诀</div>
-  <div class="text">A + B + C + D</div>
-</div>
-```
-
-### 📦 考点速记 (`.exam-grid`) — 5 列小卡, 章节末尾用
-```html
-<div class="exam-grid">
-  <div class="exam-item">
-    <div class="exam-num">01</div>
-    <div class="exam-text">必背要点 <span class="star">★</span></div>
-  </div>
-</div>
-```
-
-### 📦 图表卡 (`.diagram-card`) + PlantUML
-```html
-<div class="diagram-card">
-  <div class="diagram-label">Diagram · 类型</div>
-  <div class="diagram-title">图表主标题</div>
-  <div class="plantuml" id="diagram-xxx" data-uml="
-@startuml
-... PlantUML 代码 (引号转义为 &quot;)
-@enduml
-  "></div>
-</div>
-```
-
-PPT 复用同一图表用 `<div class="plantuml-ref" data-ref="diagram-xxx"></div>` (但因当前已是 JS 自动派生, 通常无需手动复用)。
-
----
-
-## 📐 布局规范
-
-### 标准章节骨架 (一个 .section = 一张 PPT)
-```html
-<div class="section">
-  <div class="section-head">
-    <span class="section-num">01</span>            <!-- 等距字号编号 -->
-    <h2 class="section-title">章节中文标题</h2>
-    <span class="section-sub">English Subtitle</span>
-  </div>
-  <!-- 内容: card / cond-grid / strat-grid / key-quote / pitfall / mnemonic / exam-grid / diagram-card -->
-</div>
-```
-
-### 多列网格快捷类
-- `.grid-2` 1:1 两列
-- `.grid-3` 1:1:1 三列
-- `.grid-4` 四列 (条件类专用)
-- `.grid-5` 五列 (考点类专用)
-
-### Hero (页头)
-```html
-<div class="hero">
-  <div class="eyebrow">EYEBROW · UPPERCASE</div>
-  <h1>主题英文名</h1>
-  <div class="sub">中文副标题</div>
-</div>
-```
-
-### 章节顺序建议 (6 节最稳)
-1. **什么是 X** (定义 + 类比 + 经典示例)
-2. **核心概念/必要条件** (横向 4 卡)
-3. **策略/分类** (3 卡 + 对比)
-4. **核心算法/方法** (左右两栏)
-5. **辨析/对比 + 易错警示**
-6. **高频考点 + 一句话精华**
-
-但**不强制**, 创造性允许:
-- 标题创意自由 (可以写"为什么 X 重要")
-- 章节数 4-8 都行
-- 顺序可调
-- **唯一硬约束**: 用上面定义的 class, 不要新造样式
-
----
-
-## ⛔ 反例 (禁止做)
-
-❌ 不要给样式起新名字 (eg `.my-card`)
-❌ 不要在 HTML 里写 `style="..."` 内联样式 (除非临时 hack)
-❌ 不要直接把图片放 `pages/` 旁边
-❌ 不要用 emoji 当主装饰
-❌ 不要用 border (用 box-shadow)
-❌ 不要用渐变 (除背景圆点外)
-❌ 不要手写 PPT slide (会被自动派生覆盖)
-❌ 不要用 `--ink` 作为深色卡背景 (夜间模式会翻成白色 → 用 `--inverse-bg`)
-❌ 改完不同步 `html2show/skills/` (导致版本不一致)
-❌ **不要**完全照搬模板的章节数和组件布局 — 见下方 "🎨 创造性组合" 与 "🐛 已知坑位"
-
----
-
-## 🎨 创造性组合 (而非照搬模板)
-
-deadlock.html 是一个**示例**, 不是固定章节模板。为不同主题写新页时, **章节数与组件布局必须为内容服务**, 不能机械复制 6 节结构。
-
-| 主题类型 | 章节数 | 组件偏向 |
+| 用户说... | Archetype | 模板 |
 |---|---|---|
-| 概念定义型 (死锁/进程) | 5–6 节 | def-stack + cond-grid + 简单 algo-grid |
-| **算法型 (KMP/银行家/Dijkstra)** | **7+ 节** | **多用 step + ds-row + 完整 walkthrough trace** |
-| 对比辨析型 (HTTP vs HTTPS) | 4–5 节 | rag-grid + compare-row + pitfall |
-| 公式推导型 (页表计算) | 5–6 节 | def-stack + algo-grid + 公式 key-quote |
+| "解释 X / 这功能怎么工作" | A1 research-explainer | [archetype-research-explainer.html](../templates/archetype-research-explainer.html) |
+| "对比 A 和 B / 几种方式哪种好" | A2 concept-comparison | [archetype-concept-comparison.html](../templates/archetype-concept-comparison.html) |
+| "review 这个 PR / 看这段代码" | A3 code-review | [archetype-code-review.html](../templates/archetype-code-review.html) |
+| "写个 PR description" | A4 pr-writeup | [archetype-pr-writeup.html](../templates/archetype-pr-writeup.html) |
+| "规划怎么做 X / list milestones" | A5 implementation-plan | [archetype-implementation-plan.html](../templates/archetype-implementation-plan.html) |
+| "周报 / 这周做了什么 / status" | A6 status-report | [archetype-status-report.html](../templates/archetype-status-report.html) |
+| "复盘 / postmortem / 故障分析" | A7 incident-report | [archetype-incident-report.html](../templates/archetype-incident-report.html) |
+| "画一下流程 / 部署管线" | A8 flowchart-doc | [archetype-flowchart-doc.html](../templates/archetype-flowchart-doc.html) |
+| "设计 token / 色板 / 字号规范" | A9 design-reference | [archetype-design-reference.html](../templates/archetype-design-reference.html) |
+| "考研知识点 / 408 / 教学讲义" | A10 knowledge-map (含 PPT) | [archetype-knowledge-map.html](../templates/archetype-knowledge-map.html) |
 
-**KMP 案例**: 7 节结构（核心思想 / next 本质 / 手算示例 / 主算法 / nextval / 完整 trace / 考点），其中:
-- "手算示例" 用 `.def-stack` 套两个 card (Target + 9 行 ds-row trace)
-- "完整 trace" 用 7 个连续 step 演示一次匹配过程
-- 这些**结构**在 deadlock 里都没出现, 是为算法主题专门组合的
+详见 [templates/ARCHETYPES.md](../templates/ARCHETYPES.md)。
 
-**判断标准**: 章节切分应符合"一张幻灯片讲一个独立观点", 而不是"凑够 6 节"。算法主题通常需要"完整 walkthrough"作为独立章节。
+### Step 2 — 复制骨架到 pages/
+
+```bash
+cp templates/archetype-<X>.html pages/<topic>.html
+```
+
+骨架已带:
+- `<link rel="stylesheet" href="../styles/atoms.css">` (相对路径)
+- GitHub 头像 favicon
+- 占位 Hero + 章节 + 注释槽位
+
+### Step 3 — 填内容 (按需挑原子粘进去)
+
+按 [components/INDEX.md](../components/INDEX.md) 找原子, 复制 [_atoms/<name>.html](../components/_atoms/) 内的 HTML 片段粘到 section 内。
+
+**不要造新 class** — 缺组件就回 [styles/atoms.css](../styles/atoms.css) 加一个, 在 INDEX.md 登记, 再去用。
+
+### Step 4 — 本地预览
+
+```bash
+start pages/<topic>.html
+```
+
+检查:
+- [ ] hero / sections 全部填了占位
+- [ ] callout / pitfall / pull-quote 等强调块**至少有一个** (不然全是平铺正文太单调)
+- [ ] 切暗夜模式 (浏览器开发者工具加 `<body class="dark">`) 颜色都可读
+- [ ] 移动端 width 720px 时单栏布局正常
+
+### Step 5 — 提交 + 推送
+
+```bash
+git add pages/<topic>.html images/<topic>/
+git commit -m "feat(<topic>): add <archetype-name>"
+git push
+```
+
+GitHub Pages 自动部署 ~30s。
 
 ---
 
-## 🐛 已知坑位 (本节 = 实战教训档案)
+## 🎨 风格系统 · Anthropic Clay
 
-### 坑 1 · 章节 div 嵌套错位 → PPT 只生成几张幻灯片
-**症状**: 写完 7 节, PPT 模式只显示 4 张幻灯片; TOC 也对不上
-**根因**: 某个 `.section` 内部漏关 `</div>` (常见: card 套 def-stack 套 key-quote 时少一层关闭), 导致后续 section 被嵌套进前一个 section, `querySelectorAll('#flow-view .section')` 仍能找到, 但 `buildSlidesFromFlow` 处理时出错
-**预防**:
-- 每改完一个 section 立刻数 div 平衡: `awk '/<div /{n++}/<\/div>/{c++}END{print n,c}' file.html` (开闭差应为 0)
-- **每个 section 内只用一个主容器** (.def-stack / .algo-grid / .rag-grid 等), key-quote/pitfall/mnemonic 作为容器的兄弟节点
-- 不要在 .def-stack 内部嵌 .key-quote — 它应是 section 的直接子, 不是 grid 的子
-- 写多个并列 card 时**必须**包在 .def-stack 里, 别游离
+### Tokens (全部来自 [styles/atoms.css](../styles/atoms.css))
 
-### 坑 2 · PlantUML 状态图语法错误
-**症状**: 渲染出来是源码 + "Syntax Error? (Assumed diagram type: state)" 红字
-**踩过的写法**:
-```
-state q0 as "q0"          ❌ 别名顺序反了
-[*] -right-> q0           ❌ 状态图不支持带方向的虚线 .down.>
-q4 .down.> q2 : 失配      ❌ 同上
-skinparam state {         
-  StartColor #0071e3      ❌ state 块里没这个 key, 引发解析失败
-  EndColor #16a34a        ❌ 同上
-}
-```
-**正确写法**:
-```
-state "q0" as q0          ✅ 标签在前, 别名在后
-state "q1 : A" as q1
-[*] --> q0                ✅ 起始用 [*], 实线用 -->
-q4 ..> q2 : 失配 next=2   ✅ 虚线只能用 ..>, 不能加方向
-skinparam state {
-  BackgroundColor #FFFFFF
-  BorderColor #0071e3
-  FontColor #0071e3       ✅ 只用通用 key
-}
-```
-**或干脆**: 状态图/有向图用**内联 SVG** 替代 PlantUML, 更可控、无网络依赖、好调样式 (KMP 页就是这么做的)
+```css
+/* 6 个语义色 */
+--clay:   #D97757   /* 强调主色 — 标签/链接/章节编号 */
+--slate:  #141413   /* 主墨字 */
+--olive:  #788C5D   /* 成功 / done / 正向 */
+--rust:   #B04A3F   /* 警示 / 错误 / 差异 */
+--oat:    #E3DACC   /* 柔软分隔 */
+--ivory:  #FAF9F5   /* body 背景 */
 
-### 坑 3 · 标准章节是 6 节, 但算法主题需要更多
-**症状**: 强行塞进 6 节, 银行家/KMP 这种重头戏没空间展开 trace
-**预防**: 算法主题至少 7 节, 多出来的一节专门做 step-by-step walkthrough (用连续的 .step 元素列出每一步)
+/* 5 阶灰度 */
+--gray-100  #F0EEE6
+--gray-300  #D1CFC5   /* 标准描边 1.5px */
+--gray-500  #87867F   /* meta / caption */
+--gray-700  #3D3D3A   /* 正文备选 */
+--white     #FFFFFF   /* panel 底 */
 
-### 坑 4 · 游离 .card 与 grid 混用导致间距不齐
-**症状**: 同一 section 里, 上方是 standalone `<div class="card">`, 下方是 `<div class="rag-grid">`, 视觉上间距不匀
-**根因**: `.card` 自身没 margin, grid 也没 margin, 它们之间靠手动 inline `style="margin-bottom:24px"` 凑, 与其他 section 的 `gap:20px` 节奏不一致
-**预防**:
-- 同一 section 内多个 card 一律用 `.def-stack` 包 (gap:20px, 与所有其他 grid 一致)
-- 不要写 `<div class="card" style="margin-bottom:Xpx">` 手动堆叠
+/* 字体三体 */
+--serif:  ui-serif, Georgia        /* h1 / h2 / 大数字 */
+--sans:   system-ui                /* 正文 */
+--mono:   ui-monospace, SF Mono    /* code / label / badge */
+
+/* 圆角 */
+--r-sm 6px / --r-row 8px / --r-panel 12px
+```
+
+### 字号阶梯 (硬规范, 不要换)
+
+| 用途 | 字号 | 字体 |
+|---|---|---|
+| display (knowledge-map hero) | 48px | serif 500 |
+| h1 (普通 archetype) | 32–36px | serif 500 |
+| h2 (section) | 24px | serif 500 |
+| h3 (subsection) | 18px | serif 500 |
+| 正文 body | 15px | sans 1.65 |
+| 表格 / variant body | 14px | sans |
+| metric-label / caption | 12px | sans uppercase |
+| eyebrow / pill / label | 11px | mono UPPERCASE 0.08em |
+
+### 视觉规范 (做 / 不做)
+
+✅ **做**:
+- 描边一律 `1.5px solid var(--gray-300)` 或 `1px hairline`
+- 圆角 12px (panel) / 8px (row) / 6px (small) — 不要 4 / 16 / 22 等乱数
+- 强调用 **左侧 3-4px stripe** (clay) 而不是 box-shadow
+- pill 用 `border-radius: 999px`
+- inline code 用 gray-100 底 + 4px 圆角
+
+❌ **不做**:
+- 不要 emoji 当主装饰 (用 mono 编号 `01 02 03` 或 `★ ✓ ✗`)
+- 不要 box-shadow 做层级 (Clay 风用 hairline, 不堆阴影)
+- 不要渐变 (除非 body 噪点/圆点纹理)
+- 不要给样式起新名字 (`.my-card`) — 缺组件先加 atoms.css
+- 不要内联 `style="..."` 改字号 / 颜色 (走 token)
 
 ---
 
-## ✅ 检查清单 (新主题完成前过一遍)
+## 🎬 知识图 / 教学模式 · PPT / Export / PlantUML
 
-- [ ] `<title>` 改成主题名
-- [ ] Hero 三个字段都填了
-- [ ] **章节数为内容服务**, 不强行 6 节 (算法主题通常 7+)
-- [ ] 每个 section 至少一个组件 (card / grid / quote / pitfall)
-- [ ] **每个 section 内只有一个主容器** (.def-stack / .algo-grid / .rag-grid 等)
-- [ ] **div 平衡**: `awk '/<div /{n++}/<\/div>/{c++}END{print n,c}' file.html` 开闭相等
-- [ ] **没有游离 .card** 在 section 内部 (要么进 grid, 要么进 .def-stack)
-- [ ] PlantUML 图本地预览过, 无 "Syntax Error" 红字 (复杂状态图直接用内联 SVG)
-- [ ] 至少一个 `.key-quote` 重点引用
-- [ ] 至少一个 `.pitfall` 易错警示
-- [ ] 浏览器打开测试: 流式滚动通畅 / TOC 全部章节都列出 / PPT 模式 = (hero + 章节数) 张
-- [ ] 浏览器打开测试: 切日夜模式所有元素可读 / 导出 PNG 有左右留白
-- [ ] 提交 + 推送 + 同步 skills/
+⚠️ **仅适用 A10 knowledge-map archetype** — 其他 archetype 是参考型, 不带 PPT 模式。
 
----
-
-## 何时使用
-
-- 用户说："给我生成一个 X 的知识图 / 知识点总结 / 教学 HTML"
-- 用户给一个章节内容（如"死锁"、"TCP 三次握手"），希望以视觉化方式整理
-- 用户要做考研/课程的可视化讲义
-
-## 必备 CDN 库 (强制)
+### CDN 引入 (强制)
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -410,305 +199,16 @@ skinparam state {
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 ```
 
-- **html2canvas**: 高清 PNG 导出
-- **plantuml-encoder**: PlantUML 图表编码渲染
-- **lucide**: 极简线条图标库 (替代 inline SVG, 配合 Apple 风格)
+### ⭐⭐⭐ 视图复用核心架构
 
-### Lucide 图标使用
-```html
-<i data-lucide="moon" style="width:16px;height:16px;"></i>
-<i data-lucide="presentation"></i>
-<i data-lucide="image-down"></i>
-<i data-lucide="arrow-up"></i>
-<script>lucide.createIcons();</script>
-```
-常用图标: moon/sun (日夜)、arrow-up (回顶)、image-down (导出)、presentation (PPT)、chevron-left/right (翻页)。
-
----
-
-## 左侧浮动目录 (TOC) — 必备
-
-**自动从 #flow-view 的 section 提取标题, 生成左侧导航条, 点击跳转 + 滚动高亮**。
-JS 见 examples/deadlock_reference.html 中的 `buildTOC()`。
-
-CSS 关键约束 (避免标题挤成竖排):
-```css
-.toc { width: 220px; box-sizing: border-box; }     /* 必须固定宽度 */
-.toc a {
-  display: flex; align-items: center; gap: 10px;
-  white-space: nowrap; overflow: hidden;            /* 防换行/竖排 */
-}
-.toc .title {
-  flex: 1; min-width: 0;
-  white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis;
-  writing-mode: horizontal-tb;                      /* 强制横排 */
-}
-.toc a.active { background: var(--blue); color: #fff; }
-@media (max-width: 1380px) { .toc { display: none; } }
-```
-
-行为:
-- 点击 → `scrollIntoView({ behavior: 'smooth' })` 平滑跳转
-- 滚动 → IntersectionObserver 高亮当前 section
-- PPT 模式时自动隐藏 (enterPPT/exitPPT 包装)
-
----
-
-## 输出物
-
-**单一 HTML 文件**，包含：
-1. **流式视图**（默认）：从上往下滚动浏览
-2. **PPT 视图**（按钮触发）：全屏幻灯片模式，键盘可控
-3. **导出图片**（按钮触发）：流式视图 → 高清 PNG（html2canvas + 2x scale）
-4. **画图区**（按需）：使用 Mermaid.js 绘制流程图/关系图/状态图
-
-文件路径：用户指定 / 默认放当前项目的 `explain/images/<topic>_knowledge_map.html`
-
----
-
-## 设计风格规范（必须严格遵守）
-
-### 视觉哲学
-- **极简、教学、Apple + Karpathy geek 风**
-- 蓝白配色为主，红色专门留给"重点/易错"
-- **零 border、零渐变** — 用 box-shadow 制造层次
-- **网格点状背景** — radial-gradient 圆点
-- 大量留白，呼吸感
-
-### 配色（CSS 变量必须保留）
-
-```css
-:root {
-  --blue:    #0071e3;       /* 苹果蓝, 主色 */
-  --blue-2:  #0066cc;
-  --blue-soft: #e8f1ff;     /* 浅蓝底 */
-  --red:     #ff3b30;       /* 重点/易错专用 */
-  --red-soft: #fff1f0;
-  --ink:     #1d1d1f;       /* 主文字 */
-  --ink-2:   #424245;       /* 副文字 */
-  --ink-3:   #86868b;       /* 弱文字/标签 */
-  --line:    #e8e8ed;       /* 分隔线 */
-  --bg:      #fbfbfd;       /* 页面背景 */
-  --mono:    'SF Mono', 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
-}
-```
-
-### 字体栈
-```css
-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-             'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-```
-
-### 字号层级（教学风必须有强对比）
-- Hero h1: **88px** (PPT 模式 120px)
-- Section title: **36px** (PPT 模式 72px)
-- Card title: **22px** (PPT 模式 26-36px)
-- 副标题/标签: 11-13px 等距字体, 小写, letter-spacing
-- 正文: 15-16px (PPT 24px)
-- **重点引用**: 28px (PPT 44px)，深色卡片包裹
-
-### 颜色规则
-| 用途 | 颜色 | 何时使用 |
-|---|---|---|
-| 主色调 | `--blue` | 标签、链接、装饰、章节编号 |
-| 重点/易错 | `--red` | 易错警示框、`.em` 强调字 |
-| 强调框 | 深色背景 `--ink` | 重点引用 / 一句话精华 |
-| 通过/正确 | `#5dd4a1` 或 `#1a8a3a` | "✓ 正确"标识 |
-
-### 不要做的事
-- ❌ 不要加 border（用 shadow 区分层级）
-- ❌ 不要用渐变（除了 `body` 的圆点 background-image）
-- ❌ 不要塞满文字（每个 card 重点一句话）
-- ❌ 不要用 emoji 当图标（用等距字体的 `01 02 03` 或 `★ ✓ ✗`）
-
----
-
-## 画图规范（PlantUML · 学术风 · 必须遵守）
-
-⚠️ **不要用 Mermaid**，不要用 Excalidraw，**统一用 PlantUML** 渲染所有图表。
-原因：PlantUML 学术风更标准、形状语义更丰富、PPT 模式 display:none 不影响渲染（图片是异步加载的）。
-
-### CDN 引入（两个）
-```html
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
-```
-
-### 渲染原理
-- 把 PlantUML 源码放到 `data-uml` 属性（必须 HTML 转义引号 `&quot;` 和 `&gt;` `&lt;`）
-- JS 用 `plantumlEncoder.encode()` 编码后拼接 `https://www.plantuml.com/plantuml/svg/<编码>` URL
-- 创建 `<img>` 加载 SVG → 替换容器内容
-
-### 图表容器样式
-```css
-.diagram-card {
-  background: white;
-  border-radius: 18px;
-  padding: 40px 32px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
-  text-align: center;
-}
-.diagram-label {
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--blue); margin-bottom: 8px;
-}
-.diagram-title {
-  font-size: 18px; font-weight: 700;
-  color: var(--ink); margin-bottom: 24px; letter-spacing: -0.3px;
-}
-.plantuml {
-  display: flex; justify-content: center; align-items: center;
-  min-height: 200px;
-}
-.plantuml img { max-width: 100%; height: auto; display: block; }
-.plantuml.loading::before {
-  content: '加载图表中...';
-  color: var(--ink-3);
-  font-family: var(--mono);
-  font-size: 13px;
-}
-```
-
-### 标准用法
-```html
-<div class="diagram-card">
-  <div class="diagram-label">Diagram · 副标题</div>
-  <div class="diagram-title">图表主标题</div>
-  <div class="plantuml" id="diagram-xxx" data-uml="
-@startuml
-... PlantUML 代码 (引号必须转义为 &quot;)
-@enduml
-  "></div>
-</div>
-```
-
-### 必备渲染 JS
-```javascript
-const PLANTUML_SERVER = 'https://www.plantuml.com/plantuml/svg/';
-function renderPlantUML(el) {
-  if (el.dataset.rendered === 'true') return;
-  const uml = (el.dataset.uml || '').trim();
-  if (!uml || !window.plantumlEncoder) return;
-  el.classList.add('loading');
-  const encoded = plantumlEncoder.encode(uml);
-  const img = document.createElement('img');
-  img.src = PLANTUML_SERVER + encoded;
-  img.onload = () => {
-    el.classList.remove('loading');
-    el.innerHTML = '';
-    el.appendChild(img);
-    el.dataset.rendered = 'true';
-  };
-}
-function renderAllPlantUML(scope) {
-  (scope || document).querySelectorAll('.plantuml[data-uml]').forEach(renderPlantUML);
-}
-// 启动
-if (document.readyState === 'loading')
-  document.addEventListener('DOMContentLoaded', () => renderAllPlantUML());
-else renderAllPlantUML();
-```
-
-### 学术风 skinparam 模板（必须保留这套主题）
-所有 PlantUML 图都要带这段开头的 skinparam：
-
-```plantuml
-@startuml
-skinparam backgroundColor #FFFFFF
-skinparam defaultFontName 'Microsoft YaHei'
-skinparam defaultFontSize 14
-skinparam shadowing false
-skinparam roundCorner 8
-skinparam padding 6
-skinparam ArrowThickness 1.4
-skinparam ArrowColor #424245
-skinparam ArrowFontColor #1d1d1f
-skinparam ArrowFontSize 13
-
-' 进程/主体: 蓝色圆形 (语义=主动方)
-skinparam circle {
-  BackgroundColor #FFFFFF
-  BorderColor #0071e3
-  BorderThickness 2
-  FontColor #0071e3
-  FontStyle bold
-}
-' 资源/对象: 黑边方框 (语义=被动方)
-skinparam rectangle {
-  BackgroundColor #FFFFFF
-  BorderColor #1d1d1f
-  BorderThickness 1.5
-  FontColor #1d1d1f
-}
-' 决策/状态: 黄色菱形
-skinparam state {
-  BackgroundColor #fffbeb
-  BorderColor #d97706
-  FontColor #92400e
-}
-' 强调/错误: 红色
-skinparam node {
-  BackgroundColor #fff1f0
-  BorderColor #ff3b30
-  FontColor #ff3b30
-}
-@enduml
-```
-
-### 形状语义约定（按教学语义选）
-
-| 语义 | PlantUML 形状 | 配色 |
-|---|---|---|
-| **进程 / 主体 / 用户** | `circle "P1" as P1` | 蓝色边 (主动方) |
-| **资源 / 数据 / 对象** | `rectangle "数据" as D` | 黑色边 (被动方) |
-| **状态 / 决策点** | `state "等待" as W` | 黄色边 |
-| **错误 / 异常 / 阻塞** | `node "Error" as E` | 红色边 |
-| **数据库 / 存储** | `database "DB" as DB` | 灰色 |
-| **云 / 外部服务** | `cloud "API" as API` | 浅蓝 |
-| **角色 / 用户** | `actor "User" as U` | 黑色 |
-| **包 / 模块** | `package "模块名" {...}` | 圆角框 |
-| **组件** | `component "Auth"` | 立体方块 |
-
-### 推荐图表类型（按教学场景）
-
-| 场景 | PlantUML 类型 | 关键语法 |
-|---|---|---|
-| 关系/资源分配 | object diagram | `circle/rectangle + 箭头` |
-| 算法流程 | activity diagram | `start/:动作;/if/end` |
-| 状态变化 | state diagram | `[*] --> S1 --> S2` |
-| 时序/通信 | sequence diagram | `A -> B: msg` |
-| 类/数据结构 | class diagram | `class A {...}` |
-| 部署/架构 | deployment diagram | `node/database/cloud` |
-
-### 写 PlantUML 的硬要求
-1. **必须放在 `data-uml` 属性内**, 引号转义为 `&quot;`, `<` `>` 转义为 `&lt;` `&gt;`
-2. **每个图必须给 id**: `<div class="plantuml" id="diagram-xxx" ...>`，方便 PPT 复用
-3. **必须包含完整 skinparam**（见上面学术风模板）
-4. **节点用 as 别名**: `circle "中文名" as P1` 避免编码问题
-5. **箭头明确方向**: `-right->` `-down->` `-up->` `-left->` 控制布局
-
-**画图原则**：
-1. 一张图只表达一个核心观点
-2. 节点不超过 8 个
-3. 必须有标题 (`.diagram-title`)
-4. 关键关系/数字直接标在线上 (`-->|文字|`)
-5. 抽象概念图优先于纯文字描述
-
-### ⭐⭐⭐ 视图复用核心架构（最重要规则）
-
-**禁止两套独立维护的内容**。整个 HTML **只有一份内容源**：`#flow-view` 里的 hero + sections。
-PPT slides **必须由 JS 在运行时从 flow-view 自动克隆派生**。
+**禁止两套独立维护的内容**。整个 HTML **只有一份内容源**: `#flow-view` 里的 hero + sections。PPT slides **必须由 JS 在运行时从 flow-view 自动克隆派生**。
 
 **原因**: 用户曾因维护两份内容而极度不满 — "改一个另一个也要改太烦"。
 
 **强制实现**:
 1. PPT 视图的 `<div id="ppt-stage">` 在 HTML 里 **保持空** (没有任何 `<div class="slide">` 子元素)
-2. 用 JS `buildSlidesFromFlow()` 函数在启动时遍历 `#flow-view .hero` 和所有 `#flow-view .section`, 用 `cloneNode(true)` 克隆并包到 `<div class="slide">` 里, append 到 ppt-stage
-3. 每次进入 PPT 模式时调用 `reinitPPT()` 重新派生 (保证 flow 改了能即时同步)
-
-**结果**: 改 flow-view 内容 → PPT 自动同步, 改 CSS class 样式 → 两边都生效
+2. 用 JS `buildSlidesFromFlow()` 在启动时遍历 `#flow-view .hero` 和所有 `#flow-view .section`, 用 `cloneNode(true)` 克隆并包到 `<div class="slide">` 里, append 到 ppt-stage
+3. 每次进入 PPT 模式时调用 `reinitPPT()` 重新派生
 
 ```javascript
 function buildSlidesFromFlow() {
@@ -729,720 +229,211 @@ function buildSlidesFromFlow() {
 }
 ```
 
-### ⭐ 双视图必须复用图表（强制规则）
+### PPT 控制逻辑
 
-**任何在流式视图里出现的 Mermaid 图表，必须在 PPT 视图里也有对应幻灯片**。
-**反之亦然 —— 不要让 PPT 缺图**。
+```javascript
+const pptBtn  = document.getElementById('ppt-btn');
+const flow    = document.getElementById('flow-view');
+const overlay = document.getElementById('ppt-view');
+const stage   = document.getElementById('ppt-stage');
+let cur = 0, slides = [];
 
-#### PPT 模式专用图表样式
-```css
-/* 加到 .slide 内部样式区 */
-.slide .s-diagram-wrap {
-  margin-top: 40px;
-  background: white;
-  border-radius: 24px;
-  padding: 48px 40px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
-  text-align: center;
+function enterPPT() {
+  buildSlidesFromFlow();
+  slides = document.querySelectorAll('.slide');
+  document.getElementById('ppt-total').textContent = slides.length;
+  overlay.classList.add('active');
+  flow.style.display = 'none';
+  document.body.style.overflow = 'hidden';
+  showSlide(0);
 }
-.slide .s-diagram-wrap .lab {
-  font-family: var(--mono); font-size: 12px; color: var(--blue);
-  font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-  margin-bottom: 12px;
+function exitPPT() {
+  overlay.classList.remove('active');
+  flow.style.display = '';
+  document.body.style.overflow = '';
 }
-.slide .s-diagram-wrap .title {
-  font-size: 22px; font-weight: 700; color: var(--ink);
-  margin-bottom: 32px; letter-spacing: -0.3px;
+function showSlide(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+  document.getElementById('ppt-cur').textContent = cur + 1;
+  document.getElementById('ppt-progress').style.width = ((cur + 1) / slides.length * 100) + '%';
 }
-.slide .s-diagram-wrap .mermaid {
-  transform: scale(1.4);
-  transform-origin: center;
-  margin: 40px 0;
-}
+pptBtn.addEventListener('click', enterPPT);
+document.getElementById('ppt-exit').addEventListener('click', exitPPT);
+document.addEventListener('keydown', e => {
+  if (!overlay.classList.contains('active')) return;
+  if (e.key === 'Escape') exitPPT();
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); showSlide(cur + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); showSlide(cur - 1); }
+});
 ```
 
-#### PPT 中放图表的标准结构
-```html
-<div class="slide">
-  <div class="s-eyebrow">01 — Visualization</div>
-  <h2>图表标题</h2>
-  <div class="s-diagram-wrap">
-    <div class="lab">Diagram · 副标题</div>
-    <div class="title">说明这张图在表达什么</div>
-    <div class="mermaid">
-      <!-- 完整复制流式视图里同一个 Mermaid 代码 -->
-graph LR
-    A((节点1)) --> B[节点2]
-    </div>
-  </div>
-</div>
-```
+### html2canvas 导出 PNG
 
-#### 跨视图复用的工作流程
-```
-1. 在流式视图的 .diagram-card 里写一次 Mermaid
-2. 完整复制 Mermaid 代码到 PPT 的 .s-diagram-wrap > .mermaid 里
-3. PPT 里给图加更大的标题和副标题(因为屏幕大)
-4. Mermaid 在初始化时会自动渲染所有 .mermaid 元素 —— 不要担心 display:none
-```
-
-#### 反例 (不要做)
-- ❌ 流式视图有图但 PPT 没图 —— 用户切到 PPT 模式时会困惑"图哪去了"
-- ❌ PPT 里直接 `<img>` 引用流式视图的图 —— 图无法独立缩放
-- ❌ 用 iframe 嵌入 —— 渲染问题多
-- ❌ 不加 `transform: scale(1.4)` —— PPT 屏幕大，图太小看不清
-
----
-
-## 导出图片规范（html2canvas · 必须遵守）
-
-### CDN 引入
-```html
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-```
-
-### 导出函数核心要求 ⭐
-**导出时必须创建带左右留白的临时容器**，不要直接截 `#flow-view`：
+**必须创建带左右留白的临时容器**, 不要直接截 `#flow-view`:
 
 ```javascript
 async function exportToPNG() {
-  if (pptMode) { alert('请先退出 PPT 模式再导出'); return; }
-
-  exportBtn.disabled = true;
-  exportLoading.style.display = 'flex';
-  const topActions = document.querySelector('.top-actions');
-  topActions.style.display = 'none';
-
-  // ★ 关键: 创建临时导出容器, 加足留白
-  const flowView = document.getElementById('flow-view');
-  const exportWrapper = document.createElement('div');
-  exportWrapper.style.cssText = `
-    position: absolute;
-    top: -99999px; left: -99999px;
-    background: #fbfbfd;
-    background-image: radial-gradient(circle, #d2d2d7 1px, transparent 1px);
+  if (overlay.classList.contains('active')) {
+    alert('请先退出 PPT 模式再导出'); return;
+  }
+  document.querySelector('.top-actions').style.display = 'none';
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `
+    position: absolute; top: -99999px; left: -99999px;
+    background: var(--ivory);
+    background-image: radial-gradient(circle, var(--dot, #E3DACC) 1px, transparent 1px);
     background-size: 24px 24px;
-    padding: 80px 64px 100px 64px;     /* ⭐ 必须有左右 64px 内边距 */
-    width: 1208px;                     /* ⭐ 1080 + 64*2 */
+    padding: 80px 64px 100px;   /* ⭐ 左右 64px 必须 */
+    width: 1208px;              /* ⭐ 1080 + 64*2 */
     box-sizing: border-box;
   `;
   const inner = document.createElement('div');
   inner.style.cssText = 'max-width: 1080px; margin: 0 auto;';
-  inner.innerHTML = flowView.innerHTML;
-  exportWrapper.appendChild(inner);
-  document.body.appendChild(exportWrapper);
-
+  inner.innerHTML = flow.innerHTML;
+  wrapper.appendChild(inner);
+  document.body.appendChild(wrapper);
   try {
-    await new Promise(r => setTimeout(r, 200));   // 等渲染
-    const canvas = await html2canvas(exportWrapper, {
-      scale: 2,                                    // ⭐ 高清 2x
+    await new Promise(r => setTimeout(r, 200));
+    const canvas = await html2canvas(wrapper, {
+      scale: 2,                  /* ⭐ 高清 2x */
       useCORS: true,
-      backgroundColor: '#fbfbfd',
-      width: exportWrapper.offsetWidth,
-      height: exportWrapper.scrollHeight,
-      windowWidth: exportWrapper.offsetWidth,
-      windowHeight: exportWrapper.scrollHeight,
+      backgroundColor: '#FAF9F5',
+      width: wrapper.offsetWidth,
+      height: wrapper.scrollHeight,
+      windowWidth: wrapper.offsetWidth,
+      windowHeight: wrapper.scrollHeight,
       logging: false,
       imageTimeout: 0
     });
-    // ...生成下载...
+    const link = document.createElement('a');
+    link.download = document.title + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
   } finally {
-    if (exportWrapper.parentNode) exportWrapper.parentNode.removeChild(exportWrapper);
-    topActions.style.display = '';
-    exportBtn.disabled = false;
+    wrapper.remove();
+    document.querySelector('.top-actions').style.display = '';
   }
 }
 ```
 
-### 导出留白硬规范
-- **左右内边距**: **64px**（必须）
-- **顶部内边距**: **80px**
-- **底部内边距**: **100px**
-- **容器宽度**: **1208px** (= 1080 + 64×2)
-- **scale**: **2** (高清 2x 像素)
-- **backgroundColor**: `#fbfbfd` (与页面一致)
-- **背景**: 必须包含网格点状背景（与页面一致）
+**留白硬规范**:
+- 左右内边距: **64px**
+- 顶部内边距: **80px**
+- 底部内边距: **100px**
+- 容器宽度: **1208px**
+- scale: **2**
 
-### 反例 (不要做)
-❌ 直接 `html2canvas(document.getElementById('flow-view'), ...)` —— 会贴边
-❌ 用 `body` 截 —— 会包含按钮
-❌ scale: 1 —— 不够清晰
-❌ 忘记隐藏 `.top-actions` —— 按钮出现在图片里
-
-### 顶部按钮组结构
-```html
-<div class="top-actions">
-  <button class="top-btn export" id="export-btn">
-    <span class="icon"></span>导出图片
-  </button>
-  <button class="top-btn" id="ppt-btn">
-    <span class="icon"></span>PPT 模式
-  </button>
-</div>
-```
-
----
-
-## HTML 结构模板
-
-### 整体骨架
-
-```html
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <title>主题名 · Knowledge Map</title>
-  <style>/* 完整 CSS, 见下方 */</style>
-</head>
-<body>
-  <!-- 模式切换按钮(右上角悬浮) -->
-  <button class="mode-toggle" id="ppt-btn">
-    <span class="icon"></span> PPT 模式
-  </button>
-
-  <!-- 流式视图 -->
-  <div class="page" id="flow-view">
-    <div class="hero">...</div>
-    <div class="section">...</div>  <!-- 重复 N 个 -->
-  </div>
-
-  <!-- PPT 视图(默认 hidden) -->
-  <div class="ppt-overlay" id="ppt-view">
-    <div class="ppt-stage" id="ppt-stage">
-      <div class="slide active">...</div>
-      <div class="slide">...</div>
-      <!-- 重复 N 张 -->
-    </div>
-    <div class="ppt-bar">
-      <div class="info"><span id="ppt-cur">1</span> / <span id="ppt-total">N</span></div>
-      <div class="progress"><div class="fill" id="ppt-progress"></div></div>
-      <div class="nav">
-        <button id="ppt-prev">‹</button>
-        <button id="ppt-next">›</button>
-      </div>
-      <button class="btn" id="ppt-exit">ESC 退出</button>
-    </div>
-  </div>
-
-  <div class="ppt-tip" id="ppt-tip"></div>
-
-  <script>/* PPT 切换逻辑, 见下方 */</script>
-</body>
-</html>
-```
-
-### 章节结构(每个 section)
-
-```html
-<div class="section">
-  <div class="section-head">
-    <span class="section-num">01</span>           <!-- 等距字体编号 -->
-    <h2 class="section-title">章节标题</h2>
-    <span class="section-sub">English Subtitle</span>
-  </div>
-  <!-- 章节内容: card / grid / quote / pitfall -->
-</div>
-```
-
-### 关键内容块(按需组合)
-
-#### 1. 普通 Card
-```html
-<div class="card">
-  <div class="card-label">LABEL</div>           <!-- eyebrow text -->
-  <div class="card-h">主标题</div>
-  <div class="card-body">正文描述</div>
-  <div class="card-meta">类比 ▸ 补充信息</div>   <!-- 灰色辅助 -->
-</div>
-```
-
-#### 2. 多列并排(grid)
-```html
-<div class="cond-grid">    <!-- 4 列 -->
-  <div class="cond">
-    <div class="cond-num">01</div>
-    <div class="cond-name">名称</div>
-    <div class="cond-en">ENGLISH</div>
-    <div class="cond-desc">描述<br>多行</div>
-  </div>
-  <!-- 重复 -->
-</div>
-```
-
-#### 3. 重点引用(深色卡片)⭐
-```html
-<div class="key-quote">
-  <div class="lab">重点</div>
-  <div class="text">
-    主要论点 <span class="em">易错关键词(红)</span><br>
-    <span class="ok">正确做法(绿)</span>
-  </div>
-</div>
-```
-
-#### 4. 易错警示框(红色)⭐
-```html
-<div class="pitfall">
-  <div class="lab">Pitfall · 高频易错</div>
-  <div class="head">这些说法都是 错的</div>
-  <ul>
-    <li>"<b>错误说法</b>" <span class="right">✓ 正确: 解释</span></li>
-  </ul>
-</div>
-```
-
-#### 5. 记忆口诀
-```html
-<div class="mnemonic">
-  <div class="lab">Mnemonic · 记忆口诀</div>
-  <div class="text">A + B + C + D</div>
-</div>
-```
-
----
-
-## 完整 CSS 模板
-
-⚠️ **必须使用以下完整 CSS**，不要简化或修改基础结构：
-
-```css
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-size: 16px; }
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-               'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  color: var(--ink);
-  background-color: var(--bg);
-  background-image: radial-gradient(circle, #d2d2d7 1px, transparent 1px);
-  background-size: 24px 24px;
-  line-height: 1.6;
-  padding: 80px 24px 120px;
-  -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.01em;
-}
-.page { max-width: 1080px; margin: 0 auto; }
-
-/* 模式切换按钮 */
-.mode-toggle {
-  position: fixed; top: 24px; right: 24px; z-index: 1000;
-  background: var(--ink); color: white;
-  padding: 12px 20px; border-radius: 999px;
-  font-family: var(--mono); font-size: 13px; font-weight: 600;
-  cursor: pointer; user-select: none; border: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s, background 0.2s;
-  display: flex; align-items: center; gap: 8px;
-}
-.mode-toggle:hover { transform: translateY(-1px); background: var(--blue); }
-.mode-toggle .icon { width: 14px; height: 14px; background: var(--blue); border-radius: 3px; }
-.mode-toggle:hover .icon { background: white; }
-
-/* Hero */
-.hero { text-align: center; margin-bottom: 96px; padding: 48px 0; }
-.hero .eyebrow {
-  color: var(--blue); font-size: 13px; font-weight: 600;
-  letter-spacing: 2px; text-transform: uppercase;
-  margin-bottom: 24px; font-family: var(--mono);
-}
-.hero h1 {
-  font-size: 88px; font-weight: 700; letter-spacing: -3px;
-  color: var(--ink); line-height: 1; margin-bottom: 20px;
-}
-.hero .sub { color: var(--ink-3); font-size: 20px; font-weight: 400; }
-
-/* Section */
-.section { margin-bottom: 80px; }
-.section-head {
-  display: flex; align-items: baseline; gap: 20px; margin-bottom: 36px;
-}
-.section-num {
-  font-family: var(--mono); font-size: 14px; font-weight: 600;
-  color: var(--blue); letter-spacing: 1px;
-}
-.section-title {
-  font-size: 36px; font-weight: 700;
-  color: var(--ink); letter-spacing: -1px;
-}
-.section-sub {
-  color: var(--ink-3); font-size: 14px;
-  margin-left: auto; font-family: var(--mono);
-}
-
-/* Card */
-.card {
-  background: white; border-radius: 18px; padding: 32px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 16px 36px rgba(0,0,0,0.06);
-}
-.card-label {
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--blue); margin-bottom: 12px;
-}
-.card-h {
-  font-size: 22px; font-weight: 700; color: var(--ink);
-  margin-bottom: 12px; letter-spacing: -0.5px;
-}
-.card-body { color: var(--ink-2); font-size: 16px; line-height: 1.7; }
-.card-meta { color: var(--ink-3); font-size: 14px; margin-top: 12px; font-family: var(--mono); }
-
-/* 重点引用(深色卡片) */
-.key-quote {
-  margin: 24px 0; padding: 36px 44px;
-  background: var(--ink); color: white;
-  border-radius: 22px; text-align: center;
-}
-.key-quote .lab {
-  font-family: var(--mono); font-size: 11px; color: var(--blue);
-  font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-  margin-bottom: 16px;
-}
-.key-quote .text { font-size: 28px; font-weight: 700; line-height: 1.5; letter-spacing: -0.5px; }
-.key-quote .text .em { color: #ff6b6b; }
-.key-quote .text .ok { color: #5dd4a1; }
-
-/* 易错红色框 */
-.pitfall { background: var(--red-soft); border-radius: 16px; padding: 28px 32px; margin: 24px 0; }
-.pitfall .lab {
-  font-family: var(--mono); font-size: 11px; color: var(--red);
-  font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
-}
-.pitfall .head { font-size: 22px; font-weight: 700; color: var(--red); margin-bottom: 14px; letter-spacing: -0.5px; }
-.pitfall ul { list-style: none; padding: 0; }
-.pitfall li {
-  color: var(--ink); font-size: 16px; line-height: 1.9;
-  padding: 4px 0; display: flex; align-items: baseline; gap: 10px;
-}
-.pitfall li::before { content: '✗'; color: var(--red); font-weight: 700; }
-.pitfall li b { color: var(--red); font-weight: 700; }
-.pitfall li .right { color: #5dd4a1; font-weight: 600; margin-left: 8px; }
-
-/* 记忆口诀 */
-.mnemonic {
-  margin-top: 32px; padding: 28px 36px;
-  background: var(--blue-soft); border-radius: 18px; text-align: center;
-}
-.mnemonic .lab {
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 1.5px; color: var(--blue-2);
-  text-transform: uppercase; margin-bottom: 10px;
-}
-.mnemonic .text { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: 0.5px; }
-
-/* 多列网格(常用) */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-
-/* PPT 模式 */
-.ppt-overlay {
-  position: fixed; inset: 0;
-  background: var(--bg);
-  background-image: radial-gradient(circle, #d2d2d7 1px, transparent 1px);
-  background-size: 32px 32px;
-  z-index: 9999; display: none; flex-direction: column;
-}
-.ppt-overlay.active { display: flex; }
-.ppt-stage {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 60px 80px; overflow: hidden;
-}
-.slide { width: 100%; max-width: 1100px; display: none; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.slide.active { display: block; }
-@keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.slide .s-eyebrow {
-  font-family: var(--mono); font-size: 14px; color: var(--blue);
-  font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-  margin-bottom: 24px;
-}
-.slide h2 {
-  font-size: 72px; font-weight: 700; color: var(--ink);
-  letter-spacing: -2px; line-height: 1.05; margin-bottom: 36px;
-}
-.slide .s-sub { font-size: 28px; color: var(--ink-3); font-weight: 400; }
-.slide .s-body { font-size: 24px; color: var(--ink-2); line-height: 1.6; margin-top: 36px; }
-.slide .s-body .em { color: var(--red); font-weight: 700; }
-.slide .s-body .blue { color: var(--blue); font-weight: 700; }
-.slide .s-quote {
-  background: var(--ink); color: white; border-radius: 24px;
-  padding: 64px 80px; text-align: center; margin-top: 48px;
-}
-.slide .s-quote .lab {
-  font-family: var(--mono); font-size: 14px; color: var(--blue);
-  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;
-}
-.slide .s-quote .txt { font-size: 44px; font-weight: 700; line-height: 1.4; letter-spacing: -1px; }
-.slide .s-quote .txt .em { color: #ff6b6b; }
-
-/* PPT 控制条 */
-.ppt-bar {
-  height: 64px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px; background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-}
-.ppt-bar .progress {
-  flex: 1; height: 4px; background: var(--line);
-  border-radius: 2px; margin: 0 24px; overflow: hidden;
-}
-.ppt-bar .progress .fill {
-  height: 100%; background: var(--blue);
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.ppt-bar .info { font-family: var(--mono); font-size: 13px; color: var(--ink-3); min-width: 100px; }
-.ppt-bar .info .cur { color: var(--ink); font-weight: 700; }
-.ppt-bar .btn {
-  background: var(--ink); color: white; padding: 10px 18px;
-  border-radius: 999px; font-family: var(--mono); font-size: 12px;
-  font-weight: 600; cursor: pointer; border: none; transition: background 0.2s;
-}
-.ppt-bar .btn:hover { background: var(--blue); }
-.ppt-bar .nav { display: flex; gap: 8px; }
-.ppt-bar .nav button {
-  width: 36px; height: 36px; border-radius: 50%; border: none;
-  background: var(--blue-soft); color: var(--blue);
-  font-size: 18px; cursor: pointer; transition: all 0.2s;
-}
-.ppt-bar .nav button:hover { background: var(--blue); color: white; }
-.ppt-bar .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.ppt-tip {
-  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-  background: var(--ink); color: white;
-  padding: 12px 20px; border-radius: 999px;
-  font-family: var(--mono); font-size: 12px;
-  z-index: 10000; opacity: 0; transition: opacity 0.4s; pointer-events: none;
-}
-.ppt-tip.show { opacity: 1; }
-
-/* 响应式 */
-@media (max-width: 900px) {
-  .hero h1 { font-size: 56px; letter-spacing: -2px; }
-  .section-title { font-size: 28px; }
-  .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
-  body { padding: 40px 16px 80px; }
-  .key-quote .text { font-size: 20px; }
-  .slide h2 { font-size: 40px; }
-}
-```
-
----
-
-## 必备 JavaScript（PPT 控制）
-
-⚠️ **完整复制以下 JS，不要修改逻辑**：
+### PlantUML 渲染
 
 ```javascript
-const pptBtn = document.getElementById('ppt-btn');
-const flowView = document.getElementById('flow-view');
-const pptView = document.getElementById('ppt-view');
-const slides = document.querySelectorAll('.slide');
-const totalSlides = slides.length;
-const pptCur = document.getElementById('ppt-cur');
-const pptTotal = document.getElementById('ppt-total');
-const pptProgress = document.getElementById('ppt-progress');
-const pptPrev = document.getElementById('ppt-prev');
-const pptNext = document.getElementById('ppt-next');
-const pptExit = document.getElementById('ppt-exit');
-const pptTip = document.getElementById('ppt-tip');
-const pptStage = document.getElementById('ppt-stage');
-
-let currentSlide = 0;
-let pptMode = false;
-pptTotal.textContent = totalSlides;
-
-function showTip(msg) {
-  pptTip.textContent = msg;
-  pptTip.classList.add('show');
-  clearTimeout(pptTip._timer);
-  pptTip._timer = setTimeout(() => pptTip.classList.remove('show'), 1500);
+const PLANTUML_SERVER = 'https://www.plantuml.com/plantuml/svg/';
+function renderPlantUML(el) {
+  if (el.dataset.rendered === 'true') return;
+  const uml = (el.dataset.uml || '').trim();
+  if (!uml || !window.plantumlEncoder) return;
+  el.classList.add('loading');
+  const encoded = plantumlEncoder.encode(uml);
+  const img = document.createElement('img');
+  img.src = PLANTUML_SERVER + encoded;
+  img.onload = () => {
+    el.classList.remove('loading');
+    el.innerHTML = '';
+    el.appendChild(img);
+    el.dataset.rendered = 'true';
+  };
 }
-function enterPPT() {
-  pptMode = true;
-  pptView.classList.add('active');
-  flowView.style.display = 'none';
-  document.body.style.overflow = 'hidden';
-  showSlide(0);
-  showTip('SPACE / ← → 翻页  ·  ESC 退出');
+function renderAllPlantUML() {
+  document.querySelectorAll('.plantuml[data-uml]').forEach(renderPlantUML);
 }
-function exitPPT() {
-  pptMode = false;
-  pptView.classList.remove('active');
-  flowView.style.display = '';
-  document.body.style.overflow = '';
-}
-function showSlide(idx) {
-  if (idx < 0) idx = 0;
-  if (idx >= totalSlides) idx = totalSlides - 1;
-  currentSlide = idx;
-  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
-  pptCur.textContent = idx + 1;
-  pptProgress.style.width = ((idx + 1) / totalSlides * 100) + '%';
-  pptPrev.disabled = (idx === 0);
-  pptNext.disabled = (idx === totalSlides - 1);
-}
-function nextSlide() { showSlide(currentSlide + 1); }
-function prevSlide() { showSlide(currentSlide - 1); }
-pptBtn.addEventListener('click', enterPPT);
-pptExit.addEventListener('click', exitPPT);
-pptPrev.addEventListener('click', prevSlide);
-pptNext.addEventListener('click', nextSlide);
-pptStage.addEventListener('click', (e) => {
-  if (!pptMode) return;
-  if (e.target === pptStage || e.target.classList.contains('slide')) nextSlide();
-});
-document.addEventListener('keydown', (e) => {
-  if (!pptMode) return;
-  switch (e.key) {
-    case 'Escape': exitPPT(); break;
-    case 'ArrowRight':
-    case ' ':
-    case 'PageDown': e.preventDefault(); nextSlide(); break;
-    case 'ArrowLeft':
-    case 'PageUp': e.preventDefault(); prevSlide(); break;
-    case 'Home': showSlide(0); break;
-    case 'End': showSlide(totalSlides - 1); break;
-  }
-});
+document.addEventListener('DOMContentLoaded', renderAllPlantUML);
 ```
+
+**学术风 skinparam 模板** (每个 PlantUML 图都带):
+```plantuml
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName 'Microsoft YaHei'
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ArrowColor #424245
+' 进程/主体: 蓝边圆
+skinparam circle { BorderColor #D97757 BorderThickness 2 FontColor #D97757 FontStyle bold }
+' 资源/对象: 黑边方框
+skinparam rectangle { BorderColor #141413 BorderThickness 1.5 FontColor #141413 }
+@enduml
+```
+
+**形状语义约定**:
+- `circle "P1" as P1` — 进程/主体 (clay 边)
+- `rectangle "数据" as D` — 资源/对象 (slate 边)
+- `state "等待" as W` — 决策/状态 (yellow 边)
+- `node "Error" as E` — 错误/异常 (rust 边)
+
+**注**: 简单流程图优先用 [_atoms/flowchart-svg.html](../components/_atoms/flowchart-svg.html) 内联 SVG, 离线可用、无网络依赖。PlantUML 只在 A10 knowledge-map 历史兼容保留。
 
 ---
 
-## 内容生成原则（教学风必须遵守）
+## 📐 编辑铁律
 
-### 1. 章节结构（推荐 6 段）
-```
-01  什么是 X (定义 + 类比)
-02  关键概念/必要条件 (横向多卡)
-03  核心策略/分类 (3-4 卡片)
-04  核心算法/方法 (左右两栏)
-05  辨析/对比 (易错强调)
-06  考点 + 一句话精华
-```
-
-### 2. 每张 PPT 一个核心点
-- 标题页 + 每章节 2-3 张 PPT
-- 总数控制在 **10-15 张**
-- 不要塞满文字，每张突出一个论点
-
-### 3. 重点/易错的标识规则
-| 内容类型 | 用什么 | 颜色 |
-|---|---|---|
-| 一般定义 | `.card` | 默认 |
-| 关键论点 | `.key-quote` (深色卡) | `.em`(红) / `.ok`(绿) |
-| 易错警示 | `.pitfall` (红底) | 红 |
-| 记忆口诀 | `.mnemonic` (浅蓝底) | 蓝 |
-
-### 4. PPT 模式特殊处理
-- 标题页：120px 大字 + 居中 + 操作提示
-- 重点页：用 `.s-quote` 黑底白字突出
-- 每页字号普遍比流式视图大 1.5-2 倍
-- 末页提示 "END · 按 ESC 退出"
+1. **每个 section 内只用一个主容器** (.def-stack / .variants / .risks / .timeline 等), 不要游离 card
+2. **div 平衡检查**: `awk '/<div /{n++}/<\/div>/{c++}END{print n,c}' file.html` 开闭差应为 0
+3. **章节数由内容决定**, 不强行凑 6 节; A10 算法主题 7+ 节正常
+4. **token 集中管理**: 改色 / 改字号只改 [styles/atoms.css](../styles/atoms.css)
+5. **不要造新 class**, 缺组件 → 先加进 atoms.css → 在 INDEX.md 登记 → 再用
+6. **暗夜模式自动可用**: body.dark 已在 atoms.css 配好, 不要再单独写
 
 ---
 
-## ⭐ 推荐工作流: 直接复用空骨架模板
+## ⛔ 反例 (禁止做)
 
-skill 自带一个**完整可用的空骨架**:
-`references/teaching-html-template.html`
-
-里面已经包含:
-- 全套 CSS 变量 + 暗夜模式
-- PlantUML 渲染 / html2canvas 导出 / FAB 浮动按钮 / 阅读进度条
-- PPT 单一来源派生逻辑 (改 flow → PPT 自动同步)
-- ESC 键退出 / 翻页 / 各种交互
-
-**生成新主题 HTML 时的标准流程**:
-```
-1. cp references/teaching-html-template.html → 目标文件
-2. 改 <title>
-3. 改 .hero (标题/副标题)
-4. 在 #flow-view 里依次添加 .section (你想要几节就几节)
-5. 完成 — PPT/夜间模式/导出/图表 全部自动可用
-```
-
-**绝对不需要做的事**:
-- ❌ 不用手写 PPT slides (自动派生)
-- ❌ 不用单独维护夜间色板 (CSS 变量已切换)
-- ❌ 不用复制 JS 逻辑 (模板已带完整 JS)
-- ❌ 不用从 deadlock 例子里删内容 (从空骨架开始更干净)
+❌ 在 HTML 里写 `style="color: red"` (除非临时 hack)
+❌ 用 emoji 当主装饰 (用 mono 编号 / ★ / ✓ / ✗)
+❌ 用 border 区分卡片 (用 1.5px hairline + 圆角)
+❌ 用渐变 (除背景圆点)
+❌ 手写 PPT slide (会被 buildSlidesFromFlow 覆盖)
+❌ 直接放图片在 `pages/` 旁 (按 `images/<topic>/` 分目录)
+❌ 改完不 push (本地预览 ≠ 线上可访问)
+❌ 完全照抄某一示例的章节布局 (内容服务结构, 不是结构服务内容)
 
 ---
 
-## 工作流（执行步骤）
+## ✅ 检查清单 (生成新主题前过一遍)
 
-### Step 1: 收集主题信息
-- 主题名（中文 + 英文）
-- 核心知识点列表（5-10 个）
-- 哪些是易错点 / 重点
-- 输出位置（默认 `explain/images/<topic>_knowledge_map.html`）
-
-### Step 2: 规划内容结构
-- 列出 6 个章节（编号 01-06）
-- 每章列出 1-3 张 PPT 内容
-- 标记重点/易错块
-
-### Step 3: 生成完整 HTML
-- 一次性 Write 整个文件
-- 包含完整 CSS（不省略）
-- 包含完整 JS（不省略）
-- 流式视图 + PPT 视图都生成
-
-### Step 4: 报告输出
-告诉用户：
-- 文件路径
-- 双视图说明（流式默认 / PPT 按钮触发）
-- PPT 键盘快捷键（Space/← →/ESC）
+- [ ] 判定了 archetype, 选了对应模板
+- [ ] `<title>` 改成主题名
+- [ ] Hero (eyebrow / h1 / sub) 三个字段都填了
+- [ ] 章节数 = 内容需要的最小数量 (不强凑)
+- [ ] 每个 section 至少一个原子组件 (callout / tldr / step-list / table 等)
+- [ ] **每个 section 内只有一个主容器**
+- [ ] **div 平衡** awk 检查通过
+- [ ] 至少一个 callout / pull-quote / pitfall 强调块
+- [ ] 浏览器打开: 切日夜模式所有元素可读
+- [ ] (仅 A10) PPT 模式张数 = 1 (hero) + section 数
+- [ ] (仅 A10) 导出 PNG 有左右 64px 留白
+- [ ] (仅含 PlantUML) 每个图本地预览无 "Syntax Error" 红字
+- [ ] git push, 等 30s, 线上 URL 能开
 
 ---
 
-## 反例（不要做的事）
+## 🐛 已知历史坑位
 
-❌ 不要用 emoji 当主装饰（用等距字体编号）
-❌ 不要用 border 区分卡片（用 box-shadow）
-❌ 不要用线性渐变（除背景圆点外）
-❌ 不要塞满文字（card 主标题 + 一行描述足矣）
-❌ 不要简化 CSS（必须用上面完整模板）
-❌ 不要省略 PPT 模式（双视图是核心特性）
-❌ 不要把所有内容都重复说一遍（流式和 PPT 内容可以不一样，PPT 更精炼）
+迁出到独立文档: [docs/lessons.md](../docs/lessons.md)
+- 坑 1 · div 嵌套错位 → PPT 张数不对
+- 坑 2 · PlantUML 状态图语法
+- 坑 3 · 章节数硬性 6 节 (已废弃)
+- 坑 4 · 游离 .card 间距不齐
+- 坑 5 · Apple 蓝迁移到 Clay 残留
+
+写新主题前看一眼。
 
 ---
 
-## 参考实例（必读 + 模仿）
+## 📚 参考资料
 
-**模板范例**（与 skill 一起打包）：
-- `examples/deadlock_reference.html` —— **完整可运行参考**
-
-**生成新 HTML 时的强制要求**：
-1. **先读 `examples/deadlock_reference.html`** 学习其结构
-2. **完整保留** CSS 变量定义、所有样式类、JS 逻辑
-3. **只替换内容**（章节文字、卡片标题、PPT 内容）
-4. **不要简化或修改**：
-   - 网格点状背景
-   - box-shadow 阴影系统
-   - PPT 模式的所有控件和键盘逻辑
-   - 模式切换按钮位置和样式
-
-该范例展示了：
-- 6 章节流式布局（定义 / 4 必要条件 / 3 策略 / 银行家算法 / RAG / 考点）
-- 12 页 PPT 演示（标题页 → 重点引用 → 易错警示 → END）
-- 重点引用 `.key-quote`、易错警示 `.pitfall`、记忆口诀 `.mnemonic` 的实际用法
-- 完整的双视图切换实现（按钮触发 + ESC 退出 + 键盘导航）
-
-**生成新主题 HTML 时的标准操作**：
-```
-1. Read examples/deadlock_reference.html
-2. 用同样的结构, 替换:
-   - <title> 标签
-   - .hero 区的 h1 / sub
-   - 6 个 section 的内容
-   - PPT 部分的所有 slide 内容
-3. 保持所有 CSS 和 JS 不变
-4. Write 到目标路径
-```
+- **真品灵感**: [skills/references/thariqs/](references/thariqs/) — 21 个 ThariqS/html-effectiveness 原始 HTML
+- **映射表**: [docs/archetype-atom-mapping.md](../docs/archetype-atom-mapping.md) — ThariqS 20 页 → 9 archetype + 30 atom
+- **原子库**: [components/INDEX.md](../components/INDEX.md)
+- **骨架库**: [templates/ARCHETYPES.md](../templates/ARCHETYPES.md)
+- **样式表**: [styles/atoms.css](../styles/atoms.css)
+- **历史坑**: [docs/lessons.md](../docs/lessons.md)

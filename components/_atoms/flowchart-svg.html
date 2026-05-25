@@ -1,0 +1,53 @@
+<!--
+COMPONENT: flowchart-svg · 内联 SVG 流程图
+WHEN: 部署管线 / 请求路径 / 状态机 (任何"盒子 + 箭头"图)
+SLOT: section 内
+WHY SVG NOT PLANTUML: 无网络依赖 + 直接 CSS 控样式 + 离线可用 + 主题色随 token 变
+CSS HOOKS: .node-box / .node-emph / .node-done / .node-fail / .arrow / .label
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ DEPLOY PIPELINE ────────────────────┐
+  │   [push]→[CI]→[build]→[canary]→...   │
+  │              ↓                       │
+  │            [tests fail] ◍            │
+  └──────────────────────────────────────┘
+-->
+<div class="flowchart">
+  <span class="fc-label">Diagram · Deploy pipeline</span>
+  <div class="fc-title">从 git push 到 prod 全自动 ~12 分钟</div>
+
+  <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg">
+    <!-- nodes -->
+    <rect class="node-box" x="20"  y="100" width="100" height="40"/>
+    <text class="label" x="70"  y="125" text-anchor="middle">git push</text>
+
+    <rect class="node-box" x="160" y="100" width="100" height="40"/>
+    <text class="label" x="210" y="125" text-anchor="middle">CI lint+test</text>
+
+    <rect class="node-emph" x="300" y="100" width="100" height="40"/>
+    <text class="label" x="350" y="125" text-anchor="middle">image build</text>
+
+    <rect class="node-box" x="440" y="100" width="100" height="40"/>
+    <text class="label" x="490" y="125" text-anchor="middle">canary 5%</text>
+
+    <rect class="node-done" x="580" y="100" width="120" height="40"/>
+    <text class="label" x="640" y="125" text-anchor="middle">prod 100%</text>
+
+    <rect class="node-fail" x="300" y="180" width="100" height="40"/>
+    <text class="label" x="350" y="205" text-anchor="middle">auto-rollback</text>
+
+    <!-- arrows -->
+    <path class="arrow" d="M 120 120 L 160 120" marker-end="url(#a)"/>
+    <path class="arrow" d="M 260 120 L 300 120" marker-end="url(#a)"/>
+    <path class="arrow" d="M 400 120 L 440 120" marker-end="url(#a)"/>
+    <path class="arrow" d="M 540 120 L 580 120" marker-end="url(#a)"/>
+    <path class="arrow" d="M 350 140 L 350 180" marker-end="url(#a)" stroke-dasharray="4 4"/>
+
+    <defs>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--gray-700)"/>
+      </marker>
+    </defs>
+  </svg>
+</div>

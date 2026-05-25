@@ -1,0 +1,29 @@
+<!--
+COMPONENT: callout · 提示/注意/小贴士
+WHEN: 段落旁的"顺手提一句"信息, 非主线但值得知道
+SLOT: section 内, 任意段落之间
+VARIANT:
+  - 默认 (info):  clay 图标 + oat 软底
+  - .warn:        rust 图标 + 浅红底 (警告但非错误)
+  - .success:     olive 图标 + 浅绿底 (good practice)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌─ ★ 提示: 这里说一句额外的注意事项 ───┐
+-->
+<div class="callout">
+  <span class="ico">★</span>
+  <div>如果你只需要默认 tier, 不用加 YAML 配置 — 直接 <code>rateLimit()</code> 无参调用即可, 路由名会自动推断。</div>
+</div>
+
+<!-- VARIANT: 警告 -->
+<div class="callout warn">
+  <span class="ico">⚠</span>
+  <div>本地开发环境 Redis 缺失时会 fallback 到内存 map, 测试结果不代表真实集群行为。</div>
+</div>
+
+<!-- VARIANT: 成功 / 推荐做法 -->
+<div class="callout success">
+  <span class="ico">✓</span>
+  <div>这种写法兼容现有 codebase, 改动最小, 推荐采纳。</div>
+</div>

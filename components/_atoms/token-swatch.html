@@ -1,0 +1,45 @@
+<!--
+COMPONENT: token-swatch · 设计 token 色票
+WHEN: 设计系统页 (展示色板 / spacing / radius)
+SLOT: 包在 .swatches 容器里 (auto-fit grid)
+STYLE: chip + name + value 三段, mono 字体
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐
+  │■ │ │■ │ │■ │ │■ │ │■ │
+  │clay│ │olive│ │rust│
+  │D97757│ │788C5D│ │B04A3F│
+-->
+<div class="swatches">
+  <div class="swatch">
+    <div class="chip" style="background: var(--clay);"></div>
+    <div class="name">--clay</div>
+    <div class="val">#D97757</div>
+  </div>
+  <div class="swatch">
+    <div class="chip" style="background: var(--olive);"></div>
+    <div class="name">--olive</div>
+    <div class="val">#788C5D</div>
+  </div>
+  <div class="swatch">
+    <div class="chip" style="background: var(--rust);"></div>
+    <div class="name">--rust</div>
+    <div class="val">#B04A3F</div>
+  </div>
+  <div class="swatch">
+    <div class="chip" style="background: var(--slate);"></div>
+    <div class="name">--slate</div>
+    <div class="val">#141413</div>
+  </div>
+  <div class="swatch">
+    <div class="chip" style="background: var(--oat);"></div>
+    <div class="name">--oat</div>
+    <div class="val">#E3DACC</div>
+  </div>
+  <div class="swatch">
+    <div class="chip" style="background: var(--ivory); border: 1.5px solid var(--gray-300);"></div>
+    <div class="name">--ivory</div>
+    <div class="val">#FAF9F5</div>
+  </div>
+</div>

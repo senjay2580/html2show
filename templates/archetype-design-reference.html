@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System · [REPLACE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page wide">
+
+  <header class="hero">
+    <div class="eyebrow">Design Reference · v0.1</div>
+    <h1>Anthropic Clay · Token Reference</h1>
+    <div class="sub">Color · typography · spacing · radius · shadow — 一页扫完所有 token。</div>
+  </header>
+
+  <section id="colors">
+    <h2>Colors</h2>
+    <hr class="rule">
+    <p class="sec-intro">6 个语义色 + 5 阶灰度。所有 atom 只从这 11 个 token 取色。</p>
+
+    <h3>Semantic</h3>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip" style="background: var(--clay);"></div>
+        <div class="name">--clay</div>
+        <div class="val">#D97757</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--olive);"></div>
+        <div class="name">--olive</div>
+        <div class="val">#788C5D</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--rust);"></div>
+        <div class="name">--rust</div>
+        <div class="val">#B04A3F</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--slate);"></div>
+        <div class="name">--slate</div>
+        <div class="val">#141413</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--oat);"></div>
+        <div class="name">--oat</div>
+        <div class="val">#E3DACC</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--ivory); border: 1.5px solid var(--gray-300);"></div>
+        <div class="name">--ivory</div>
+        <div class="val">#FAF9F5</div>
+      </div>
+    </div>
+
+    <h3>Neutrals</h3>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip" style="background: var(--gray-100);"></div>
+        <div class="name">--gray-100</div>
+        <div class="val">#F0EEE6</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--gray-300);"></div>
+        <div class="name">--gray-300</div>
+        <div class="val">#D1CFC5</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--gray-500);"></div>
+        <div class="name">--gray-500</div>
+        <div class="val">#87867F</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--gray-700);"></div>
+        <div class="name">--gray-700</div>
+        <div class="val">#3D3D3A</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--white); border: 1.5px solid var(--gray-300);"></div>
+        <div class="name">--white</div>
+        <div class="val">#FFFFFF</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="typography">
+    <h2>Typography</h2>
+    <hr class="rule">
+
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Size</th>
+          <th>Font</th>
+          <th>Used for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>h1</td><td>32–38px</td><td>serif 500</td><td>page title (hero)</td></tr>
+        <tr><td>h2</td><td>24px</td><td>serif 500</td><td>section title</td></tr>
+        <tr><td>h3</td><td>18px</td><td>serif 500</td><td>subsection</td></tr>
+        <tr><td>body</td><td>15px</td><td>sans 1.65</td><td>正文</td></tr>
+        <tr><td>small</td><td>14px</td><td>sans</td><td>variant/risk body</td></tr>
+        <tr><td>caption</td><td>12px</td><td>sans</td><td>metric-label</td></tr>
+        <tr><td>mono-label</td><td>11px</td><td>mono UPPER</td><td>eyebrow / pill / label</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="atoms-preview">
+    <h2>Atom 预览</h2>
+    <hr class="rule">
+    <p>下面是按类别快速预览所有原子组件 — 详细 HTML 见 <code>components/_atoms/</code></p>
+
+    <h3>callout 三档</h3>
+    <div class="callout"><span class="ico">★</span><div>默认信息提示</div></div>
+    <div class="callout warn"><span class="ico">⚠</span><div>警告提示</div></div>
+    <div class="callout success"><span class="ico">✓</span><div>推荐做法</div></div>
+
+    <h3>pill 全色板</h3>
+    <p>
+      <span class="pill sev">SEV-2</span>
+      <span class="pill resolved">Resolved</span>
+      <span class="pill warn">Outage</span>
+      <span class="pill neutral">47 min</span>
+      <span class="pill tag">Research</span>
+    </p>
+
+    <h3>variant-grid</h3>
+    <div class="variants">
+      <div class="variant">
+        <span class="variant-label">01</span>
+        <div class="variant-name">Variant A</div>
+        <div class="variant-body">一行说明这个变体的特点</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">02</span>
+        <div class="variant-name">Variant B</div>
+        <div class="variant-body">另一种取舍</div>
+      </div>
+      <div class="variant">
+        <span class="variant-label">03</span>
+        <div class="variant-name">Variant C</div>
+        <div class="variant-body">第三种选择</div>
+      </div>
+    </div>
+
+    <h3>pull-quote</h3>
+    <div class="pull-quote">
+      <span class="label">KEY · 核心</span>
+      <div class="text">一行<em>重要的</em>话用 pull-quote 拎出来 — 像出版物的提取页。</div>
+    </div>
+  </section>
+
+  <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

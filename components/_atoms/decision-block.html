@@ -1,0 +1,33 @@
+<!--
+COMPONENT: decision-block · 决策点
+WHEN: 周报 / 方案对比, 需要明确"二选一并给推荐"
+SLOT: section 内
+STRUCTURE: 标题 (q) + 选项 grid + 推荐说明 (why)
+REQUIRES: styles/atoms.css
+
+PREVIEW:
+  ┃ Question · 这周末发不发 v2.4 ?
+  ┃ ┌─Option A ─────┐ ┌─Option B · RECOMMENDED ─┐
+  ┃ │ 周五发        │ │ 推迟到下周一            │
+  ┃ │ 提早进入用户  │ │ 让 QA 多扫两天         │
+  ┃ └───────────────┘ └─────────────────────────┘
+  ┃ ──── Why: B 风险更低, A 早进的 PR 主要是文案 ────
+-->
+<div class="decision">
+  <div class="q">Question · 这周末发不发 v2.4 ?</div>
+  <div class="options">
+    <div class="opt">
+      <div class="opt-label">Option A</div>
+      <div class="opt-title">周五发</div>
+      <div class="opt-body">早 3 天进入用户, 但 QA 只扫了主路径。</div>
+    </div>
+    <div class="opt recommended">
+      <div class="opt-label">Option B · Recommended</div>
+      <div class="opt-title">推迟到下周一</div>
+      <div class="opt-body">让 QA 多扫两天边界 case; 发布日避开周末值班。</div>
+    </div>
+  </div>
+  <div class="why">
+    <b>Why B:</b> 风险更低; A 早进的 PR 主要是文案/无破坏性变更, 推迟 3 天用户感知不到差异。
+  </div>
+</div>

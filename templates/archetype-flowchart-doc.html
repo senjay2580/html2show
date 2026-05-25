@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowchart · [REPLACE]</title>
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="stylesheet" href="../styles/atoms.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Illustrations &amp; Diagrams · Flowchart</div>
+    <h1>Deploy pipeline · birchline/web</h1>
+    <div class="sub">从 git push 到 prod 100% 流量 ~ 12 分钟。下面这张图是真实的, 展开看每步细节。</div>
+  </header>
+
+  <section id="overview">
+    <h2>The pipeline</h2>
+    <hr class="rule">
+    <p class="sec-intro">先用一张大图建立整体感, 再展开每一步的耗时/条件/失败回退。</p>
+
+    <div class="flowchart">
+      <span class="fc-label">Diagram · Deploy pipeline</span>
+      <div class="fc-title">push → CI → image → canary 5% → 100%</div>
+
+      <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
+        <rect class="node-box" x="20"  y="100" width="100" height="40"/>
+        <text class="label" x="70"  y="125" text-anchor="middle">git push</text>
+
+        <rect class="node-box" x="160" y="100" width="100" height="40"/>
+        <text class="label" x="210" y="125" text-anchor="middle">CI lint+test</text>
+        <text class="label" x="210" y="155" text-anchor="middle" style="fill:var(--gray-500);font-size:10px;">~2min</text>
+
+        <rect class="node-emph" x="300" y="100" width="100" height="40"/>
+        <text class="label" x="350" y="125" text-anchor="middle">image build</text>
+        <text class="label" x="350" y="155" text-anchor="middle" style="fill:var(--gray-500);font-size:10px;">~6min</text>
+
+        <rect class="node-box" x="440" y="100" width="100" height="40"/>
+        <text class="label" x="490" y="125" text-anchor="middle">canary 5%</text>
+        <text class="label" x="490" y="155" text-anchor="middle" style="fill:var(--gray-500);font-size:10px;">~90s</text>
+
+        <rect class="node-done" x="580" y="100" width="120" height="40"/>
+        <text class="label" x="640" y="125" text-anchor="middle">prod 100%</text>
+
+        <rect class="node-fail" x="300" y="200" width="120" height="40"/>
+        <text class="label" x="360" y="225" text-anchor="middle">auto-rollback</text>
+
+        <path class="arrow" d="M 120 120 L 160 120" marker-end="url(#a)"/>
+        <path class="arrow" d="M 260 120 L 300 120" marker-end="url(#a)"/>
+        <path class="arrow" d="M 400 120 L 440 120" marker-end="url(#a)"/>
+        <path class="arrow" d="M 540 120 L 580 120" marker-end="url(#a)"/>
+        <path class="arrow" d="M 360 140 L 360 200" marker-end="url(#a)" stroke-dasharray="4 4"/>
+
+        <defs>
+          <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--gray-700)"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </section>
+
+  <section id="steps">
+    <h2>每步细节</h2>
+    <hr class="rule">
+
+    <details open>
+      <summary>1 · git push <span class="where">.git/hooks</span></summary>
+      <div class="body">
+        <p>触发 webhook 到 CI 系统。push 到 main / release/* 进入 prod pipeline, 其他分支只跑 CI。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>2 · CI lint + test <span class="where">.github/workflows/ci.yml</span></summary>
+      <div class="body">
+        <p>串行: ESLint → TypeScript → Jest (unit) → Playwright (E2E)。任意失败 fail-fast。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>3 · Image build <span class="where">Dockerfile</span></summary>
+      <div class="body">
+        <p>多阶段构建, 缓存 npm install 层。镜像 push 到 GHCR, tag 是 commit SHA。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>4 · Canary 5% → SLO gate <span class="where">k8s/ingress.yaml</span></summary>
+      <div class="body">
+        <p>5% 流量打到新版本, 观察 5 分钟 error rate &lt; 0.5% / p95 &lt; 1s。任何违反 → auto-rollback。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>5 · Promote 100% <span class="where">k8s/ingress.yaml</span></summary>
+      <div class="body">
+        <p>SLO gate 通过, 流量比例递增到 100% (25% → 50% → 100%, 每档 2 分钟)。</p>
+      </div>
+    </details>
+  </section>
+
+  <section id="rollback">
+    <h2>Rollback 触发条件</h2>
+    <hr class="rule">
+
+    <div class="callout warn">
+      <span class="ico">⚠</span>
+      <div>下面任何一条触发自动回滚, <b>不需要人为决策</b> — pipeline 自带"快速止血"能力。</div>
+    </div>
+
+    <ul style="padding-left:20px; max-width:680px;">
+      <li>Error rate &gt; 0.5% sustained 60s</li>
+      <li>p95 latency &gt; 1s sustained 120s</li>
+      <li>Health check failure &gt; 30%</li>
+      <li>Smoke test 失败 (合成请求)</li>
+    </ul>
+  </section>
+
+  <footer class="atom">Auto-generated · [DATE] · kasahuki / html2show</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="https://github.com/senjay2580.png?size=64">
+<link rel="apple-touch-icon" href="https://github.com/senjay2580.png?size=180">
+<title>Repo · GitHub Timeline</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #f6f6f2;
+    --panel: #ffffff;
+    --panel-2: #f1f1eb;
+    --text: #171717;
+    --muted: #6f6f66;
+    --line: #d9d8cf;
+    --line-strong: #bdbbb0;
+    --accent: #171717;
+    --shadow: 0 0 0 rgba(0,0,0,0);
+    --serif: 'Iowan Old Style', 'Source Han Serif SC', 'Noto Serif SC', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+    --mono: 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+  }
+
+  body.dark {
+    --bg: #121212;
+    --panel: #181818;
+    --panel-2: #1f1f1f;
+    --text: #f4f4ef;
+    --muted: #9d9b91;
+    --line: #2b2b2b;
+    --line-strong: #44443f;
+    --accent: #f4f4ef;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    transition: background .25s ease, color .25s ease;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 28px;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+  }
+  .topbar.scrolled { border-color: var(--line); }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+  }
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.08;
+  }
+  .brand-copy strong {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .brand-copy span {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .top-actions a,
+  .theme-btn {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    transition: color .2s ease;
+  }
+  .top-actions a:hover,
+  .theme-btn:hover { color: var(--text); }
+  .top-actions a.active { color: var(--text); }
+  .theme-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 36px 24px 100px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: end;
+    padding: 0 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 34px;
+  }
+  .hero-meta,
+  .hero-side {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hero-meta {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(46px, 8vw, 88px);
+    line-height: .92;
+    letter-spacing: -0.07em;
+    font-weight: 600;
+  }
+  .hero-side {
+    text-align: right;
+    display: grid;
+    gap: 6px;
+  }
+  .hero-side strong {
+    color: var(--text);
+    font-size: 24px;
+    font-family: var(--mono);
+    letter-spacing: -.04em;
+    text-transform: none;
+  }
+
+  .timeline {
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .state,
+  .empty {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 18px 20px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 70px 1fr;
+    align-items: start;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  .item.reverse .card { grid-column: 1 / 2; }
+  .item.reverse .meta { grid-column: 3 / 4; text-align: left; justify-self: start; }
+
+  .meta {
+    justify-self: end;
+    text-align: right;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    display: grid;
+    gap: 6px;
+    padding-top: 8px;
+  }
+  .meta strong {
+    color: var(--text);
+    font-size: 20px;
+    letter-spacing: -.04em;
+    font-weight: 600;
+  }
+
+  .dot {
+    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 14px;
+  }
+  .dot::before {
+    content: '';
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 2px solid var(--bg);
+    position: relative;
+    z-index: 2;
+  }
+
+  .card {
+    grid-column: 3 / 4;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    min-height: 170px;
+  }
+  .cover {
+    border-right: 1px solid var(--line);
+    background: var(--panel-2);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .fork-badge {
+    border: 1px solid var(--line-strong);
+    padding: 4px 7px;
+  }
+  .art {
+    font-family: var(--serif);
+    font-size: clamp(30px, 3.5vw, 44px);
+    line-height: .9;
+    letter-spacing: -.08em;
+    word-break: break-word;
+  }
+  .art small {
+    display: block;
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .content {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .head h3 {
+    font-size: 28px;
+    line-height: .95;
+    letter-spacing: -.05em;
+    font-weight: 600;
+    word-break: break-word;
+  }
+  .index {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .desc {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tags span {
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 6px 10px;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .foot a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .footer {
+    margin-top: 42px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 980px) {
+    .timeline::before { left: 18px; }
+    .item, .item.reverse {
+      grid-template-columns: 36px 1fr;
+      gap: 14px;
+    }
+    .meta, .item.reverse .meta {
+      grid-column: 2 / 3;
+      text-align: left;
+      justify-self: start;
+      padding-top: 0;
+    }
+    .dot {
+      grid-column: 1 / 2;
+      grid-row: 1 / span 2;
+      justify-content: flex-start;
+    }
+    .card, .item.reverse .card { grid-column: 2 / 3; }
+  }
+
+  @media (max-width: 720px) {
+    .topbar { padding: 16px 18px; }
+    main { padding: 28px 16px 80px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-side { text-align: left; }
+    .card { grid-template-columns: 1fr; }
+    .cover { border-right: none; border-bottom: 1px solid var(--line); min-height: 130px; }
+    .head h3 { font-size: 24px; }
+    .footer { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar" id="topbar">
+  <a class="brand" href="../home.html">
+    <img src="https://github.com/senjay2580.png?size=80" alt="senjay2580">
+    <span class="brand-copy">
+      <strong>senjay2580 / repo</strong>
+      <span>github timeline</span>
+    </span>
+  </a>
+
+  <nav class="top-actions">
+    <a href="../home.html">Library</a>
+    <a href="showcase.html">Works</a>
+    <a href="repo.html" class="active">Repo</a>
+    <a href="resume.html">Resume</a>
+    <a href="blog.html">Blog</a>
+    <a href="https://github.com/senjay2580?tab=repositories" target="_blank" rel="noopener">GitHub</a>
+    <button class="theme-btn" id="theme-btn" title="切换主题">
+      <i data-lucide="moon" style="width:16px;height:16px;"></i>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="hero-meta">
+        <span>Live sync</span>
+        <span>/</span>
+        <span id="repo-count">-- repos</span>
+      </div>
+      <h1>GitHub Repo</h1>
+    </div>
+    <div class="hero-side">
+      <span>Last sync</span>
+      <strong id="sync-time">--</strong>
+    </div>
+  </section>
+
+  <section id="timeline" class="timeline">
+    <div class="state">Loading repos…</div>
+  </section>
+
+  <footer class="footer">
+    <span>@senjay2580</span>
+    <span>All public repositories</span>
+  </footer>
+</main>
+
+<script>
+  const USERNAME = 'senjay2580';
+  const API_URL = `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=updated`;
+
+  const FALLBACK_REPOS = [
+    { name: 'mutimind-tracker', html_url: 'https://github.com/senjay2580/mutimind-tracker', description: 'MutiMind 优质开源项目追踪 · Nextra docs site auto-deployed to Vercel', language: 'MDX', stargazers_count: 0, fork: false, updated_at: '2026-05-25T11:06:59Z' },
+    { name: 'video-transcribe-web', html_url: 'https://github.com/senjay2580/video-transcribe-web', description: 'Web service: Groq Whisper transcribe + LLM polish, 6-way concurrent, Modern Minimal UI', language: 'HTML', stargazers_count: 0, fork: false, updated_at: '2026-05-24T04:11:47Z' },
+    { name: 'Lumina', html_url: 'https://github.com/senjay2580/Lumina', description: '工作流编排', language: 'TypeScript', stargazers_count: 0, fork: false, updated_at: '2026-05-23T14:45:07Z' },
+    { name: 'zmap', html_url: 'https://github.com/senjay2580/zmap', description: 'ZMap is a fast single packet network scanner designed for Internet-wide network surveys.', language: 'C', stargazers_count: 0, fork: true, updated_at: '2026-05-21T00:39:57Z' },
+    { name: 'zgrab2', html_url: 'https://github.com/senjay2580/zgrab2', description: 'Fast Application Layer Scanner', language: 'Go', stargazers_count: 0, fork: true, updated_at: '2026-05-20T23:20:17Z' },
+    { name: 'html2show', html_url: 'https://github.com/senjay2580/html2show', description: 'Apple/Karpathy 风教学 HTML 知识图集合 · 双视图 (流式+PPT) · GitHub Pages', language: 'HTML', stargazers_count: 0, fork: false, updated_at: '2026-05-19T16:06:14Z' },
+    { name: 'Horizon-feed', html_url: 'https://github.com/senjay2580/Horizon-feed', description: 'Horizon daily AI feed (standalone, non-fork)', language: 'Python', stargazers_count: 0, fork: false, updated_at: '2026-05-19T10:41:47Z' },
+    { name: 'FluxFilter', html_url: 'https://github.com/senjay2580/FluxFilter', description: 'AI 视频每日推流过滤', language: 'TypeScript', stargazers_count: 1, fork: false, updated_at: '2026-05-14T13:49:19Z' },
+    { name: 'Gemini-Nexus', html_url: 'https://github.com/senjay2580/Gemini-Nexus', description: 'Gemini Nexus 是一款深度集成 Google Gemini 能力的 Chrome 扩展程序。它不仅仅是一个侧边栏插件，而是通过注入式的悬浮工具栏、强大的图像 AI 处理以及前沿的浏览器控制协议 (MCP)，将 AI 的触角伸向网页浏览的每一个交互细节。', language: 'JavaScript', stargazers_count: 1, fork: true, updated_at: '2026-05-14T08:05:37Z' },
+    { name: 'MutiExpert', html_url: 'https://github.com/senjay2580/MutiExpert', description: 'AI professional knewledge repository', language: 'TypeScript', stargazers_count: 0, fork: false, updated_at: '2026-05-14T00:23:46Z' },
+    { name: 'awesome-feishu-bot', html_url: 'https://github.com/senjay2580/awesome-feishu-bot', description: '', language: '', stargazers_count: 0, fork: false, updated_at: '2026-05-03T12:57:05Z' },
+    { name: 'PTTemplate', html_url: 'https://github.com/senjay2580/PTTemplate', description: '', language: '', stargazers_count: 0, fork: false, updated_at: '2026-03-31T14:05:41Z' },
+    { name: 'TrendRadar', html_url: 'https://github.com/senjay2580/TrendRadar', description: '', language: 'Python', stargazers_count: 0, fork: false, updated_at: '2026-01-08T04:25:24Z' },
+    { name: 'ArcHat', html_url: 'https://github.com/senjay2580/ArcHat', description: 'ArcHat，一款AI赋能的仿飞书的企业级通讯与协作平台', language: 'Vue', stargazers_count: 3, fork: false, updated_at: '2025-12-01T07:00:55Z' },
+    { name: 'ArcHat-server', html_url: 'https://github.com/senjay2580/ArcHat-server', description: 'ArcHat 服务端，基于lanchain4j、SpringBoot3、Netty、MyBatis-Plus 和 RabbitMQ 构建的一站式协作平台', language: 'Java', stargazers_count: 3, fork: false, updated_at: '2025-11-16T13:45:38Z' },
+    { name: 'wewe-rss', html_url: 'https://github.com/senjay2580/wewe-rss', description: '🤗更优雅的微信公众号订阅方式，支持私有化部署、微信公众号RSS生成（基于微信读书）', language: 'TypeScript', stargazers_count: 0, fork: true, updated_at: '2025-04-04T03:55:08Z' }
+  ];
+
+  const timeline = document.getElementById('timeline');
+  const repoCount = document.getElementById('repo-count');
+  const syncTime = document.getElementById('sync-time');
+
+  function formatDate(date) {
+    if (!date) return '--';
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return '--';
+    return new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(d).replace(/\//g, '.');
+  }
+
+  function formatDateTime(date) {
+    if (!date) return '--';
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return '--';
+    return new Intl.DateTimeFormat('zh-CN', {
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    }).format(d).replace(/\//g, '.');
+  }
+
+  function compactText(text = '', fallback = 'No description') {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!clean) return fallback;
+    return clean.length > 120 ? `${clean.slice(0, 117)}…` : clean;
+  }
+
+  function normalizeRepos(repos) {
+    return repos
+      .filter(repo => repo && repo.name && repo.html_url)
+      .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+  }
+
+  function buildTags(repo) {
+    const tags = [];
+    if (repo.language) tags.push(repo.language);
+    tags.push(`${repo.stargazers_count || 0}★`);
+    if (repo.fork) tags.push('Fork');
+    return tags;
+  }
+
+  function repoType(repo) {
+    if (repo.fork) return 'Fork';
+    return repo.language || 'Repo';
+  }
+
+  function artText(name = '') {
+    return name.replace(/[-_]/g, ' ');
+  }
+
+  function itemTemplate(repo, index) {
+    const reverse = index % 2 === 1;
+    const tags = buildTags(repo);
+    return `
+      <article class="item ${reverse ? 'reverse' : ''}">
+        <div class="meta">
+          <span>${formatDate(repo.updated_at)}</span>
+          <strong>${String(index + 1).padStart(2, '0')}</strong>
+        </div>
+        <div class="dot"></div>
+        <div class="card">
+          <div class="cover">
+            <div class="cover-top">
+              <span>${repoType(repo)}</span>
+              ${repo.fork ? '<span class="fork-badge">fork</span>' : ''}
+            </div>
+            <div class="art">${artText(repo.name)}<small>${formatDate(repo.updated_at)}</small></div>
+          </div>
+          <div class="content">
+            <div>
+              <div class="head">
+                <h3>${repo.name}</h3>
+                <span class="index">#${String(index + 1).padStart(2, '0')}</span>
+              </div>
+              <p class="desc">${compactText(repo.description)}</p>
+            </div>
+            <div>
+              <div class="tags">${tags.map(tag => `<span>${tag}</span>`).join('')}</div>
+              <div class="foot">
+                <span>${formatDateTime(repo.updated_at)}</span>
+                <a href="${repo.html_url}" target="_blank" rel="noopener">Open</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderRepos(repos, syncedAt, source = 'live') {
+    const list = normalizeRepos(repos);
+    repoCount.textContent = `${String(list.length).padStart(2, '0')} repos`;
+    syncTime.textContent = source === 'live' ? formatDateTime(syncedAt) : 'fallback';
+
+    if (!list.length) {
+      timeline.innerHTML = '<div class="empty">No repositories found.</div>';
+      return;
+    }
+
+    timeline.innerHTML = list.map(itemTemplate).join('');
+  }
+
+  async function loadRepos() {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2500);
+      const response = await fetch(API_URL, {
+        headers: { 'Accept': 'application/vnd.github+json' },
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      if (!response.ok) throw new Error(`GitHub API ${response.status}`);
+      const repos = await response.json();
+      renderRepos(repos, new Date().toISOString(), 'live');
+    } catch (error) {
+      console.warn('GitHub live sync failed, fallback snapshot used.', error);
+      renderRepos(FALLBACK_REPOS, FALLBACK_REPOS[0]?.updated_at, 'fallback');
+    }
+  }
+
+  const savedTheme = localStorage.getItem('repo-theme');
+  if (savedTheme === 'dark') document.body.classList.add('dark');
+
+  function syncThemeIcon() {
+    const icon = document.body.classList.contains('dark') ? 'sun' : 'moon';
+    document.getElementById('theme-btn').innerHTML = `<i data-lucide="${icon}" style="width:16px;height:16px;"></i>`;
+    lucide.createIcons();
+  }
+
+  document.getElementById('theme-btn').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('repo-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    syncThemeIcon();
+  });
+
+  const topbar = document.getElementById('topbar');
+  const syncTopbar = () => topbar.classList.toggle('scrolled', window.scrollY > 12);
+  syncTopbar();
+  window.addEventListener('scroll', syncTopbar, { passive: true });
+
+  syncThemeIcon();
+  loadRepos();
+</script>
+</body>
+</html>

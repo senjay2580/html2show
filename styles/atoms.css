@@ -1,0 +1,1118 @@
+/* ============================================================
+ * atoms.css · Anthropic Clay 风原子组件样式 (ThariqS-derived)
+ *
+ * 用法：在 archetype 模板里 <link rel="stylesheet" href="../styles/atoms.css">
+ *      或者 <style>@import url("../styles/atoms.css")</style>
+ *
+ * 配色与 token 直接对齐 ThariqS/html-effectiveness 项目, 22 个原子组件全部基于这套 token。
+ * ============================================================ */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Anthropic Clay 主调色 */
+  --ivory:    #FAF9F5;        /* body 背景 (奶白偏暖) */
+  --slate:    #141413;        /* 主墨字 (近黑带绿味) */
+  --clay:     #D97757;        /* 强调主色 (橘红粘土色) */
+  --clay-d:   #B85C3E;        /* clay 深色, 用于 active/hover */
+  --oat:      #E3DACC;        /* 柔分隔 / 软背景 */
+  --olive:    #788C5D;        /* 成功 / 正向 / done */
+  --rust:     #B04A3F;        /* 警示 / 差异 / 危险 */
+  --gray-100: #F0EEE6;        /* 极柔底 (table header / pill 中性) */
+  --gray-300: #D1CFC5;        /* 标准分割线 / 描边 */
+  --gray-500: #87867F;        /* meta / caption 灰 */
+  --gray-700: #3D3D3A;        /* 正文备选 */
+  --white:    #FFFFFF;        /* panel 底 */
+
+  /* 字体三体 */
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+
+  /* 圆角 */
+  --r-sm:    6px;
+  --r-row:   8px;
+  --r-panel: 12px;
+
+  /* 描边标准 */
+  --border:  1.5px solid var(--gray-300);
+  --hairline:1px solid var(--gray-300);
+
+  /* 间距尺度 */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  24px;
+  --sp-6:  32px;
+  --sp-7:  48px;
+  --sp-8:  64px;
+}
+
+/* ---------- Dark mode (opt-in via body.dark) ---------- */
+body.dark {
+  --ivory:    #1A1A18;
+  --slate:    #FAF9F5;
+  --clay:     #E89373;
+  --clay-d:   #F0A98C;
+  --oat:      #3D3D3A;
+  --olive:    #9DAE7E;
+  --rust:     #D87060;
+  --gray-100: #25241F;
+  --gray-300: #3D3D3A;
+  --gray-500: #87867F;
+  --gray-700: #D1CFC5;
+  --white:    #25241F;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  padding: 56px 24px 120px;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.page.wide { max-width: 1100px; }
+.page.two-col {
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 48px;
+}
+@media (max-width: 920px) {
+  .page.two-col { grid-template-columns: 1fr; gap: 24px; }
+  .page.two-col > nav.side { display: none; }
+}
+
+/* ============================================================
+ * ATOM 01 · hero
+ * eyebrow + h1 + sub (页面顶部统一入口)
+ * ============================================================ */
+.hero { margin-bottom: 32px; }
+.hero .eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 10px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 36px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--slate);
+  margin: 0 0 14px;
+}
+.hero .sub {
+  font-size: 16px;
+  color: var(--gray-500);
+  max-width: 680px;
+}
+
+/* ============================================================
+ * ATOM 02 · section
+ * 标准章节容器: hr.rule + h2 + 内容
+ * ============================================================ */
+section {
+  margin-bottom: 52px;
+  scroll-margin-top: 24px;
+}
+section h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  color: var(--slate);
+  margin: 0 0 8px;
+}
+section h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--slate);
+  margin: 24px 0 8px;
+}
+hr.rule {
+  border: none;
+  border-top: var(--hairline);
+  margin: 0 0 22px;
+}
+section p { margin: 0 0 14px; max-width: 680px; }
+
+/* ============================================================
+ * ATOM 03 · sec-intro
+ * 章节标题下的散文段开场 (引出后续内容)
+ * ============================================================ */
+.sec-intro {
+  font-size: 15.5px;
+  color: var(--gray-700);
+  max-width: 680px;
+  margin: 0 0 22px;
+}
+
+/* ============================================================
+ * ATOM 04 · jump-nav
+ * 横向/侧栏锚点目录 (incident / long page 用)
+ * 用法 A: <nav class="side">  侧栏锚点列表 (2 列布局时)
+ * 用法 B: <nav class="jump">  横向胶囊条 (单栏布局时)
+ * ============================================================ */
+nav.side {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  font-size: 13px;
+}
+nav.side .label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 12px;
+}
+nav.side a {
+  display: block;
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid var(--gray-300);
+  color: var(--gray-700);
+  text-decoration: none;
+}
+nav.side a:hover { color: var(--slate); border-color: var(--slate); }
+nav.side a.l2 { padding-left: 24px; font-size: 12.5px; color: var(--gray-500); }
+nav.side a.active { color: var(--clay); border-color: var(--clay); }
+
+nav.jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding: 12px 0;
+  border-top: var(--hairline);
+  border-bottom: var(--hairline);
+}
+nav.jump a {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gray-500);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: var(--hairline);
+}
+nav.jump a:hover { color: var(--clay); border-color: var(--clay); }
+
+/* ============================================================
+ * ATOM 05 · page-meta
+ * 标题旁的元信息: 作者 / 日期 / 状态 pill
+ * ============================================================ */
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: var(--gray-500);
+}
+.page-meta .author {
+  color: var(--gray-700);
+  font-weight: 600;
+}
+.page-meta .date,
+.page-meta .repo {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.page-meta .auto-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  border: var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+/* ============================================================
+ * ATOM 06 · footer
+ * 页脚: 时间戳 / 来源 / "auto-generated"
+ * ============================================================ */
+footer.atom {
+  margin-top: 64px;
+  padding-top: 18px;
+  border-top: var(--hairline);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+ * ATOM 07 · tldr · 两种样式
+ * .tldr            浅色变体 (clay 左侧 stripe + 白底)
+ * .tldr.inverse    深色变体 (slate 底 + ivory 文字, incident 风)
+ * ============================================================ */
+.tldr {
+  border: var(--border);
+  border-left: 3px solid var(--clay);
+  border-radius: var(--r-panel);
+  background: var(--white);
+  padding: 16px 18px;
+  margin: 0 0 32px;
+}
+.tldr-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--clay);
+  margin-bottom: 8px;
+  display: block;
+}
+.tldr p { margin: 0; font-size: 15px; line-height: 1.6; }
+.tldr b { color: var(--slate); }
+
+.tldr.inverse {
+  background: var(--slate);
+  color: var(--ivory);
+  border: none;
+  padding: 22px 26px;
+}
+.tldr.inverse .tldr-label { color: var(--oat); }
+.tldr.inverse code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: rgba(250, 249, 245, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+ * ATOM 08 · callout
+ * 提示/警告/注意 (clay icon + oat 软底)
+ * 变体: .callout.warn / .callout.info / .callout.success
+ * ============================================================ */
+.callout {
+  display: flex;
+  gap: 12px;
+  border: 1.5px solid var(--oat);
+  background: rgba(227, 218, 204, 0.35);
+  border-radius: var(--r-panel);
+  padding: 14px 16px;
+  margin: 18px 0;
+  font-size: 14px;
+  color: var(--gray-700);
+}
+.callout .ico {
+  color: var(--clay);
+  font-weight: 600;
+  font-family: var(--serif);
+  flex-shrink: 0;
+}
+.callout.warn { border-color: var(--rust); background: rgba(176, 74, 63, 0.06); }
+.callout.warn .ico { color: var(--rust); }
+.callout.success { border-color: var(--olive); background: rgba(120, 140, 93, 0.10); }
+.callout.success .ico { color: var(--olive); }
+
+/* ============================================================
+ * ATOM 09 · pull-quote
+ * 大字引用 / 章节锚点 (深色卡变体可作 key-quote)
+ * ============================================================ */
+.pull-quote {
+  margin: 32px 0;
+  padding: 28px 32px;
+  background: var(--slate);
+  color: var(--ivory);
+  border-radius: var(--r-panel);
+}
+.pull-quote .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 12px;
+  display: block;
+}
+.pull-quote .text {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.pull-quote .text em { color: var(--clay); font-style: italic; }
+.pull-quote .text .ok { color: var(--olive); }
+
+/* ============================================================
+ * ATOM 10 · pitfall
+ * 红色易错警示框
+ * ============================================================ */
+.pitfall {
+  background: rgba(176, 74, 63, 0.06);
+  border: 1.5px solid var(--rust);
+  border-radius: var(--r-panel);
+  padding: 18px 22px;
+  margin: 22px 0;
+}
+.pitfall .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 10px;
+  display: block;
+}
+.pitfall .head {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--rust);
+  margin-bottom: 10px;
+}
+.pitfall ul { list-style: none; padding: 0; margin: 0; }
+.pitfall li {
+  padding: 4px 0 4px 22px;
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.pitfall li::before {
+  content: "✗";
+  position: absolute;
+  left: 0;
+  color: var(--rust);
+  font-weight: 700;
+}
+.pitfall li b { color: var(--rust); font-weight: 600; }
+.pitfall li .right {
+  color: var(--olive);
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* ============================================================
+ * ATOM 11 · rule-of-thumb
+ * 浅色 oat 底一句话铁律 / 记忆口诀
+ * ============================================================ */
+.rule-of-thumb {
+  background: var(--gray-100);
+  border-left: 3px solid var(--clay);
+  border-radius: var(--r-panel);
+  padding: 16px 20px;
+  margin: 22px 0;
+  font-size: 15px;
+  color: var(--gray-700);
+}
+.rule-of-thumb .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 6px;
+  display: block;
+}
+.rule-of-thumb .text {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--slate);
+}
+
+/* ============================================================
+ * ATOM 12 · badge / pill
+ * 状态/分类标签 (SEV-2 / Resolved / Blocking / Nit / safe)
+ * ============================================================ */
+.pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 11px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.pill .k { font-weight: 400; opacity: 0.75; }
+.pill .v { font-family: var(--mono); }
+.pill.sev      { background: var(--clay);    color: var(--white); letter-spacing: 0.03em; }
+.pill.resolved { background: var(--olive);   color: var(--white); }
+.pill.warn     { background: var(--rust);    color: var(--white); }
+.pill.neutral  { background: var(--gray-100);color: var(--gray-700); border: var(--border); }
+.pill.tag      { background: var(--oat);     color: var(--gray-700); }
+
+/* ============================================================
+ * ATOM 13 · metric-card
+ * KPI 大数字 + 标签 (status / dashboard)
+ * 配合 .summary-band 做 4 列 grid
+ * ============================================================ */
+.summary-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 0 0 32px;
+}
+@media (max-width: 720px) {
+  .summary-band { grid-template-columns: repeat(2, 1fr); }
+}
+.metric-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-panel);
+  padding: 18px 22px 16px;
+}
+.metric-card.warn {
+  border-left: 4px solid var(--clay);
+  padding-left: 19px;
+}
+.metric-num {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--slate);
+  margin-bottom: 8px;
+}
+.metric-label {
+  font-family: var(--sans);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+}
+
+/* ============================================================
+ * ATOM 14 · metric-delta
+ * 数字 + 上下箭头 ± 变化 (与 metric-card 配合)
+ * ============================================================ */
+.metric-delta {
+  font-family: var(--mono);
+  font-size: 11px;
+  margin-top: 6px;
+}
+.metric-delta.up    { color: var(--olive); }
+.metric-delta.down  { color: var(--rust); }
+.metric-delta.flat  { color: var(--gray-500); }
+.metric-delta::before { margin-right: 4px; }
+.metric-delta.up::before   { content: "▲"; }
+.metric-delta.down::before { content: "▼"; }
+.metric-delta.flat::before { content: "—"; }
+
+/* ============================================================
+ * ATOM 15 · kv-row
+ * key-value 横排单行 (label: value)
+ * ============================================================ */
+.kv-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: var(--hairline);
+}
+.kv-row:last-child { border-bottom: none; }
+.kv-row .k {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+.kv-row .v {
+  font-size: 14.5px;
+  color: var(--slate);
+}
+
+/* ============================================================
+ * ATOM 16 · step-list
+ * 编号步骤 (01 → 02 → 03)
+ * 配合 .steps 容器做纵向排列
+ * ============================================================ */
+.steps { display: grid; gap: 10px; margin: 18px 0; }
+.step {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: baseline;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-row);
+}
+.step .step-n {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--clay);
+}
+.step .step-t {
+  font-size: 14.5px;
+  color: var(--slate);
+}
+.step code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--gray-100);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+ * ATOM 17 · timeline
+ * 时间戳 + 事件 (postmortem / rollout / 故障复盘)
+ * ============================================================ */
+.timeline {
+  position: relative;
+  padding: 4px 0 4px 16px;
+  margin: 16px 0 32px;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--gray-300);
+}
+.tl-entry {
+  position: relative;
+  padding: 0 0 22px 28px;
+}
+.tl-entry::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 2px solid var(--clay);
+}
+.tl-entry.done::before  { background: var(--olive); border-color: var(--olive); }
+.tl-entry.alert::before { background: var(--rust);  border-color: var(--rust); }
+.tl-time {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 4px;
+  display: block;
+}
+.tl-title {
+  font-size: 15px;
+  color: var(--slate);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.tl-body { font-size: 14px; color: var(--gray-700); }
+
+/* ============================================================
+ * ATOM 18 · risk-row
+ * 风险描述 + 严重度 + 缓解 (implementation-plan / code-review)
+ * ============================================================ */
+.risks {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-panel);
+  overflow: hidden;
+  margin: 18px 0;
+}
+.risk-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1.2fr;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: var(--hairline);
+  align-items: baseline;
+}
+.risk-row:last-child { border-bottom: none; }
+.risk-row .risk { font-size: 14.5px; color: var(--slate); }
+.risk-row .sev  { font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 999px; }
+.risk-row .sev.high { background: var(--rust);  color: var(--white); }
+.risk-row .sev.med  { background: var(--clay);  color: var(--white); }
+.risk-row .sev.low  { background: var(--oat);   color: var(--gray-700); }
+.risk-row .mit  { font-size: 13.5px; color: var(--gray-700); }
+@media (max-width: 720px) {
+  .risk-row { grid-template-columns: 1fr; }
+  .risk-row .sev { justify-self: start; }
+}
+
+/* ============================================================
+ * ATOM 19 · comparison-table
+ * 横向特性矩阵 (Mod N vs Consistent Hash 等)
+ * ============================================================ */
+table.compare {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-panel);
+  overflow: hidden;
+  margin: 18px 0;
+}
+table.compare thead th {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-300);
+}
+table.compare tbody td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 14px;
+  color: var(--gray-700);
+  vertical-align: top;
+}
+table.compare tbody tr:last-child td { border-bottom: none; }
+table.compare tbody td:first-child {
+  font-weight: 600;
+  color: var(--slate);
+}
+table.compare .good { color: var(--olive); }
+table.compare .bad  { color: var(--rust); }
+
+/* ============================================================
+ * ATOM 20 · qa-pair
+ * FAQ / Q&A 区
+ * ============================================================ */
+dl.faq { margin: 18px 0; }
+dl.faq dt {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--slate);
+  margin-top: 22px;
+}
+dl.faq dt:first-child { margin-top: 0; }
+dl.faq dd {
+  font-size: 14.5px;
+  color: var(--gray-700);
+  margin: 6px 0 0;
+  max-width: 680px;
+}
+
+/* ============================================================
+ * ATOM 21 · decision-block
+ * 决策点: 问题 + 选项 A/B + 推荐
+ * ============================================================ */
+.decision {
+  background: var(--white);
+  border: var(--border);
+  border-left: 3px solid var(--clay);
+  border-radius: var(--r-panel);
+  padding: 20px 24px;
+  margin: 22px 0;
+}
+.decision .q {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--slate);
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.decision .options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.decision .opt {
+  border: var(--hairline);
+  border-radius: var(--r-row);
+  padding: 12px 14px;
+}
+.decision .opt.recommended {
+  border-color: var(--olive);
+  background: rgba(120, 140, 93, 0.06);
+}
+.decision .opt .opt-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.decision .opt.recommended .opt-label { color: var(--olive); }
+.decision .opt .opt-title { font-size: 15px; font-weight: 600; color: var(--slate); margin-bottom: 4px; }
+.decision .opt .opt-body { font-size: 13.5px; color: var(--gray-700); }
+.decision .why {
+  font-size: 13.5px;
+  color: var(--gray-700);
+  border-top: var(--hairline);
+  padding-top: 12px;
+}
+
+/* ============================================================
+ * ATOM 22 · action-items
+ * 待办列表: owner + task + due-date
+ * ============================================================ */
+table.actions {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-panel);
+  overflow: hidden;
+  margin: 18px 0;
+}
+table.actions thead th {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-300);
+}
+table.actions tbody td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 14px;
+  color: var(--gray-700);
+  vertical-align: top;
+}
+table.actions tbody tr:last-child td { border-bottom: none; }
+table.actions .owner { font-weight: 600; color: var(--slate); white-space: nowrap; }
+table.actions .due   { font-family: var(--mono); font-size: 13px; color: var(--gray-500); white-space: nowrap; }
+
+/* ============================================================
+ * ATOM 23 · code-block + file-ref (复合)
+ * code-block: 单语言代码块 (with optional filename header)
+ * file-ref:   行内 mono badge 表示 path/to/file.ts:42
+ * ============================================================ */
+pre.code {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-row);
+  margin: 14px 0;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--slate);
+}
+pre.code .file {
+  display: block;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--gray-300);
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-500);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+pre.code code { display: block; padding: 14px 16px; }
+pre.code .hl { color: var(--clay); }
+pre.code .cm { color: var(--gray-500); font-style: italic; }
+pre.code .add { color: var(--olive); }
+pre.code .del { color: var(--rust); }
+
+.file-ref {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-decoration: none;
+  vertical-align: baseline;
+}
+.file-ref:hover { color: var(--clay); }
+
+/* ============================================================
+ * ATOM 24 · code-triple
+ * 三栏并列代码 (yaml + ts + http) — tab 切换
+ * ============================================================ */
+.tabs {
+  border: var(--border);
+  border-radius: var(--r-row);
+  background: var(--white);
+  margin: 16px 0;
+  overflow: hidden;
+}
+.tabs .tabbar {
+  display: flex;
+  border-bottom: 1px solid var(--gray-300);
+  background: var(--gray-100);
+}
+.tabs .tabbar button {
+  appearance: none;
+  border: none;
+  background: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gray-500);
+  padding: 10px 16px;
+  cursor: pointer;
+  border-right: 1px solid var(--gray-300);
+}
+.tabs .tabbar button.on {
+  background: var(--white);
+  color: var(--slate);
+  border-bottom: 2px solid var(--clay);
+  margin-bottom: -1px;
+}
+.tabs pre {
+  display: none;
+  margin: 0;
+  padding: 16px 18px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--slate);
+  overflow-x: auto;
+}
+.tabs pre.on { display: block; }
+.tabs .hl { color: var(--clay); }
+.tabs .cm { color: var(--gray-500); font-style: italic; }
+
+/* ============================================================
+ * ATOM 25 · diff-block
+ * +/- 变化代码 (PR / code-review)
+ * ============================================================ */
+pre.diff {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-row);
+  margin: 14px 0;
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+pre.diff .add { background: rgba(120, 140, 93, 0.10); color: var(--olive); display: block; padding: 0 8px; margin: 0 -8px; }
+pre.diff .del { background: rgba(176, 74, 63, 0.06);  color: var(--rust);  display: block; padding: 0 8px; margin: 0 -8px; }
+pre.diff .ctx { color: var(--gray-500); display: block; padding: 0 8px; margin: 0 -8px; }
+
+/* ============================================================
+ * ATOM 26 · flowchart-svg
+ * 内联 SVG 流程图 (无外部依赖)
+ * 容器 + 标题约定
+ * ============================================================ */
+.flowchart {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-panel);
+  padding: 32px 24px;
+  margin: 22px 0;
+  text-align: center;
+}
+.flowchart .fc-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clay);
+  margin-bottom: 6px;
+  display: block;
+}
+.flowchart .fc-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  color: var(--slate);
+  margin-bottom: 20px;
+}
+.flowchart svg { max-width: 100%; height: auto; }
+.flowchart svg .node-box {
+  fill: var(--white);
+  stroke: var(--slate);
+  stroke-width: 1.5;
+  rx: 8;
+}
+.flowchart svg .node-emph {
+  fill: var(--ivory);
+  stroke: var(--clay);
+  stroke-width: 2;
+}
+.flowchart svg .node-done {
+  fill: rgba(120, 140, 93, 0.10);
+  stroke: var(--olive);
+  stroke-width: 1.5;
+}
+.flowchart svg .node-fail {
+  fill: rgba(176, 74, 63, 0.06);
+  stroke: var(--rust);
+  stroke-width: 1.5;
+}
+.flowchart svg .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: var(--slate);
+}
+.flowchart svg .arrow {
+  stroke: var(--gray-700);
+  stroke-width: 1.4;
+  fill: none;
+}
+
+/* ============================================================
+ * ATOM 27 · token-swatch
+ * 色票 / spacing / radius 示例格
+ * ============================================================ */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.swatch {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-row);
+  padding: 12px 14px;
+}
+.swatch .chip {
+  width: 100%;
+  height: 60px;
+  border-radius: var(--r-sm);
+  border: var(--hairline);
+  margin-bottom: 10px;
+}
+.swatch .name {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--slate);
+  font-weight: 600;
+}
+.swatch .val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-500);
+}
+
+/* ============================================================
+ * ATOM 28 · variant-grid
+ * 同组件多变体并列 (4-6 格)
+ * ============================================================ */
+.variants {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+.variant {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--r-panel);
+  padding: 18px 20px;
+}
+.variant .variant-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--clay);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  display: block;
+}
+.variant .variant-name {
+  font-family: var(--serif);
+  font-size: 17px;
+  color: var(--slate);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.variant .variant-en {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-bottom: 10px;
+}
+.variant .variant-body {
+  font-size: 13.5px;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+/* ============================================================
+ * ATOM 29 · details · 可折叠章节 (原生 <details>/<summary>)
+ * ============================================================ */
+details {
+  border: var(--border);
+  border-radius: var(--r-row);
+  background: var(--white);
+  margin: 14px 0;
+  overflow: hidden;
+}
+details summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--slate);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  color: var(--clay);
+  font-family: var(--sans);
+  font-size: 12px;
+  transition: transform 120ms;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary .where {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-left: auto;
+}
+details .body { padding: 0 16px 16px; }
+details .body p { font-size: 14px; margin: 0 0 10px; max-width: 680px; }
+
+/* ============================================================
+ * 全局: inline code / strong / em
+ * ============================================================ */
+code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--gray-100);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+strong, b { color: var(--slate); font-weight: 600; }
+em { font-style: italic; color: var(--clay); }
+a { color: var(--clay-d); }
+a:hover { color: var(--clay); }
