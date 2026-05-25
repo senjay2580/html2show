@@ -51,7 +51,7 @@
     background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
     background-size: 32px 32px;
     line-height: 1.6;
-    padding: 60px 32px 100px;
+    padding: 96px 32px 100px;
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.01em;
     transition: background-color 0.4s, color 0.4s;
@@ -239,113 +239,111 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
   }
+  /* ============== Item Card — open-design (Geist/Linear-ish) ============== */
   .item-card {
+    --ic-line: var(--line);
+    --ic-line-hover: var(--ink-3);
+    --ic-tone: var(--blue);
     background: var(--card);
-    border-radius: 18px;
-    padding: 26px;
+    border: 1px solid var(--ic-line);
+    border-radius: 14px;
+    padding: 22px 22px 20px;
     cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     position: relative;
     overflow: hidden;
-    animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  }
-  @keyframes cardIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .item-card::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 80px; height: 80px;
-    background: radial-gradient(circle at top right, var(--blue-soft) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
+    transition: border-color .2s ease, background .2s ease;
   }
   .item-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 16px 36px rgba(0,0,0,0.10);
+    border-color: var(--ic-line-hover);
+    background: color-mix(in srgb, var(--ic-tone) 4%, var(--card));
   }
-  .item-card:hover::after { opacity: 1; }
+  .item-card:hover .ic-arrow {
+    transform: translate(2px, -2px);
+    color: var(--ink);
+  }
+  .item-card .ic-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
   .item-card .icon-box {
-    width: 48px; height: 48px;
-    border-radius: 12px;
-    background: var(--blue-soft);
-    color: var(--blue);
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--ic-line);
+    background: color-mix(in srgb, var(--ic-tone) 8%, transparent);
+    color: var(--ic-tone);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+  }
+  .item-card .ic-eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .item-card .ic-eyebrow b { color: var(--ink-2); font-weight: 600; }
+  .item-card .ic-eyebrow .sep { color: var(--line); }
+  .item-card .ic-arrow {
+    color: var(--ink-3);
+    transition: transform .25s cubic-bezier(.16,1,.3,1), color .2s ease;
+    flex-shrink: 0;
   }
   .item-card .name {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 600;
     color: var(--ink);
-    letter-spacing: -0.3px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
   }
   .item-card .desc {
-    font-size: 13.5px;
+    font-size: 13px;
     color: var(--ink-2);
     line-height: 1.6;
     flex: 1;
-  }
-  .item-card .meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 12px;
-    border-top: 1px dashed var(--line);
-    font-size: 12px;
-    color: var(--ink-3);
-    font-family: var(--mono);
-  }
-  .item-card .type-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: var(--blue-soft);
-    color: var(--blue);
-    font-size: 11px;
-    font-weight: 600;
-    font-family: var(--mono);
-    letter-spacing: 0.5px;
-  }
-  .item-card .type-badge.folder {
-    background: rgba(234, 88, 12, 0.12);
-    color: #ea580c;
-  }
-  .item-card.empty .icon-box {
-    background: rgba(134, 134, 139, 0.1);
-    color: var(--ink-3);
-  }
-  .item-card.empty {
-    opacity: 0.65;
-    cursor: default;
-  }
-  .item-card.empty:hover {
-    transform: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .item-card .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    margin-top: 2px;
   }
   .item-card .tags span {
-    font-size: 11px;
+    font-family: var(--mono);
+    font-size: 10.5px;
     padding: 2px 8px;
     border-radius: 4px;
-    background: var(--blue-soft);
-    color: var(--blue-2);
-    font-family: var(--mono);
+    border: 1px solid var(--ic-line);
+    background: transparent;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
   }
+  .item-card.empty {
+    --ic-tone: var(--ink-3);
+    opacity: 0.55;
+    cursor: default;
+  }
+  .item-card.empty:hover {
+    border-color: var(--ic-line);
+    background: var(--card);
+  }
+  .item-card.empty:hover .ic-arrow { transform: none; color: var(--ink-3); }
 
   /* ============== 列表视图 ============== */
   .list-view {
@@ -445,136 +443,162 @@
   #fab-top { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   #fab-top.visible { opacity: 1; pointer-events: auto; }
 
-  /* ============== 顶部角标 ============== */
-  .top-corners {
+  /* ========== Site Nav — Rauno-style minimal (unified across site) ========== */
+  .site-nav{
+    --nv-fg: var(--ink, #141413);
+    --nv-fg-soft: var(--ink-3, #87867F);
+    --nv-bg: var(--card, #ffffff);
+    --nv-bg-soft: var(--bg, #FAF9F5);
+    --nv-line: var(--line, #D1CFC5);
+    --nv-accent: var(--blue, #D97757);
+    --nv-mono: var(--mono, ui-monospace, "SF Mono", monospace);
     position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 900;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  .gh-corner {
-    background: var(--card);
-    color: var(--ink);
-    padding: 10px 16px;
-    border-radius: 999px;
-    text-decoration: none;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-    line-height: 1;
-  }
-  .gh-corner:hover {
-    background: var(--ink);
-    color: var(--card);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
-  }
-
-  /* 导航入口：低调文字链 + 下划线动画 */
-  .nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink-2);
-    text-decoration: none;
-    padding: 10px 4px;
-    position: relative;
-    transition: color 0.2s ease;
-    line-height: 1;
-  }
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    right: 4px;
-    bottom: 6px;
-    height: 1.5px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: right center;
-    transition: transform 0.32s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-  .nav-link:hover {
-    color: var(--blue);
-  }
-  .nav-link:hover::after {
-    transform: scaleX(1);
-    transform-origin: left center;
-  }
-  .nav-link .arrow {
-    transition: transform 0.25s ease;
-  }
-  .nav-link:hover .arrow {
-    transform: translate(2px, -2px);
-  }
-  .nav-link.soon {
-    position: relative;
-  }
-  .nav-link.soon::before {
-    content: '';
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: #c8a23a;
-    margin-right: 4px;
-    box-shadow: 0 0 0 0 rgba(200, 162, 58, 0.6);
-    animation: navSoonPulse 2s infinite;
-  }
-  @keyframes navSoonPulse {
-    0%   { box-shadow: 0 0 0 0 rgba(200, 162, 58, 0.6); }
-    70%  { box-shadow: 0 0 0 7px rgba(200, 162, 58, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(200, 162, 58, 0); }
-  }
-  .nav-link.soon[title]:hover .tip,
-  .nav-link.soon[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ink);
-    color: var(--card);
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    white-space: nowrap;
+    top: 22px; left: 28px; right: 28px;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px;
     pointer-events: none;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+  .site-nav > *{ pointer-events: auto; }
+  .nv-brand{
+    display: inline-flex; align-items: center; gap: 11px;
+    text-decoration: none; color: var(--nv-fg);
+  }
+  .nv-avatar{
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--nv-line);
+    background: var(--nv-bg);
+    object-fit: cover;
+    transition: transform .25s cubic-bezier(.16,1,.3,1);
+  }
+  .nv-brand:hover .nv-avatar{ transform: scale(1.06); }
+  .nv-id{ display: flex; flex-direction: column; line-height: 1.04; }
+  .nv-name{
+    font-family: var(--sans, system-ui, sans-serif);
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--nv-fg);
+  }
+  .nv-handle{
+    font-family: var(--nv-mono);
+    font-size: 10px;
+    color: var(--nv-fg-soft);
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+  .nv-links{ display: inline-flex; align-items: center; gap: 22px; }
+  .nv-links a{
+    position: relative;
+    font-family: var(--nv-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--nv-fg-soft);
+    text-decoration: none;
+    padding: 6px 0;
+    line-height: 1;
+    transition: color .18s ease;
+  }
+  .nv-links a:hover{ color: var(--nv-fg); }
+  .site-nav[data-active="library"] [data-key="library"],
+  .site-nav[data-active="works"]   [data-key="works"],
+  .site-nav[data-active="repo"]    [data-key="repo"]{ color: var(--nv-fg); }
+  .site-nav[data-active="library"] [data-key="library"]::after,
+  .site-nav[data-active="works"]   [data-key="works"]::after,
+  .site-nav[data-active="repo"]    [data-key="repo"]::after{
+    content: "";
+    position: absolute;
+    left: 50%; bottom: -5px;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--nv-accent);
+  }
+  .nv-links a.soon{
+    color: var(--nv-fg-soft);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .nv-links a.soon:hover{ color: var(--nv-fg-soft); }
+  .nv-links a.soon::before{
+    content: "soon";
+    position: absolute;
+    bottom: -16px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    color: var(--nv-fg-soft);
+    opacity: 0;
+    transition: opacity .2s ease;
+    pointer-events: none;
+    text-decoration: none;
+  }
+  .nv-links a.soon:hover::before{ opacity: 1; }
+  .nv-links a.ext::after{
+    content: "↗";
+    display: inline-block;
+    margin-left: 3px;
+    font-size: 0.95em;
+    transition: transform .2s ease;
+  }
+  .nv-links a.ext:hover::after{ transform: translate(1px, -1px); }
+  .nv-theme{
+    background: none;
+    border: 1px solid transparent;
+    color: var(--nv-fg-soft);
+    border-radius: 999px;
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: color .18s ease, border-color .18s ease, background .18s ease;
+    margin-left: 6px;
+  }
+  .nv-theme:hover{
+    color: var(--nv-fg);
+    border-color: var(--nv-line);
+    background: var(--nv-bg-soft);
+  }
+  @media (max-width: 820px){
+    .site-nav{ top: 14px; left: 16px; right: 16px; gap: 12px; }
+    .nv-handle{ display: none; }
+    .nv-links{ gap: 14px; }
+    .nv-links a{ font-size: 10px; letter-spacing: 0.1em; }
   }
 
   @media (max-width: 720px) {
-    body { padding: 32px 16px 80px; }
+    body { padding: 72px 16px 80px; }
     .hero h1 { font-size: 44px; }
-    .top-corners { top: 16px; right: 16px; gap: 8px; }
-    .gh-corner span { display: none; }
-    .gh-corner { padding: 10px 12px; }
-    .nav-link { font-size: 12px; }
     .grid-view { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<div class="top-corners">
-  <a href="https://github.com/senjay2580/html2show" target="_blank" class="gh-corner">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-    </svg>
-    <span>GitHub</span>
+<header class="site-nav" data-active="library" id="site-nav">
+  <a class="nv-brand" href="home.html" aria-label="kasahuki home">
+    <img class="nv-avatar" src="https://avatars.githubusercontent.com/u/208902042?v=4" alt="">
+    <span class="nv-id">
+      <span class="nv-name">kasahuki</span>
+      <span class="nv-handle">@senjay2580</span>
+    </span>
   </a>
-</div>
+  <nav class="nv-links">
+    <a data-key="library" href="home.html">Library</a>
+    <a data-key="works"   href="pages/showcase.html">Works</a>
+    <a data-key="repo"    href="pages/repo.html">Repo</a>
+    <a data-key="resume"  href="#" class="soon" aria-disabled="true">Resume</a>
+    <a data-key="blog"    href="#" class="soon" aria-disabled="true">Blog</a>
+    <a data-key="github"  href="https://github.com/senjay2580" target="_blank" rel="noopener" class="ext">Github</a>
+    <button class="nv-theme" id="nv-theme-btn" aria-label="Toggle theme">
+      <i data-lucide="moon" style="width:14px;height:14px;"></i>
+    </button>
+  </nav>
+</header>
 
 <div class="page">
   <!-- Hero -->
@@ -792,24 +816,24 @@
     const target = isPage ? it.path : it.path;
     const icon = it.icon || (isPage ? 'file-text' : 'folder');
     const tags = (it.tags || []).slice(0, 3).map(t => `<span>${t}</span>`).join('');
-    const childCount = !isPage ? `${(it.children || []).length} 项` : '';
-    const updated = it.updated ? `<span>${it.updated}</span>` : '';
+    const childCount = !isPage ? `${(it.children || []).length}` : '';
+    const eyebrowMeta = isPage
+      ? `<b>PAGE</b>${it.updated ? ` <span class="sep">·</span> ${it.updated}` : ''}`
+      : `<b>FOLDER</b> <span class="sep">·</span> ${childCount} ${empty ? 'EMPTY' : 'ITEMS'}`;
+    const toneStyle = it.color && !empty ? ` style="--ic-tone:${it.color}"` : '';
 
     return `
-      <a class="item-card ${empty ? 'empty' : ''}" ${empty ? '' : `data-target="${target}" data-page="${isPage}"`}>
-        <div class="icon-box" ${it.color && !empty ? `style="background:${it.color}1f;color:${it.color};"` : ''}>
-          <i data-lucide="${icon}" style="width:24px;height:24px;"></i>
+      <a class="item-card ${empty ? 'empty' : ''}"${toneStyle} ${empty ? '' : `data-target="${target}" data-page="${isPage}"`}>
+        <div class="ic-head">
+          <div class="icon-box">
+            <i data-lucide="${icon}" style="width:16px;height:16px;"></i>
+          </div>
+          <span class="ic-eyebrow">${eyebrowMeta}</span>
+          <i class="ic-arrow" data-lucide="${isPage ? 'arrow-up-right' : 'arrow-right'}" style="width:15px;height:15px;"></i>
         </div>
         <div class="name">${it.name}</div>
         <div class="desc">${it.desc || (empty ? '暂无内容' : '')}</div>
         ${tags ? `<div class="tags">${tags}</div>` : ''}
-        <div class="meta">
-          <span class="type-badge ${isPage ? '' : 'folder'}">
-            <i data-lucide="${isPage ? 'file-text' : 'folder'}" style="width:11px;height:11px;"></i>
-            ${isPage ? 'PAGE' : 'FOLDER'}
-          </span>
-          ${childCount || updated}
-        </div>
       </a>
     `;
   }
@@ -896,17 +920,22 @@
   });
 
   const fabTheme = document.getElementById('fab-theme');
+  const navTheme = document.getElementById('nv-theme-btn');
   function syncThemeIcon() {
     const isDark = document.body.classList.contains('dark');
-    fabTheme.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" style="width:20px;height:20px;"></i>`;
+    const icon = isDark ? 'sun' : 'moon';
+    if (fabTheme) fabTheme.innerHTML = `<i data-lucide="${icon}" style="width:20px;height:20px;"></i>`;
+    if (navTheme) navTheme.innerHTML = `<i data-lucide="${icon}" style="width:14px;height:14px;"></i>`;
     if (window.lucide) lucide.createIcons();
   }
   if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
-  fabTheme.onclick = () => {
+  const toggleTheme = () => {
     document.body.classList.toggle('dark');
     localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
     syncThemeIcon();
   };
+  if (fabTheme) fabTheme.onclick = toggleTheme;
+  if (navTheme) navTheme.onclick = toggleTheme;
 
   // ========== Inline Fallback Manifest ==========
   // 当 fetch 失败 (例如 file:// 双击本地预览), 用这份兜底
